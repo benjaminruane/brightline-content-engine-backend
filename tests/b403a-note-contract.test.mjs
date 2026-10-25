@@ -65,14 +65,14 @@ describe("B403A note contract", () => {
     assert.equal(settled[1].status, "matched");
   });
 
-  test("a kind prefix is stripped before a surface fallback matches", () => {
+  test("a kind prefix resolves the element, and an unnamed surface is not disputed", () => {
     const elements = [fact("matched", "HCIL")];
     const accepted = acceptNote(
       { bucket: "beyond", text: "The source does not use that spelling.", disputedElements: ["name: HCIL"] },
       elements
     );
-    assert.deepEqual(accepted.note.disputedIndices, [0]);
-    assert.equal(accepted.rejections.length, 0);
+    assert.deepEqual(accepted.note.disputedIndices, []);
+    assert.equal(accepted.rejections[0].reason, "not_named");
   });
 
   test("a matched fact carries the line, and the extract contains the surface", () => {

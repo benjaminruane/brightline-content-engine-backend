@@ -160,12 +160,19 @@ describe("B402 reading contract", () => {
     assert.equal(settled[0].status, "matched");
   });
 
-  test("conflicts marks a listed element matched_disputed", () => {
+  test("conflicts marks a listed element only when the note names it", () => {
     const settled = settleFacts([fact("matched")], {
       bucket: "conflicts",
+      text: "The statement says HICL.",
       disputedIndices: [0],
     });
     assert.equal(settled[0].status, "matched_disputed");
+    const unnamed = settleFacts([fact("matched", "EBITDA")], {
+      bucket: "beyond",
+      text: "The statement adds \"valuation gains,\" which the source does not assert.",
+      disputedIndices: [0],
+    });
+    assert.equal(unnamed[0].status, "matched");
   });
 
   test("header and footnote contain none of the banned words", () => {

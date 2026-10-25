@@ -114,6 +114,7 @@ for (const row of review.statements) {
     id: String(card.index),
     text,
     facts: facts.filter((fact) => fact.status === "not_found"),
+    note,
     qcCard: next,
   });
 }

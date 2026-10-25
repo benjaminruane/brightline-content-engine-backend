@@ -38,6 +38,7 @@ S4 nothing_raised edge green
 S5 beyond edge amber
   prose: The source says the new towers and co-location opportunities are expected to support continued EBITDA growth in line with HICL's valuation assumption. The statement adds "and valuation gains," which the source does not assert.
   concern stamp: (empty)
+  mark and valuation gains kind fact tone beyond answered yes
   finding: (none)
 S6 nothing_raised edge green
   prose: (stage 5 kept)
