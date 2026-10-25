@@ -161,7 +161,7 @@ for (const card of cards) {
   }).length;
   const stage5 = typeof card.reasoningParagraph === "string" ? card.reasoningParagraph : "";
   const prose = card.displayedEvidenceProse;
-  if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts") && proseContradictsVerdict(prose || "")) {
+  if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts" || card.statementVerdict.state === "not_in_source") && proseContradictsVerdict(prose || "")) {
     tripped.push({ index: card.index, text: prose });
   }
   if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts") && proseContradictsVerdict(stage5) && prose === "") {

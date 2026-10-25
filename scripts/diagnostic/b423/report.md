@@ -16,14 +16,14 @@ S0 nothing_raised edge green
   concern stamp: (empty)
   finding: (none)
 S1 not_in_source edge red
-  prose: (stage 5 kept)
+  prose: The source says "HICL has delivered robust operational performance during the period, with capex programmes driving EBITDA growth, alongside resilient cash generation across the portfolio, supporting our confidence in achieving our target dividend cash cover." The statement rephrases this with a typo ("HCIL") but conveys the same assertion.
   concern stamp: EBITDA growth driven by capital expenditure
   mark HCIL kind fact tone conflict answered yes
   mark EBITDA growth driven by capital expenditure kind evidence tone beyond answered yes
   finding overreach_unsupported_causal: EBITDA growth driven by capital expenditure
     on this sentence: yes
 S2 not_in_source edge red
-  prose: (stage 5 kept)
+  prose: The source says EBITDA is delivered in line with expectations, not in line with budgets. "Budgets" is a different benchmark than the "expectations" stated in the source.
   concern stamp: (empty)
   mark budgets kind fact tone conflict answered yes
   finding: (none)

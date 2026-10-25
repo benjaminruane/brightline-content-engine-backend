@@ -36,11 +36,14 @@ test("a finding the headline already states is left off, and the others are retu
   assert.equal(extra[0].rule, "overreach_unsupported_causal");
 });
 
-test("beyond and conflicts prose is the note, unless the note contradicts the verdict", () => {
+test("beyond, conflicts, and not_in_source prose is the note, unless the note asserts support", () => {
   const note = "The statement adds a gain the source does not assert.";
+  const budgets = "The source says EBITDA is delivered in line with expectations, not in line with budgets.";
   assert.equal(displayedEvidenceProse("beyond", note), note);
   assert.equal(displayedEvidenceProse("conflicts", "The source confirms the figure as stated."), "");
   assert.equal(displayedEvidenceProse("conflicts", "The draft aligns with a different company."), "");
   assert.equal(displayedEvidenceProse("nothing_raised", "The source confirms this."), null);
-  assert.equal(displayedEvidenceProse("not_in_source", "The source confirms this."), null);
+  assert.equal(displayedEvidenceProse("not_in_source", "The source confirms this."), "");
+  assert.equal(displayedEvidenceProse("not_in_source", ""), "");
+  assert.equal(displayedEvidenceProse("not_in_source", budgets), budgets);
 });
