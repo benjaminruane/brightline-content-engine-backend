@@ -177,9 +177,9 @@ describe("revise-actions licensed change", () => {
     });
     const found = result.entries.find((e) => e.id === "S7:editorial:voice_consistency:0");
     assert.ok(found, "S7 voice finding must exist");
-    assert.equal(found.disposition, "ACKNOWLEDGE");
-    assert.equal(found.sort?.reasonCode, "visible_signal");
-    assert.equal(found.noProposalReason, NO_PROPOSAL.visible_signal);
+    assert.equal(found.disposition, "ACTION");
+    assert.equal(found.provenance, "derived");
+    assert.match(found.resultingSentence, /Halden Group recommends/);
     assert.equal(calledIds.includes("S7:editorial:voice_consistency:0"), false);
   });
 

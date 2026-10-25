@@ -34,6 +34,9 @@ export default async function handler(req, res) {
       sources: body.sources,
       entries: body.entries,
       decisions: body.decisions,
+      outputType: body.outputType,
+      requiredVersion: body.requiredVersion,
+      authoringOrganisation: body.authoringOrganisation,
     });
     return res.status(200).json({ ok: true, ...result });
   } catch (err) {

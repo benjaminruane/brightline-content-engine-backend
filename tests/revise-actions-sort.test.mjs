@@ -1,7 +1,7 @@
 /**
  * Primary control for the per-finding action list.
- * S1 marketing and S3 overreach must stay ACKNOWLEDGE (conflict-free partials).
- * If they come back ACTION, the slice is wrong.
+ * S1 marketing stays ACKNOWLEDGE. A concern whose direction names the exact
+ * span is a draft-side proposal and is ACTION even on a silent partial.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -45,11 +45,13 @@ describe("revise-actions sort (r10-review1)", () => {
     assert.equal(found.sort?.reasonCode, "partial_policy");
   });
 
-  test("S3 overreach is evidence and stays ACKNOWLEDGE on a silent partial", () => {
+  test("S3 overreach names its span, so it is a draft-side action", () => {
     const found = row(entries, "3", "evidence", "overreach_unsupported_causal");
     assert.ok(found, "S3 overreach finding must exist");
-    assert.equal(found.disposition, "ACKNOWLEDGE");
-    assert.equal(found.sort?.reasonCode, "partial_no_edit");
+    assert.equal(found.kind, "evidence");
+    assert.equal(found.disposition, "ACTION");
+    assert.equal(found.draftSide, true);
+    assert.match(found.resultingSentence, /suggests key-person risk may be limited/);
   });
 
   test("S1 voice is ACTION", () => {

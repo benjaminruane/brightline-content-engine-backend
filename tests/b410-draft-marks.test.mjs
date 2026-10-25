@@ -133,6 +133,12 @@ test("recheck calls the note once for the changed statement and clears its decis
       calls += 1;
       return JSON.stringify({ bucket: "none", note: "", disputedIndices: [] });
     },
+    reviewStatement: async () => ({
+      editorialConcerns: [],
+      editorialVerdict: "clean",
+      complianceConcerns: [],
+      complianceVerdict: "clean",
+    }),
   });
   assert.equal(calls, 1);
   assert.deepEqual(result.stale, [1]);
