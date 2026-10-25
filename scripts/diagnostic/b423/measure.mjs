@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDraftMarks, draftFromStatementSpans } from "../../../lib/qc/draft-marks.mjs";
-import { cardEvidenceFindings, displayedEvidenceProse, proseContradictsVerdict } from "../../../lib/qc/evidence-findings.mjs";
+import { cardEvidenceFindings, displayedEvidenceProse, findingsByStatement, proseContradictsVerdict } from "../../../lib/qc/evidence-findings.mjs";
 import { summariseReview } from "../../../lib/qc/review-summary.mjs";
 import { statementVerdict, toneForStatementVerdict, editorialVerdictWithoutCausal } from "../../../lib/qc/statement-verdict.mjs";
 import { summaryBulletsFromReview } from "../../../lib/qc/summary-bullets.mjs";
@@ -49,14 +49,19 @@ function toneName(mark) {
   return "none";
 }
 
+function quoteInSentence(quote, statement) {
+  return typeof quote === "string" && quote.trim() !== "" && typeof statement === "string" && statement.includes(quote.trim());
+}
+
 function answered(card, mark, findings) {
   const state = card.statementVerdict?.state;
   const setBy = card.statementVerdict?.setBy;
+  const belonging = (Array.isArray(findings) ? findings : []).filter((row) => quoteInSentence(row?.quote, card.statement));
   if (mark.severity === "missing" && (state === "not_in_source" || state === "conflicts")) return true;
   if (mark.kind === "fact" && mark.severity === "concern" && (state === "beyond" || state === "conflicts")) return true;
   if (mark.kind === "evidence") {
     if (setBy?.source === "action" && setBy?.rule === mark.rule) return true;
-    return findings.some((row) => row.ref === mark.ref || (row.rule === mark.rule && row.quote === mark.surface));
+    return belonging.some((row) => row.quote === mark.surface);
   }
   if (mark.kind === "editorial" || mark.kind === "style" || mark.kind === "compliance") {
     const concerns = [
@@ -66,6 +71,18 @@ function answered(card, mark, findings) {
     return concerns.some((concern) => String(concern?.concernCode || concern?.rule || "") === mark.rule);
   }
   return false;
+}
+
+function unfilteredFindings(entries) {
+  const out = [];
+  for (const entry of entries) {
+    const rule = String(entry?.rule || "");
+    if (rule !== "overreach_unsupported_causal" && rule !== "partial") continue;
+    const quote = typeof entry?.thing1?.quote === "string" ? entry.thing1.quote.trim() : "";
+    const note = typeof entry?.thing2 === "string" ? entry.thing2.trim() : "";
+    out.push({ ref: entry.id, rule, quote, note, statementId: entry.statementId });
+  }
+  return out;
 }
 
 const beforeCards = review.statements.map((row) => row.qcCard);
@@ -89,8 +106,8 @@ for (const row of review.statements) {
   };
   const prose = displayedEvidenceProse(verdict.state, note?.text);
   if (prose !== null) next.displayedEvidenceProse = prose;
-  const entryRows = (actions.entries || []).filter((entry) => entry.statementId === String(card.index ?? row.id) || entry.statement === text);
-  next.evidenceFindings = cardEvidenceFindings(next, [...concerns, ...entryRows]);
+  next.concernStamp = cardEvidenceFindings(next, concerns);
+  next.evidenceFindings = cardEvidenceFindings(next, [...concerns, ...(actions.entries || [])]);
   cards.push(next);
   statementRows.push({
     index: card.index,
@@ -122,33 +139,72 @@ say("## Statements");
 say("");
 
 let unanswered = 0;
+let misplaced = 0;
+let oldUnanswered = 0;
+let oldMisplaced = 0;
+let mapMismatch = 0;
 const tripped = [];
+const byStatement = findingsByStatement(statementRows, actions.entries || []);
 for (const card of cards) {
   const marks = built.marks.filter((mark) => mark.statementIndex === card.index);
-  const open = marks.filter((mark) => !answered(card, mark, card.evidenceFindings));
+  const shown = card.evidenceFindings;
+  const foreign = shown.filter((row) => !quoteInSentence(row.quote, card.statement));
+  const open = marks.filter((mark) => !answered(card, mark, shown));
   unanswered += open.length;
+  misplaced += foreign.length;
+  const broadcast = unfilteredFindings(actions.entries || []);
+  const oldForeign = broadcast.filter((row) => !quoteInSentence(row.quote, card.statement));
+  oldMisplaced += oldForeign.length;
+  oldUnanswered += marks.filter((mark) => {
+    if (mark.kind !== "evidence") return !answered(card, mark, []);
+    return !broadcast.some((row) => row.quote === mark.surface);
+  }).length;
   const stage5 = typeof card.reasoningParagraph === "string" ? card.reasoningParagraph : "";
-  const shown = card.displayedEvidenceProse;
-  if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts") && proseContradictsVerdict(shown || "")) {
-    tripped.push({ index: card.index, text: shown });
+  const prose = card.displayedEvidenceProse;
+  if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts") && proseContradictsVerdict(prose || "")) {
+    tripped.push({ index: card.index, text: prose });
   }
-  if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts") && proseContradictsVerdict(stage5) && shown === "") {
+  if ((card.statementVerdict.state === "beyond" || card.statementVerdict.state === "conflicts") && proseContradictsVerdict(stage5) && prose === "") {
     tripped.push({ index: card.index, text: "(note withheld; stage 5 would have contradicted)" });
   }
+  const mapped = byStatement[String(card.index)] || [];
+  const shownQuotes = shown.map((row) => row.quote).sort().join("|");
+  const mappedQuotes = mapped.map((row) => row.quote).sort().join("|");
+  if (shownQuotes !== mappedQuotes) mapMismatch += 1;
   say(`S${card.index} ${card.statementVerdict.state} edge ${toneForStatementVerdict(card.statementVerdict)}`);
-  say(`  prose: ${shown == null ? "(stage 5 kept)" : shown || "(nothing)"}`);
+  say(`  prose: ${prose == null ? "(stage 5 kept)" : prose || "(nothing)"}`);
+  say(`  concern stamp: ${card.concernStamp.length ? card.concernStamp.map((row) => row.quote).join(" | ") : "(empty)"}`);
   for (const mark of marks) {
-    say(`  mark ${mark.surface} kind ${mark.kind || "(none)"} tone ${toneName(mark)} answered ${answered(card, mark, card.evidenceFindings) ? "yes" : "NO"}`);
+    say(`  mark ${mark.surface} kind ${mark.kind || "(none)"} tone ${toneName(mark)} answered ${answered(card, mark, shown) ? "yes" : "NO"}`);
   }
-  for (const finding of card.evidenceFindings) {
+  if (!shown.length) say("  finding: (none)");
+  for (const finding of shown) {
+    const onThisSentence = quoteInSentence(finding.quote, card.statement);
     say(`  finding ${finding.rule}: ${finding.quote}`);
+    say(`    on this sentence: ${onThisSentence ? "yes" : "NO"}`);
   }
+  if (foreign.length) say(`  misplaced: ${foreign.map((row) => row.ref).join(", ")}`);
   if (open.length) say(`  unanswered: ${open.map((mark) => mark.ref).join(", ")}`);
+  if (shownQuotes !== mappedQuotes) say("  inventory map disagrees with the card list");
 }
 say("");
+say(`Findings on a card they do not belong to: ${misplaced}`);
 say(`Unanswered marks: ${unanswered}`);
+say(`Old screen rule, findings on a card they do not belong to: ${oldMisplaced}`);
+say(`Old screen rule, unanswered marks: ${oldUnanswered}`);
+say("The B423 zero counted a mark answered when the finding was in the list attached to that card. It did not count a finding whose quote is absent from the card's sentence. The screen passed the whole inventory into every card, so each card held every finding and the unanswered count stayed zero. Replaying that rule on this payload is the old-screen pair above: unanswered stays zero while the refinancing note is on every card. The two counts above are separate. A finding whose quote is not in the sentence does not answer a mark, so adding it to every card cannot clear the unanswered count.");
 say(`Contradiction guard trips: ${tripped.length}`);
 for (const row of tripped) say(`  S${row.index} ${row.text}`);
+say(`Concern stamp empty on ${cards.filter((card) => card.concernStamp.length === 0).length} of ${cards.length} cards.`);
+say("The stamp is the concern list on the card, written before the revise-actions inventory exists. On this payload the causal concern is already on S1, so that stamp is not empty. The refinancing finding is not a concern. It is an inventory row, so it is absent from every stamp. The screen was not reading the stamp. It appended the whole inventory to every card.");
+say("");
+say("## Where the list is built");
+say("");
+say("The list is built in findingsByStatement, called from runActionList once the inventory exists, and returned as evidenceFindingsByStatement. The review-card field is left as the concern-only stamp. It is not the list the screen shows after the inventory arrives. Removing it would drop the causal finding for the moment before that response, and recheck would lose the finding for a sentence whose inventory row was discarded. A saved review with no map keeps an entry only when its statement id is that card.");
+say("");
+say("## Other run-wide lists");
+say("");
+say("Stage 6 still pastes the whole draft into the editorial prompt. That is model context, not a list copied onto each card. Not changed here. buildDraftMarks, attachActionListToStatement and attachDocumentFindings each keep an entry only for the statement it belongs to.");
 say("");
 
 const ledger = { demands: 0, light: 0, quiet: 0, noise: [] };
@@ -178,5 +234,6 @@ say("");
 const report = lines.join("\n");
 writeFileSync(path.join(root, "scripts/diagnostic/b423/report.md"), report);
 console.log(report);
-if (unanswered !== 0) process.exitCode = 1;
+if (unanswered !== 0 || misplaced !== 0 || mapMismatch !== 0) process.exitCode = 1;
+if (oldMisplaced === 0 || oldUnanswered !== 0) process.exitCode = 1;
 if (ledger.demands !== 3 || ledger.light !== 5 || ledger.quiet !== 30 || ledger.noise.length !== 0) process.exitCode = 1;
