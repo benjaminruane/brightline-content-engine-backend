@@ -34,9 +34,16 @@ function extractRows(body) {
   return [];
 }
 
-function finishPiece(bodyText, { readiness, draftText, notes }) {
+function finishPiece(bodyText, { readiness, draftText, notes }, silences) {
   const labelled = prependReadiness(readiness, bodyText);
-  return stripUnquotedCraft(labelled, { draftText, notes });
+  const stripped = stripUnquotedCraft(labelled, { draftText, notes });
+  if (Array.isArray(silences) && stripped.length < labelled.length) {
+    silences.push({
+      id: "unquoted_craft",
+      reason: "a paragraph was removed",
+    });
+  }
+  return stripped;
 }
 
 export default async function handler(req, res) {
@@ -67,17 +74,19 @@ export default async function handler(req, res) {
   }
   const isReady = signoffVerdict === "Ready";
   const notes = collectMarginNotes(rows, activeReviewOptions, draftText);
+  const craftSilences = [];
   const cleanPiece = finishPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
     readiness: signoffVerdict,
     draftText,
     notes,
-  });
+  }, craftSilences);
 
   if (notes.length === 0) {
     return res.status(200).json({
       ok: true,
       feedbackText: cleanPiece,
       isReady,
+      ...(craftSilences.length ? { silences: craftSilences } : {}),
     });
   }
 
@@ -113,7 +122,7 @@ export default async function handler(req, res) {
       readiness: signoffVerdict,
       draftText,
       notes,
-    });
+    }, craftSilences);
   }
 
   try {
@@ -139,6 +148,7 @@ export default async function handler(req, res) {
       ok: true,
       feedbackText: feedbackText || cleanPiece,
       isReady,
+      ...(craftSilences.length ? { silences: craftSilences } : {}),
     });
   } catch {
     return res.status(200).json({ ok: false, feedbackText: "", isReady });
