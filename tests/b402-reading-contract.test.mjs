@@ -228,8 +228,8 @@ describe("B402 reading contract", () => {
     assert.equal(applied.displayVerdict, "conflict");
     assert.equal(applied.factualBadge, false);
     assert.equal(applied.statement, "HICL grew.");
-    assert.equal(applied.sentenceState, "nothing_raised");
-    assert.equal(applied.sentenceLabel, "Nothing raised");
+    assert.equal(applied.sentenceState, "conflicts");
+    assert.equal(applied.sentenceLabel, "Conflicts with the source");
     assert.equal(other.readingFacts, undefined);
     assert.equal(other.sentenceState, undefined);
   });

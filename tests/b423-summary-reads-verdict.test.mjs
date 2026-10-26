@@ -15,9 +15,10 @@ test("statement verdict counts, and a card with none keeps the old class", () =>
     { statementVerdict: { state: "nothing_raised" }, displayVerdict: "conflict" },
   ], OPTIONS);
   assert.deepEqual(counted.evidence, {
-    confirmed: 1,
-    partial: 1,
-    conflicting: 1,
+    confirmed: 0,
+    partial: 0,
+    beyond: 1,
+    conflicting: 2,
     notSupported: 1,
     unbadged: 0,
   });
