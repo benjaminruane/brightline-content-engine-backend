@@ -1,0 +1,192 @@
+{
+  "fixtures": 20,
+  "schedulerConstants": {
+    "editorialSystemTokens": 9088,
+    "complianceSystemTokens": 3000,
+    "stage2SystemTokens": 4000,
+    "stage5SystemTokens": 1600
+  },
+  "rates": {
+    "gpt4oInput": 2.5,
+    "gpt4oOutput": 10,
+    "opusInput": 5,
+    "opusOutput": 25
+  },
+  "outputAssumption": {
+    "pipelineOutputTokensPerCall": 400,
+    "noteOutputTokensPerCall": 300,
+    "note": "The scheduler counts request tokens only. Output tokens are an allowance, not a scheduler field."
+  },
+  "onePass": {
+    "statementsEstimated": 273,
+    "pipelineInputTokens": 6102843,
+    "pipelineOutputTokens": 442000,
+    "noteInputTokens": 936881,
+    "noteOutputTokens": 87900,
+    "parts": {
+      "stage1": 80069,
+      "stage1b": 50000,
+      "stage2": 1875055,
+      "stage5": 491400,
+      "editorial": 2678119,
+      "compliance": 928200
+    },
+    "pipelineUsd": 19.677108,
+    "noteUsd": 6.881905,
+    "usd": 26.559012,
+    "tpmFloorMs": 183095,
+    "idleWallMs": 164236
+  },
+  "twoPasses": {
+    "usd": 53.118025,
+    "pipelineUsd": 39.354215,
+    "noteUsd": 13.76381,
+    "tpmFloorMs": 366190,
+    "idleWallMs": 328472,
+    "noteTpmFloorMs": 56213,
+    "wallClockMinutes": 6.1,
+    "idleWallMinutes": 5.5
+  },
+  "perFixture": [
+    {
+      "id": "01",
+      "statements": 11,
+      "sources": 1,
+      "pipelineTokens": 274756,
+      "noteInput": 70498
+    },
+    {
+      "id": "02",
+      "statements": 10,
+      "sources": 1,
+      "pipelineTokens": 208165,
+      "noteInput": 22132
+    },
+    {
+      "id": "03",
+      "statements": 11,
+      "sources": 1,
+      "pipelineTokens": 230383,
+      "noteInput": 25982
+    },
+    {
+      "id": "04",
+      "statements": 18,
+      "sources": 1,
+      "pipelineTokens": 380444,
+      "noteInput": 45179
+    },
+    {
+      "id": "05",
+      "statements": 8,
+      "sources": 1,
+      "pipelineTokens": 163833,
+      "noteInput": 14192
+    },
+    {
+      "id": "06",
+      "statements": 14,
+      "sources": 1,
+      "pipelineTokens": 291227,
+      "noteInput": 31736
+    },
+    {
+      "id": "07",
+      "statements": 10,
+      "sources": 1,
+      "pipelineTokens": 209044,
+      "noteInput": 23021
+    },
+    {
+      "id": "08",
+      "statements": 19,
+      "sources": 1,
+      "pipelineTokens": 423754,
+      "noteInput": 69481
+    },
+    {
+      "id": "09",
+      "statements": 14,
+      "sources": 1,
+      "pipelineTokens": 297272,
+      "noteInput": 37235
+    },
+    {
+      "id": "10",
+      "statements": 7,
+      "sources": 1,
+      "pipelineTokens": 143355,
+      "noteInput": 11901
+    },
+    {
+      "id": "11",
+      "statements": 15,
+      "sources": 1,
+      "pipelineTokens": 317810,
+      "noteInput": 39362
+    },
+    {
+      "id": "12",
+      "statements": 9,
+      "sources": 1,
+      "pipelineTokens": 178770,
+      "noteInput": 10950
+    },
+    {
+      "id": "13",
+      "statements": 12,
+      "sources": 1,
+      "pipelineTokens": 256945,
+      "noteInput": 33796
+    },
+    {
+      "id": "14",
+      "statements": 11,
+      "sources": 1,
+      "pipelineTokens": 230440,
+      "noteInput": 25775
+    },
+    {
+      "id": "15",
+      "statements": 31,
+      "sources": 1,
+      "pipelineTokens": 864847,
+      "noteInput": 278319
+    },
+    {
+      "id": "16",
+      "statements": 15,
+      "sources": 1,
+      "pipelineTokens": 318747,
+      "noteInput": 39534
+    },
+    {
+      "id": "17",
+      "statements": 15,
+      "sources": 1,
+      "pipelineTokens": 323517,
+      "noteInput": 44739
+    },
+    {
+      "id": "18",
+      "statements": 13,
+      "sources": 2,
+      "pipelineTokens": 352220,
+      "noteInput": 34631
+    },
+    {
+      "id": "19",
+      "statements": 20,
+      "sources": 1,
+      "pipelineTokens": 436392,
+      "noteInput": 63399
+    },
+    {
+      "id": "20",
+      "statements": 10,
+      "sources": 1,
+      "pipelineTokens": 200922,
+      "noteInput": 15019
+    }
+  ]
+}
