@@ -12,7 +12,7 @@ describe("B232 export verdict label", () => {
   });
 
   test("a correct slug with different case and surrounding whitespace is not Confirmed", () => {
-    assert.equal(normalizeExportVerdict(" Supported_Partial "), "Partially confirmed");
+    assert.equal(normalizeExportVerdict(" Supported_Partial "), "Partly in the source");
     assert.equal(normalizeExportVerdict(" CONFLICT "), "Conflicting");
     assert.equal(normalizeExportVerdict(" Not_Supported "), "No support");
   });

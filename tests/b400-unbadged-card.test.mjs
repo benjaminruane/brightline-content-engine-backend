@@ -23,7 +23,7 @@ const ON = { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: t
 
 const TODAY = [
   ["supported_full", "Nothing raised", "confirmed"],
-  ["supported_partial", "Partially confirmed", "partial"],
+  ["supported_partial", "Partly in the source", "partial"],
   ["conflict", "Conflicting", "conflicting"],
   ["not_supported", "No support", "notSupported"],
   ["unverifiable", "Unverifiable", "unverifiable"],
