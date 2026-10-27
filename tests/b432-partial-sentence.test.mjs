@@ -61,6 +61,27 @@ test("the three edit rules, and a missing explanation is not a split", () => {
   );
 });
 
+test("a repeated sentence and a comma inside the closing quote are tidied", () => {
+  const said = partialSentence({
+    matchExplanations: [
+      {
+        classification: "partially_confirmed",
+        explanation:
+          "The source supports the claim of a strong competitive position but does not explicitly mention a 'growing category' or a 'credible operational team,' making the statement partially confirmed.",
+      },
+      {
+        classification: "partially_confirmed",
+        explanation:
+          "The source confirms the strength of the product, which supports the claim of a defensible competitive position. However, it does not address the credibility of the operational team, making the support partial.",
+      },
+    ],
+  });
+  assert.equal(
+    said,
+    "The source supports the claim of a strong competitive position but does not mention a 'growing category' or a 'credible operational team'."
+  );
+});
+
 test("the summary uses the card name", () => {
   const bullets = summaryBulletsFromReview({
     version: 1,

@@ -1,0 +1,14 @@
+2026-10-27T12:43:11.578Z ESTIMATE one pass USD 26.559012 pipeline 19.677108 note 6.881905 scheduler wall 3.1 min (TPM floor)
+2026-10-27T12:43:11.654Z FREEZE 261 statements. Build 102dff9. Cache off.
+2026-10-27T12:43:11.654Z PASS 1 start. Already stored: 0.
+2026-10-27T12:44:10.130Z PASS 1 F01 cards=12 wallMs=58476 spend=1.3569 list=1.4675 calls=76
+2026-10-27T12:44:52.845Z PASS 1 F02 cards=9 wallMs=42713 spend=1.9867 list=2.1910 calls=133
+2026-10-27T12:45:39.749Z PASS 1 F03 cards=9 wallMs=46903 spend=2.5698 list=2.9538 calls=194
+2026-10-27T12:47:13.420Z PASS 1 F04 cards=21 wallMs=93671 spend=3.9625 list=4.6389 calls=331
+2026-10-27T12:47:49.001Z PASS 1 F05 cards=8 wallMs=35581 spend=4.4409 list=5.2363 calls=382
+2026-10-27T12:48:51.874Z PASS 1 F06 cards=12 wallMs=62873 spend=5.3317 list=6.3119 calls=464
+2026-10-27T12:49:35.448Z PASS 1 F07 cards=7 wallMs=43574 spend=5.7841 list=6.8401 calls=511
+2026-10-27T12:50:46.037Z PASS 1 F08 cards=18 wallMs=70589 spend=7.1303 list=8.4983 calls=625
+2026-10-27T12:51:57.168Z PASS 1 F09 cards=15 wallMs=71131 spend=8.1586 list=9.8464 calls=722
+2026-10-27T12:52:32.054Z PASS 1 F10 cards=7 wallMs=34886 spend=8.5524 list=10.3772 calls=768
+2026-10-27T12:53:38.819Z PASS 1 F11 cards=14 wallMs=66764 spend=9.5312 list=11.6023 calls=860
