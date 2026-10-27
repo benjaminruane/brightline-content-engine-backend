@@ -1,0 +1,378 @@
+{
+  "cards": 261,
+  "gitSha": "504c8ac",
+  "spend": {
+    "calls": 1742,
+    "inputTokens": 7800714,
+    "cachedInputTokens": 3428736,
+    "outputTokens": 149280,
+    "costUsd": 20.966635000000007,
+    "listUsd": 25.252555,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 1390,
+        "inputTokens": 6323215,
+        "cachedInputTokens": 3428736,
+        "outputTokens": 98818,
+        "costUsd": 12.510297499999998,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 49,
+        "inputTokens": 27126,
+        "cachedInputTokens": 0,
+        "outputTokens": 2506,
+        "costUsd": 0.0055724999999999985,
+        "unpricedCalls": 0
+      },
+      "anthropic/claude-opus-4-7": {
+        "calls": 303,
+        "inputTokens": 1450373,
+        "cachedInputTokens": 0,
+        "outputTokens": 47956,
+        "costUsd": 8.450764999999997,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "catch": {
+    "raised": 10,
+    "n": 11,
+    "misses": [
+      "F13-ebitda"
+    ]
+  },
+  "leaveAlone": {
+    "quiet": 40,
+    "n": 74,
+    "perLayer": {
+      "evidence": 9,
+      "editorial": 20,
+      "compliance": 5,
+      "note": 3,
+      "framing": 1,
+      "recency": 4
+    }
+  },
+  "wordingWithheld": 118,
+  "partials": {
+    "n": 28,
+    "withExplanation": 28,
+    "samples": [
+      {
+        "fixtureId": "01",
+        "statement": "In summary, Shopify combines exceptional unit economics, a defensible competitive position, and clear growth runway.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source supports Shopify's competitive position and growth potential but does not explicitly mention 'exceptional unit economics.' The statement's claim about unit economics is not directly addressed in the source."
+      },
+      {
+        "fixtureId": "02",
+        "statement": "As AI workloads continue to drive demand for location-agnostic compute, atNorth is exceptionally well positioned to capitalize on this opportunity.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source supports the claim that atNorth is well positioned to capitalize on AI-driven demand for location-agnostic compute. However, it does not explicitly state that atNorth is 'exceptionally well positioned,' which is an evaluative claim not covered by the source."
+      },
+      {
+        "fixtureId": "04",
+        "statement": "This combination — engaged users, female-skewed, older demographic — represents a strong and underserved advertising audience and supports a credible long-term monetization path through native advertising in categories such as home decor, fashion, and weddings.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source confirms the demographic and gender skew but does not explicitly state that this represents an underserved advertising audience or supports a long-term monetization path through native advertising."
+      },
+      {
+        "fixtureId": "04",
+        "statement": "The founders, Mr. Ben Silbermann and Mr. Evan Sharp, are first-time founders but our diligence has been deeply positive.",
+        "classification": "confirmed",
+        "writtenFor": null,
+        "explanation": "The source explicitly states that both Ben Silbermann and Evan Sharp are first-time founders, confirming the statement."
+      },
+      {
+        "fixtureId": "04",
+        "statement": "Mr. Silbermann in particular has built a reputation at Google for being unusually focused on users and product.",
+        "classification": "confirmed",
+        "writtenFor": null,
+        "explanation": "The source confirms that Ben Silbermann is described as exceptionally product-focused and unusually willing to listen to user feedback, aligning with the statement about his reputation for being focused on users and product."
+      },
+      {
+        "fixtureId": "04",
+        "statement": "The risks are clear.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source outlines several risks, including lack of monetisation strategy, scalability concerns, and uncertain defensibility, but does not explicitly state that 'the risks are clear.'"
+      },
+      {
+        "fixtureId": "04",
+        "statement": "In summary, the Company combines exceptional engagement, a defensible consumer position, and a founder team in which we have high conviction.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source supports the claim of exceptional engagement and high conviction in the founders. However, it does not explicitly mention a 'defensible consumer position,' making the statement partially confirmed."
+      },
+      {
+        "fixtureId": "05",
+        "statement": "Halden Group will support continued growth in commercial aerospace and an accelerated expansion of Norwell's space applications business, where the Company has identified meaningful capacity to grow share.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source confirms Westhaven's intention to support Norwell's growth and capability expansion but does not specifically mention an accelerated expansion of Norwell's space applications business or the identified capacity to grow share."
+      },
+      {
+        "fixtureId": "08",
+        "statement": "- End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source confirms the 9% compound revenue growth over the hold period but does not specifically attribute this growth to structural exposure to medical implants and aerospace build rate increases."
+      },
+      {
+        "fixtureId": "08",
+        "statement": "- Operating leverage — the balance of EBITDA growth comes from operating leverage on the broader cost base.",
+        "classification": "partially_confirmed",
+        "writtenFor": null,
+        "explanation": "The source mentions operating leverage as a factor in EBITDA margin expansion but does not specifically attribute the balance of EBITDA growth to operating leverage on the broader cost base, as the statement does."
+      }
+    ]
+  },
+  "silenceExamples": [
+    {
+      "id": "wording_note_withheld",
+      "reason": "a wording note is recorded and not shown",
+      "count": 1,
+      "fixtureId": "01",
+      "statement": "The Company has grown rapidly, with customers increasing from 5'500 a year ago to nearly 10'000 today.",
+      "displayVerdict": "supported_full"
+    },
+    {
+      "id": "note_rejections",
+      "reason": "disputes were dropped",
+      "count": 1,
+      "fixtureId": "01",
+      "statement": "Shopify's strategic moat is its App Store, which two-thirds of customers actively use.",
+      "displayVerdict": "supported_full"
+    },
+    {
+      "id": "source_awareness",
+      "reason": "dropped",
+      "count": 1,
+      "fixtureId": "04",
+      "statement": "These are exceptional engagement metrics for a consumer product at this stage.",
+      "displayVerdict": "supported_full"
+    },
+    {
+      "id": "reassurance_stripped",
+      "reason": "every sentence was removed and the label has no why",
+      "count": null,
+      "fixtureId": "14",
+      "statement": "First, the regulatory pathway under the EU Medical Device Regulation (MDR) has matured.",
+      "displayVerdict": "supported_full"
+    },
+    {
+      "id": "note_refused",
+      "reason": "endorsing_language",
+      "count": null,
+      "fixtureId": "17",
+      "statement": "Urban last-mile is one of the most structurally supported segments of European commercial real estate.",
+      "displayVerdict": "supported_full"
+    }
+  ],
+  "notReviewed": {
+    "n": 5,
+    "reasons": {
+      "empty_confirmation_refused": 5
+    }
+  },
+  "faults": [
+    {
+      "id": "F05-acquirer",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "editorial",
+          "label": "concern",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F05-ownership",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F05-forward-support",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "supported_partial",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "partially_confirmed",
+          "named": true
+        },
+        {
+          "layer": "editorial",
+          "label": "concern",
+          "named": true
+        },
+        {
+          "layer": "compliance",
+          "label": "hard_concern",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F13-employees",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F13-ebitda",
+      "caught": false,
+      "named": false,
+      "displayVerdict": "supported_full",
+      "raised": []
+    },
+    {
+      "id": "F18-completion",
+      "caught": true,
+      "named": false,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": false
+        }
+      ]
+    },
+    {
+      "id": "F18-customers",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F18-headcount",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F18-arr-current",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F18-arr-growth",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "conflicts",
+          "named": true
+        }
+      ]
+    },
+    {
+      "id": "F18-returns",
+      "caught": true,
+      "named": true,
+      "displayVerdict": "conflict",
+      "raised": [
+        {
+          "layer": "evidence",
+          "label": "conflicting",
+          "named": true
+        },
+        {
+          "layer": "note",
+          "label": "beyond",
+          "named": true
+        }
+      ]
+    }
+  ]
+}

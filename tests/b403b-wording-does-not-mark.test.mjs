@@ -59,7 +59,9 @@ describe("B403B wording does not mark", () => {
       }
     );
     assert.equal(applied.sentenceState, "nothing_raised");
-    assert.equal(applied.wordingLine, "1 wording note");
+    assert.equal(applied.wordingLine, null);
+    assert.equal(applied.wordingNoteWithheld.count, 1);
+    assert.match(applied.wordingNoteWithheld.text, /grew/);
     assert.match(applied.readingNote.text, /grew/);
     assert.equal(applied.displayVerdict, "supported_full");
   });
