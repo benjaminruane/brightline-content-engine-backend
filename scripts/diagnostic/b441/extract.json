@@ -1,0 +1,464 @@
+{
+  "cards": 261,
+  "gitSha": "896b514",
+  "spend": {
+    "calls": 1734,
+    "inputTokens": 7786117,
+    "cachedInputTokens": 3680640,
+    "outputTokens": 148805,
+    "costUsd": 20.527969950000013,
+    "listUsd": 25.128769950000002,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 1388,
+        "inputTokens": 6325186,
+        "cachedInputTokens": 3680640,
+        "outputTokens": 100786,
+        "costUsd": 12.220024999999996,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 49,
+        "inputTokens": 27853,
+        "cachedInputTokens": 0,
+        "outputTokens": 2545,
+        "costUsd": 0.005704949999999999,
+        "unpricedCalls": 0
+      },
+      "anthropic/claude-opus-4-7": {
+        "calls": 297,
+        "inputTokens": 1433078,
+        "cachedInputTokens": 0,
+        "outputTokens": 45474,
+        "costUsd": 8.30224,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "catch": {
+    "raised": 11,
+    "n": 11,
+    "misses": [],
+    "faults": [
+      {
+        "id": "F05-acquirer",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F05-ownership",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F05-forward-support",
+        "caught": true,
+        "displayVerdict": "supported_partial",
+        "priorVerdict": "supported_partial",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "partially_confirmed",
+            "named": true
+          },
+          {
+            "layer": "editorial",
+            "label": "concern",
+            "named": true
+          },
+          {
+            "layer": "compliance",
+            "label": "hard_concern",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          },
+          {
+            "layer": "framing",
+            "label": "framing",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F13-employees",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F13-ebitda",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "supported_full",
+        "secondValueLine": "The source also says \"On a trailing basis the Company generates an EBITDA margin of approximately 13%, reflecting continued investment in product and go-to-market.\"",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F18-completion",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": false
+          }
+        ]
+      },
+      {
+        "id": "F18-customers",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F18-headcount",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F18-arr-current",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F18-arr-growth",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "conflicts",
+            "named": true
+          }
+        ]
+      },
+      {
+        "id": "F18-returns",
+        "caught": true,
+        "displayVerdict": "conflict",
+        "priorVerdict": "conflict",
+        "secondValueLine": "",
+        "raised": [
+          {
+            "layer": "evidence",
+            "label": "conflicting",
+            "named": true
+          },
+          {
+            "layer": "note",
+            "label": "beyond",
+            "named": true
+          }
+        ]
+      }
+    ]
+  },
+  "leaveAlone": {
+    "quiet": 38,
+    "n": 74
+  },
+  "newlySpeaking": [
+    {
+      "fixtureId": "06",
+      "index": 6,
+      "statement": "Operational changes introduced during 2025 — including a new Chief Commercial Officer and a new Chairman — are expected to begin contributing meaningfully in 2026, and we continue to view the underlying business as fundamentally sound.",
+      "spoke": [
+        "editorial"
+      ],
+      "before": "supported_full",
+      "after": "supported_full",
+      "secondValueLine": "",
+      "sentenceLabel": "Nothing raised"
+    },
+    {
+      "fixtureId": "11",
+      "index": 4,
+      "statement": "NorTech is the largest single realisation in Fund IV's history and moves the Fund's overall net IRR from 16.8 percent to 19.7 percent.",
+      "spoke": [
+        "editorial"
+      ],
+      "before": "supported_full",
+      "after": "supported_full",
+      "secondValueLine": "",
+      "sentenceLabel": "Nothing raised"
+    },
+    {
+      "fixtureId": "14",
+      "index": 1,
+      "statement": "The category — software that helps clinicians make better, faster, more consistent treatment decisions at the point of care — is at a structural inflection point driven by three forces.",
+      "spoke": [
+        "evidence"
+      ],
+      "before": "supported_full",
+      "after": "not reviewed",
+      "secondValueLine": "",
+      "sentenceLabel": "Nothing raised"
+    },
+    {
+      "fixtureId": "17",
+      "index": 10,
+      "statement": "Levered at 55 percent loan-to-value, the base case generates an equity gross IRR of 16.8 percent and an MOIC of 2.1x over a five-year hold.",
+      "spoke": [
+        "evidence"
+      ],
+      "before": "supported_full",
+      "after": "not reviewed",
+      "secondValueLine": "",
+      "sentenceLabel": "Nothing raised"
+    },
+    {
+      "fixtureId": "19",
+      "index": 10,
+      "statement": "Absolute Scope 1 and Scope 2 emissions reduced 8 percent during 2025 despite portfolio revenue growth of approximately 12 percent.",
+      "spoke": [
+        "editorial"
+      ],
+      "before": "supported_full",
+      "after": "supported_full",
+      "secondValueLine": "",
+      "sentenceLabel": "Nothing raised"
+    }
+  ],
+  "classChanges": [
+    {
+      "fixtureId": "02",
+      "index": 6,
+      "statement": "Partners Group will reinvest alongside CPP Investments and Equinix and retain up to 10% of the Company going forward.",
+      "before": "supported_full",
+      "after": "supported_partial",
+      "supportBefore": "supported",
+      "supportAfter": "partial",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "04",
+      "index": 7,
+      "statement": "The Company's user base is unusual in two respects.",
+      "before": "supported_full",
+      "after": "supported_partial",
+      "supportBefore": "supported",
+      "supportAfter": "partial",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "08",
+      "index": 3,
+      "statement": "The Company's competitive position is exceptional.",
+      "before": "supported_full",
+      "after": "supported_partial",
+      "supportBefore": "supported",
+      "supportAfter": "partial",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "08",
+      "index": 10,
+      "statement": "- End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
+      "before": "supported_partial",
+      "after": "supported_full",
+      "supportBefore": "partial",
+      "supportAfter": "supported",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "11",
+      "index": 5,
+      "statement": "International expansion took revenue contribution from outside the Nordic region from 19 percent at entry to 42 percent at exit.",
+      "before": "supported_full",
+      "after": "not reviewed",
+      "supportBefore": "supported",
+      "supportAfter": "skipped",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "12",
+      "index": 1,
+      "statement": "NorTech is a Stockholm-headquartered manufacturer of industrial heating and cooling systems, and when we invested in 2021 it was a strong but underexposed business — dominant in the Nordics and barely visible elsewhere.",
+      "before": "conflict",
+      "after": "supported_partial",
+      "supportBefore": "conflicting",
+      "supportAfter": "partial",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "13",
+      "index": 4,
+      "statement": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+      "before": "supported_full",
+      "after": "conflict",
+      "supportBefore": "supported",
+      "supportAfter": "conflicting",
+      "secondValueLine": "The source also says \"On a trailing basis the Company generates an EBITDA margin of approximately 13%, reflecting continued investment in product and go-to-market.\""
+    },
+    {
+      "fixtureId": "14",
+      "index": 1,
+      "statement": "The category — software that helps clinicians make better, faster, more consistent treatment decisions at the point of care — is at a structural inflection point driven by three forces.",
+      "before": "supported_full",
+      "after": "not reviewed",
+      "supportBefore": "supported",
+      "supportAfter": "skipped",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "15",
+      "index": 10,
+      "statement": "The Atelier 73 growth concept — Atelier 73 is the Company's smaller, design-led store format positioned at a younger urban customer.",
+      "before": "conflict",
+      "after": "supported_full",
+      "supportBefore": "conflicting",
+      "supportAfter": "supported",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "15",
+      "index": 25,
+      "statement": "The model has been stress-tested for modest lease renegotiation.",
+      "before": "supported_partial",
+      "after": "supported_full",
+      "supportBefore": "partial",
+      "supportAfter": "supported",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "15",
+      "index": 32,
+      "statement": "We have high conviction in the management team and the value creation plan, and we look forward to providing further updates as the hold progresses.",
+      "before": "supported_full",
+      "after": "supported_partial",
+      "supportBefore": "supported",
+      "supportAfter": "partial",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "17",
+      "index": 10,
+      "statement": "Levered at 55 percent loan-to-value, the base case generates an equity gross IRR of 16.8 percent and an MOIC of 2.1x over a five-year hold.",
+      "before": "supported_full",
+      "after": "not reviewed",
+      "supportBefore": "supported",
+      "supportAfter": "skipped",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "18",
+      "index": 6,
+      "statement": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+      "before": "supported_partial",
+      "after": "supported_full",
+      "supportBefore": "partial",
+      "supportAfter": "supported",
+      "secondValueLine": ""
+    },
+    {
+      "fixtureId": "19",
+      "index": 7,
+      "statement": "Drift Logistics, our 2024 third-party logistics investment, faces a softer parcel volume environment (European parcel volumes down 3 percent year-on-year); the Company has nevertheless gained share, with revenue up 6 percent, but EBITDA margins have compressed from 14 to 12 percent.",
+      "before": "supported_partial",
+      "after": "conflict",
+      "supportBefore": "partial",
+      "supportAfter": "conflicting",
+      "secondValueLine": ""
+    }
+  ]
+}
