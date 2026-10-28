@@ -23,6 +23,7 @@ import {
 } from "../accuracy/run-evidence.mjs";
 import { padFixtureId } from "../accuracy/lib.mjs";
 import { buildEstimate } from "./estimate.mjs";
+import { writerNoteFields } from "../../../lib/qc/reading-review.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CEILING_USD = 250;
@@ -314,7 +315,7 @@ async function main() {
         stage1Source: result?.stage1?.source ?? null,
         wallMs: Date.now() - t0,
         noteSpend: result?.reading?.spend ?? null,
-        writerFeedbackStatus: result?.reading?.writerFeedbackStatus ?? null,
+        ...writerNoteFields(result?.reading),
       });
       const after = addViews(resumeBase, spendView(getLlmSpend(), pricing));
       doc.spend = after;

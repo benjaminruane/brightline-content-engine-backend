@@ -17,7 +17,7 @@ const SOURCE = "tests/fixtures/real-runs-2026-10-04-hicl/source-hicl-interim-ext
 const CLEAN = "tests/fixtures/real-runs-2026-10-04-hicl/clean-review.json";
 
 const { READING_NOTE_PROMPT, WRITER_FEEDBACK_PROMPT } = await import("../../../lib/qc/reading-contract.mjs");
-const { attachReadingView } = await import("../../../lib/qc/reading-review.mjs");
+const { attachReadingView, writerNoteFields } = await import("../../../lib/qc/reading-review.mjs");
 
 const sourceText = readFileSync(path.join(ROOT, SOURCE), "utf8");
 const review = JSON.parse(readFileSync(path.join(ROOT, CLEAN), "utf8"));
@@ -60,8 +60,7 @@ const payload = {
   source: SOURCE,
   draft: CLEAN,
   header: attached.reading.header,
-  writerFeedback: attached.reading.writerFeedback,
-  writerFeedbackStatus: attached.reading.writerFeedbackStatus,
+  ...writerNoteFields(attached.reading),
   spend: attached.reading.spend,
   model: attached.reading.model,
   sentences: attached.reading.sentences,
