@@ -32,6 +32,10 @@ function clip(text) {
   return flat.length <= 110 ? flat : `${flat.slice(0, 107)}...`;
 }
 
+function occurrences(rows) {
+  return rows.reduce((sum, row) => sum + (Array.isArray(row.span) ? row.span.length : 0), 0);
+}
+
 function modelCodes(card) {
   const rows = Array.isArray(card.editorialConcerns) ? card.editorialConcerns : [];
   return rows.map((row) => (typeof row?.concernCode === "string" ? row.concernCode : "")).filter(Boolean);
@@ -110,7 +114,7 @@ for (const card of cards) {
   }
   if (percentRaised.length) {
     buckets.percentage_notation.raisedStatements.add(key);
-    buckets.percentage_notation.instances += percentRaised.length;
+    buckets.percentage_notation.instances += occurrences(percentRaised);
   }
   if (codes.has("percentage_notation")) buckets.percentage_notation.model.add(key);
 
@@ -123,7 +127,7 @@ for (const card of cards) {
   }
   if (dashRaised.length) {
     buckets.em_dash.raisedStatements.add(key);
-    buckets.em_dash.instances += dashRaised.length;
+    buckets.em_dash.instances += occurrences(dashRaised);
   }
   if (codes.has("em_dash")) buckets.em_dash.model.add(key);
 
@@ -139,7 +143,7 @@ for (const card of cards) {
   const personRaised = raised.filter((row) => row.concernCode === "first_person_plural" || row.concernCode === "voice_consistency");
   if (personRaised.length) {
     buckets.first_person.raisedStatements.add(key);
-    buckets.first_person.instances += personRaised.length;
+    buckets.first_person.instances += occurrences(personRaised);
   }
   const modelPerson = codes.has("first_person_plural") || (codes.has("voice_consistency") && pronounHits.length > 0);
   if (modelPerson && houseVoiceIsThirdPerson(slug)) buckets.first_person.model.add(key);
@@ -175,7 +179,11 @@ for (const card of cards) {
       ? model.has("first_person_plural") || model.has("voice_consistency")
       : model.has(row.concernCode);
     if (modelHas) continue;
-    detail.push(`- ${row.concernCode} ${key} quote=${JSON.stringify(show(row.quote))} ${clip(card.statement)}`);
+    const spans = Array.isArray(row.span) ? row.span : [];
+    for (const span of spans) {
+      const quote = card.statement.slice(span.startChar, span.endChar);
+      detail.push(`- ${row.concernCode} ${key} quote=${JSON.stringify(show(quote))} ${clip(card.statement)}`);
+    }
   }
 }
 

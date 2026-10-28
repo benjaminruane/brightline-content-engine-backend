@@ -19,13 +19,19 @@ function codes(statement, outputType) {
 }
 
 describe("B444 mechanics scan", () => {
-  test("each spelled percentage is one concern, and a % sign is not", () => {
+  test("spelled percentages are one concern, and a % sign is not", () => {
     const statement = "Yield is 5.4 percent and utilisation is 88 per cent. Margin is 12%.";
     const rows = scanMechanics({ statement, outputType: "reporting_commentary" });
     const percentages = rows.filter((row) => row.concernCode === "percentage_notation");
-    assert.deepEqual(percentages.map((row) => row.quote), ["5.4 percent", "88 per cent"]);
-    assert.equal(percentages[0].text.includes("'5.4 percent'"), true);
+    assert.equal(percentages.length, 1);
+    assert.equal(percentages[0].quote, "5.4 percent");
+    assert.equal(
+      percentages[0].text,
+      "The percentages are written '5.4 percent' and '88 per cent'. Write them with %."
+    );
+    assert.equal(percentages[0].span.length, 2);
     assert.equal(statement.slice(percentages[0].span[0].startChar, percentages[0].span[0].endChar), "5.4 percent");
+    assert.equal(statement.slice(percentages[0].span[1].startChar, percentages[0].span[1].endChar), "88 per cent");
   });
 
   test("each long dash outside quotation marks is one concern", () => {
@@ -41,12 +47,9 @@ describe("B444 mechanics scan", () => {
     assert.deepEqual(rows, [{ code: "em_dash", quote: "\u2013" }]);
   });
 
-  test("first person on commentary is first_person_plural, one concern per pronoun", () => {
+  test("first person on commentary is one first_person_plural concern", () => {
     const rows = codes("We recommend the deal on our reading of the file.", "reporting_commentary");
-    assert.deepEqual(rows, [
-      { code: "first_person_plural", quote: "We" },
-      { code: "first_person_plural", quote: "our" },
-    ]);
+    assert.deepEqual(rows, [{ code: "first_person_plural", quote: "We" }]);
   });
 
   test("first person in a press release body is voice_consistency, and quoted speech is not", () => {
