@@ -15,26 +15,24 @@ function concernWithCite(rule, statement, cited, extras = {}) {
 }
 
 describe("B54 percentage_notation per cent", () => {
-  test("keeps percentage_notation on two-word British '88 per cent'", () => {
+  test("drops a model percentage_notation concern; the scan raises the spelling", () => {
     const statement = "Utilisation has reached a record 88 per cent.";
     const out = applyDeterministicStyleFilters(
       [concernWithCite("percentage_notation", statement, "88 per cent")],
       statement,
       statement
     );
-    assert.equal(out.length, 1);
-    assert.equal(out[0].concernCode, "percentage_notation");
+    assert.equal(out.length, 0);
   });
 
-  test("keeps percentage_notation on one-word 'percent'", () => {
+  test("drops a model percentage_notation concern on one-word percent", () => {
     const statement = "Net initial yield is 5.4 percent.";
     const out = applyDeterministicStyleFilters(
       [concernWithCite("percentage_notation", statement, "5.4 percent")],
       statement,
       statement
     );
-    assert.equal(out.length, 1);
-    assert.equal(out[0].concernCode, "percentage_notation");
+    assert.equal(out.length, 0);
   });
 
   test("drops percentage_notation when the cited span already uses %", () => {

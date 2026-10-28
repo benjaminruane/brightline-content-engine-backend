@@ -1,6 +1,6 @@
 /**
  * B443. A refused craft note keeps both attempts. The card's identity does not move.
- * No model call. The ban list is not changed.
+ * B444. The craft note is refused on its own list. The evidence ban is unchanged.
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
@@ -45,44 +45,49 @@ async function card() {
 }
 
 describe("B443 writer refusal record", () => {
-  test("the ban still catches confirmed, and a missing retry is loud", () => {
+  test("the evidence ban still catches confirmed, and a missing retry is loud", () => {
     assert.equal(noteEndorsement("The draft is confirmed."), "confirmed");
-    assert.throws(() => settleWriterNote(JSON.stringify({ note: "The draft is confirmed." })), /retry text is missing/);
+    const shown = settleWriterNote(JSON.stringify({ note: "The draft is confirmed." }));
+    assert.equal(shown.writerFeedbackStatus, "shown");
+    assert.throws(
+      () => settleWriterNote(JSON.stringify({ note: "The source confirms the opening." })),
+      /retry text is missing/
+    );
   });
 
   test("both refused attempts are kept, and the retry still does not name the phrase", () => {
     const settled = settleWriterNote(
-      JSON.stringify({ note: "The draft is confirmed." }),
-      JSON.stringify({ note: "The draft is supported." })
+      JSON.stringify({ note: "The source confirms the opening." }),
+      JSON.stringify({ note: "The figures are verified against the source." })
     );
     assert.equal(settled.writerFeedback, null);
     assert.equal(settled.writerFeedbackStatus, "withheld");
-    assert.equal(settled.writerFeedbackRefused, "The draft is supported.");
-    assert.equal(settled.writerFeedbackRefusal, "supported");
+    assert.equal(settled.writerFeedbackRefused, "The figures are verified against the source.");
+    assert.equal(settled.writerFeedbackRefusal, "verified against the source");
     assert.deepEqual(settled.writerFeedbackAttempts, [
-      { text: "The draft is confirmed.", reason: "confirmed" },
-      { text: "The draft is supported.", reason: "supported" },
+      { text: "The source confirms the opening.", reason: "the source confirms" },
+      { text: "The figures are verified against the source.", reason: "verified against the source" },
     ]);
   });
 
   test("an empty retry keeps the first phrase on the attempt, and the old field stays empty", () => {
-    const settled = settleWriterNote(JSON.stringify({ note: "The draft is confirmed." }), "{}");
+    const settled = settleWriterNote(JSON.stringify({ note: "The source confirms the opening." }), "{}");
     assert.equal(settled.writerFeedbackStatus, "withheld");
-    assert.equal(settled.writerFeedbackRefused, "The draft is confirmed.");
+    assert.equal(settled.writerFeedbackRefused, "The source confirms the opening.");
     assert.equal(settled.writerFeedbackRefusal, "empty");
-    assert.equal(settled.writerFeedbackAttempts[0].reason, "confirmed");
+    assert.equal(settled.writerFeedbackAttempts[0].reason, "the source confirms");
     assert.equal(settled.writerFeedbackAttempts[1].reason, "empty");
   });
 
   test("a clean second attempt is shown, and the refused first attempt is still stored", () => {
     const settled = settleWriterNote(
-      JSON.stringify({ feedback: "This is confirmed." }),
+      JSON.stringify({ feedback: "The source confirms the opening." }),
       JSON.stringify({ text: "The draft repeats its point." })
     );
     assert.equal(settled.writerFeedback, "The draft repeats its point.");
     assert.equal(settled.writerFeedbackStatus, "shown");
     assert.equal(settled.writerFeedbackRefusal, undefined);
-    assert.equal(settled.writerFeedbackAttempts[0].reason, "confirmed");
+    assert.equal(settled.writerFeedbackAttempts[0].reason, "the source confirms");
     assert.equal(settled.writerFeedbackAttempts[1].reason, null);
   });
 
@@ -104,8 +109,8 @@ describe("B443 writer refusal record", () => {
         seen.push(messages);
         calls += 1;
         if (calls === 1) return noneNote();
-        if (calls === 2) return JSON.stringify({ note: "The draft is confirmed." });
-        return JSON.stringify({ note: "The draft is supported." });
+        if (calls === 2) return JSON.stringify({ note: "The source confirms the opening." });
+        return JSON.stringify({ note: "The figures are verified against the source." });
       },
     });
     if (previous == null) delete process.env.QC_READING_VIEW;
@@ -114,11 +119,11 @@ describe("B443 writer refusal record", () => {
     assert.deepEqual(attached.cards[0].editorialConcerns, concerns);
     assert.equal(attached.reading.writerFeedback, null);
     assert.equal(attached.reading.writerFeedbackStatus, "withheld");
-    assert.equal(attached.reading.writerFeedbackAttempts[0].reason, "confirmed");
-    assert.equal(attached.reading.writerFeedbackAttempts[1].reason, "supported");
+    assert.equal(attached.reading.writerFeedbackAttempts[0].reason, "the source confirms");
+    assert.equal(attached.reading.writerFeedbackAttempts[1].reason, "verified against the source");
     assert.equal(typeof attached.reading.writerWithheldLine, "string");
     const retry = seen[2];
     assert.equal(retry[1].content.endsWith(RETRY), true);
-    assert.equal(retry[1].content.includes("confirmed"), false);
+    assert.equal(retry[1].content.includes("the source confirms"), false);
   });
 });

@@ -47,15 +47,14 @@ describe("B180 span-free statement-scoped filters", () => {
     assert.equal(out.length, 0);
   });
 
-  test("T4 em_dash on a statement containing an em dash: KEPT", () => {
+  test("T4 em_dash model concern is dropped; the scan is the detector", () => {
     const statement = "The Company completed the acquisition \u2014 a second-quarter close.";
     const out = applyDeterministicStyleFilters(
       [spanless("em_dash", statement)],
       statement,
       statement
     );
-    assert.equal(out.length, 1);
-    assert.equal(out[0].concernCode, "em_dash");
+    assert.equal(out.length, 0);
   });
 
   test("T5 thousand_separator on apostrophe grouping (F13:S11 / B176): DROPPED", () => {

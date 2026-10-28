@@ -46,7 +46,7 @@ function concernRow(concern) {
   if (!concern || typeof concern !== "object") return { concernCode: null, text: clip(concern) };
   const code = concern.concernCode || concern.rule || concern.ruleId || null;
   const text = concern.concernText || concern.note || concern.suggestedDirection || "";
-  const quote = concern?.thing1?.quote || concern.quotedText || concern.phrase || concern.evaluativePhrase || "";
+  const quote = concern?.thing1?.quote || concern.quote || concern.quotedText || concern.phrase || concern.evaluativePhrase || "";
   return {
     concernCode: typeof code === "string" ? code : code == null ? null : String(code),
     text: clip(text),

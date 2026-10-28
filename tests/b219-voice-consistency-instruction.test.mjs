@@ -11,7 +11,6 @@ import {
   FIRST_PERSON_ACTOR_INSTRUCTION,
   buildFirstPersonActorInstruction,
 } from "../lib/qc/first-person-actor.mjs";
-import { houseVoiceIsThirdPerson } from "../lib/prompt-library/house-voice.mjs";
 import { buildEditorialStyleSystemPrompt } from "../lib/qc/editorial-compliance-reviewer.mjs";
 
 const HOUSE = "Halden Group";
@@ -65,24 +64,19 @@ function voiceConsistencyBlock(prompt) {
 
 describe("B219 voice_consistency instruction by output type", () => {
   for (const row of OUTPUT_TYPES) {
-    test(`${row.slug}: FIRST_PERSON_ACTOR_INSTRUCTION present only for third-person house voice`, () => {
+    test(`${row.slug}: the review prompt does not ask the model to remove first person`, () => {
       const prompt = promptFor(row);
       const block = voiceConsistencyBlock(prompt);
-      const expectPresent = houseVoiceIsThirdPerson(row.slug);
-      assert.equal(block.includes(REMOVAL_MARKER), expectPresent);
-      assert.equal(prompt.includes(REMOVAL_MARKER), expectPresent);
+      assert.equal(block.includes(REMOVAL_MARKER), false);
+      assert.equal(prompt.includes(REMOVAL_MARKER), false);
+      assert.equal(prompt.includes("percentage_notation:"), false);
+      assert.equal(prompt.includes("em_dash:"), false);
+      assert.equal(prompt.includes("first_person_plural:"), false);
     });
 
-    test(`${row.slug}: rule description and attached instruction never point in opposite directions`, () => {
-      const prompt = promptFor(row);
-      const block = voiceConsistencyBlock(prompt);
-      const hasRemoval = block.includes(REMOVAL_MARKER) || prompt.includes(REMOVAL_MARKER);
-      if (!houseVoiceIsThirdPerson(row.slug)) {
-        assert.equal(hasRemoval, false);
-        return;
-      }
-      assert.equal(hasRemoval, true);
-      assert.match(block, /third-person/i);
+    test(`${row.slug}: voice_consistency still asks for a switch in voice`, () => {
+      const block = voiceConsistencyBlock(promptFor(row));
+      assert.match(block, /Flag an unintended switch in voice/);
     });
   }
 

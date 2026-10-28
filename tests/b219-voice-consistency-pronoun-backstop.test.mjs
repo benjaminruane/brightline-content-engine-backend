@@ -43,7 +43,7 @@ describe("B219 voice_consistency pronoun backstop", () => {
     assert.equal(out.length, 0);
   });
 
-  test("third-person output type: first-person-misuse finding with a pronoun is kept", () => {
+  test("third-person output type: a first-person-misuse finding is dropped; the scan raises the pronoun", () => {
     const stmt = "We were attracted to Meridian on the strength of the track record.";
     const out = applyDeterministicStyleFilters(
       [firstPersonMisuseFinding(stmt)],
@@ -51,7 +51,7 @@ describe("B219 voice_consistency pronoun backstop", () => {
       stmt,
       { outputType: "reporting_commentary" }
     );
-    assert.equal(out.length, 1);
+    assert.equal(out.length, 0);
   });
 
   test("first-person output type: a finding on a third-person span is kept", () => {

@@ -111,18 +111,18 @@ describe("#4a first_person_plural deterministic filter", () => {
     assert.equal(result.length, 0);
   });
 
-  test("keeps the concern when the statement contains a real first-person pronoun", () => {
+  test("drops a model first_person_plural concern when the pronoun is real", () => {
     const stmt = "We expect to complete two further bolt-on acquisitions.";
     const concern = makeConcern(stmt, stmt);
     const result = applyDeterministicStyleFilters([concern], stmt);
-    assert.equal(result.length, 1);
+    assert.equal(result.length, 0);
   });
 
-  test("keeps the concern for 'our' usage", () => {
+  test("drops a model first_person_plural concern for 'our'", () => {
     const stmt = "Following our recent acquisition of Baltic ColdCo, combined revenue has climbed.";
     const concern = makeConcern(stmt, stmt);
     const result = applyDeterministicStyleFilters([concern], stmt);
-    assert.equal(result.length, 1);
+    assert.equal(result.length, 0);
   });
 });
 
