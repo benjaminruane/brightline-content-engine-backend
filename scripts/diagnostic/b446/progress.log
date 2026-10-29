@@ -1,0 +1,25 @@
+2026-10-29T11:41:17.437Z ESTIMATE B446 one pass USD 26.559012 pipeline 19.677108 note 6.881905 scheduler wall 3.1 min (TPM floor)
+2026-10-29T11:41:17.476Z FREEZE 261 statements. Build 40af2fd. Cache off. B446.
+2026-10-29T11:41:17.476Z PASS 1 start. Already stored: 0.
+2026-10-29T11:42:23.199Z PASS 1 F01 cards=12 wallMs=65722 spend=1.2400 list=1.4016 calls=77 note=withheld
+2026-10-29T11:43:11.256Z PASS 1 F02 cards=9 wallMs=48057 spend=1.8465 list=2.0874 calls=134 note=withheld
+2026-10-29T11:43:58.074Z PASS 1 F03 cards=9 wallMs=46816 spend=2.4116 list=2.8107 calls=195 note=withheld
+2026-10-29T11:45:23.961Z PASS 1 F04 cards=21 wallMs=85886 spend=3.8266 list=4.4791 calls=332 note=withheld
+2026-10-29T11:45:58.883Z PASS 1 F05 cards=8 wallMs=34921 spend=4.2572 list=5.0392 calls=383 note=shown
+2026-10-29T11:46:53.535Z PASS 1 F06 cards=12 wallMs=54652 spend=5.0234 list=6.0316 calls=465 note=shown
+2026-10-29T11:47:35.983Z PASS 1 F07 cards=7 wallMs=42447 spend=5.4756 list=6.5590 calls=512 note=withheld
+2026-10-29T11:48:54.575Z PASS 1 F08 cards=18 wallMs=78592 spend=6.8344 list=8.2248 calls=627 note=withheld
+2026-10-29T11:50:02.448Z PASS 1 F09 cards=15 wallMs=67872 spend=7.8092 list=9.4779 calls=726 note=withheld
+2026-10-29T11:50:44.110Z PASS 1 F10 cards=7 wallMs=41661 spend=8.1987 list=9.9926 calls=773 note=withheld
+2026-10-29T11:51:57.982Z PASS 1 F11 cards=14 wallMs=73872 spend=9.1663 list=11.2095 calls=865 note=withheld
+2026-10-29T11:52:46.342Z PASS 1 F12 cards=10 wallMs=48360 spend=9.6357 list=11.8428 calls=927 note=shown
+2026-10-29T11:53:50.549Z PASS 1 F13 cards=16 wallMs=64207 spend=10.6440 list=13.1157 calls=1026 note=shown
+2026-10-29T11:54:53.439Z PASS 1 F14 cards=13 wallMs=62890 spend=11.4004 list=14.0877 calls=1109 note=withheld
+2026-10-29T11:56:55.559Z PASS 1 F15 cards=33 wallMs=122120 spend=15.7635 list=19.0290 calls=1326 note=withheld
+2026-10-29T11:57:55.060Z PASS 1 F16 cards=13 wallMs=59499 spend=16.6620 list=20.1703 calls=1418 note=withheld
+2026-10-29T11:58:56.650Z PASS 1 F17 cards=11 wallMs=61589 spend=17.4951 list=21.1862 calls=1492 note=withheld
+2026-10-29T11:59:44.798Z PASS 1 F18 cards=10 wallMs=48148 spend=18.2918 list=22.2153 calls=1583 note=shown
+2026-10-29T12:00:54.487Z PASS 1 F19 cards=14 wallMs=69689 spend=19.4086 list=23.5803 calls=1681 note=withheld
+2026-10-29T12:01:43.725Z PASS 1 F20 cards=9 wallMs=49238 spend=19.9101 list=24.2605 calls=1747 note=withheld
+2026-10-29T12:01:44.020Z PASS 1 done. cards=261 list=24.2605 discounted=19.9101
+2026-10-29T12:01:44.022Z COMBINED list=24.2605 discounted=19.9101 calls=1747 unpriced=0
