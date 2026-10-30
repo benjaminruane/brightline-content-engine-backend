@@ -35,10 +35,12 @@ describe("B444 craft note ban", () => {
     assert.equal(craftNoteEndorsement("This aligns with the source on the date."), "aligns with the source");
   });
 
-  test("the evidence list is unchanged, and the writer prompt is unchanged", () => {
+  test("the evidence list is unchanged, and the writer prompt no longer bans ordinary editorial words", () => {
     assert.equal(NOTE_BANNED_PHRASES.some((row) => row.phrase === "confirmed"), true);
     assert.equal(NOTE_BANNED_PHRASES.some((row) => row.phrase === "the draft does not establish"), true);
-    assert.match(WRITER_FEEDBACK_PROMPT, /Do not call the draft confirmed, verified, correct, supported/);
+    assert.match(WRITER_FEEDBACK_PROMPT, /Do not claim the draft has been checked against the source/);
+    assert.match(WRITER_FEEDBACK_PROMPT, /plain hyphens, never a long dash/);
+    assert.doesNotMatch(WRITER_FEEDBACK_PROMPT, /Do not call the draft confirmed/);
   });
 
   test("a missing text is loud", () => {
