@@ -8,7 +8,6 @@ import { droppedPeriodLengths, extractElements } from "../lib/qc/b394-elements.m
 import {
   READING_NOTE_PROMPT,
   STATE_LABELS,
-  WELL_SOURCED_LINE,
   acceptNote,
   buildFacts,
   draftHeader,
@@ -25,19 +24,19 @@ function fact(status, surface = "HICL") {
 describe("B403A note contract", () => {
   test("sentenceState is never null when the note is refused", () => {
     const state = sentenceState([fact("matched")], { refused: true });
-    assert.equal(state, "nothing_raised");
+    assert.equal(state, "note_withheld");
     assert.notEqual(state, null);
-    assert.equal(STATE_LABELS[state], "Nothing raised");
+    assert.equal(STATE_LABELS[state], "Needs a look");
     assert.equal(sentenceState([fact("matched")], null), "nothing_raised");
   });
 
-  test("a refused note does not set a state and the matched draft keeps the positive line", () => {
+  test("a refused note is needs a look and the matched draft says so", () => {
     const state = sentenceState([fact("matched")], { refused: true });
-    assert.equal(state, "nothing_raised");
+    assert.equal(state, "note_withheld");
     const header = draftHeader([{ facts: [fact("matched")], sentenceState: state }]);
-    assert.equal(header.counts.statements.nothing_raised, 1);
-    assert.equal(header.counts.statements.note_withheld, 0);
-    assert.equal(header.line, WELL_SOURCED_LINE);
+    assert.equal(header.counts.statements.nothing_raised, 0);
+    assert.equal(header.counts.statements.note_withheld, 1);
+    assert.equal(header.line, "1 statement needs a look.");
   });
 
   test("not_found still beats a withheld note", () => {
@@ -98,7 +97,7 @@ describe("B403A note contract", () => {
     assert.equal(empty.reason, "empty_note");
     const none = acceptNote({ bucket: "none", text: "", disputedIndices: [] }, facts);
     assert.equal(none.ok, true);
-    assert.equal(sentenceState(facts, { refused: true, reason: "empty_note" }), "nothing_raised");
+    assert.equal(sentenceState(facts, { refused: true, reason: "empty_note" }), "note_withheld");
   });
 
   test("the prompt does not offer a bucket string the model can copy", () => {

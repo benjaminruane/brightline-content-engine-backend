@@ -55,14 +55,15 @@ test("conflicts, beyond, and a wording note", () => {
   assert.equal(wording.setBy, null);
 });
 
-test("a refused note does not set a state", () => {
+test("a refused note is needs a look", () => {
   const verdict = statementVerdict({
     facts: [fact("matched")],
     note: { refused: true, bucket: "conflicts", text: "The source confirms the statement." },
     entries: [],
   });
-  assert.equal(verdict.state, "nothing_raised");
-  assert.equal(sentenceState([fact("matched")], { refused: true }), "nothing_raised");
+  assert.equal(verdict.state, "note_withheld");
+  assert.equal(verdict.tier, "demands");
+  assert.equal(sentenceState([fact("matched")], { refused: true }), "note_withheld");
 });
 
 test("the causal action contributes beyond and a marketing action does not", () => {
