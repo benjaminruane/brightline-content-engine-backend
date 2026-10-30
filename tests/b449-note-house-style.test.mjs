@@ -28,7 +28,7 @@ describe("B449 note house style", () => {
   test("a spelled percentage becomes the symbol, and a quoted one does not", () => {
     const text = 'Margin is 11 percent, and the draft still says "11 percent" and \u201C5.4 per cent\u201D.';
     const out = applyNoteHouseStyle(text);
-    assert.equal(out, 'Margin is 11%, and the draft still says "11 percent" and \u201C5.4 per cent\u201D.');
+    assert.equal(out, 'Margin is 11%, and the draft still says "11 percent" and "5.4 per cent".');
     assert.equal(noteHouseStyleCounts(text).percentWords, 1);
     assert.equal(noteHouseStyleCounts(text).quotedPercentWords, 2);
     assert.equal(noteHouseStyleCounts(out).percentWords, 0);

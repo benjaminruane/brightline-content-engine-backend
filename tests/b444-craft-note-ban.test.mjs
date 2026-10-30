@@ -39,7 +39,8 @@ describe("B444 craft note ban", () => {
     assert.equal(NOTE_BANNED_PHRASES.some((row) => row.phrase === "confirmed"), true);
     assert.equal(NOTE_BANNED_PHRASES.some((row) => row.phrase === "the draft does not establish"), true);
     assert.match(WRITER_FEEDBACK_PROMPT, /Do not claim the draft has been checked against the source/);
-    assert.match(WRITER_FEEDBACK_PROMPT, /plain hyphens, never a long dash/);
+    assert.match(WRITER_FEEDBACK_PROMPT, /Do not comment on the draft's punctuation, number formatting, or house style/);
+    assert.doesNotMatch(WRITER_FEEDBACK_PROMPT, /plain hyphens, never a long dash/);
     assert.doesNotMatch(WRITER_FEEDBACK_PROMPT, /Do not call the draft confirmed/);
   });
 
