@@ -19,10 +19,12 @@ describe("B447 writer note schema", () => {
     });
   });
 
-  test("the writer spans require a note string, and the sentence note does not", () => {
+  test("the writer spans require a note, and the sentence note does not", () => {
     const schema = writerJsonSchemaForSpan("b404-writer");
     assert.deepEqual(schema, writerJsonSchemaForSpan("b404-writer-retry"));
-    assert.equal(schema.properties.note.type, "string");
+    assert.equal(schema.properties.note.type, "array");
+    assert.equal(schema.properties.note.minItems, 2);
+    assert.equal(schema.properties.note.items.type, "string");
     assert.deepEqual(schema.required, ["note"]);
     assert.equal(writerJsonSchemaForSpan("b404-note"), undefined);
     assert.equal(anthropicJsonInputSchema(schema), schema);
