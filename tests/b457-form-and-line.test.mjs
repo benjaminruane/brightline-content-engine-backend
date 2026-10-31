@@ -41,10 +41,11 @@ describe("B457 form equivalence", () => {
     assert.equal(found(statement, source, "Mr. Tom Fairfield"), true);
   });
 
-  test("a figure that is not the source figure stays missing", () => {
+  test("more than 150 percent is satisfied by 151, and not by 150 or 149", () => {
     const statement = "Growth was more than 150%.";
-    const source = "Growth was +151% Y/Y.";
-    assert.equal(found(statement, source, "150%"), false);
+    assert.equal(found(statement, "Growth was +151% Y/Y.", "150%"), true);
+    assert.equal(found(statement, "Growth was 150% Y/Y.", "150%"), false);
+    assert.equal(found(statement, "Growth was 149% Y/Y.", "150%"), false);
   });
 
   test("a wording note does not leave the headline saying the figure is absent", () => {
@@ -65,9 +66,12 @@ describe("B457 form equivalence", () => {
 });
 
 describe("B457 evidence line", () => {
-  test("a note is the line", () => {
+  test("a note is the line, without the sentence that explains the match", () => {
     const note = "The source states customers increased from 5,500. The statement uses a different separator.";
-    assert.equal(evidenceLine({ fileName: "memo.txt", quote: "from 5,500", noteText: note }), note);
+    assert.equal(
+      evidenceLine({ fileName: "memo.txt", quote: "from 5,500", noteText: note, noteBucket: "wording" }),
+      "The source states customers increased from 5,500."
+    );
   });
 
   test("nothing to report names the file and quotes the passage", () => {

@@ -10,6 +10,7 @@
  */
 import { mapDisplayVerdict } from "../accuracy/lib.mjs";
 import { scanMechanics } from "../../../lib/qc/mechanics-scan.mjs";
+import { shownLabel, shownState, shownTier } from "../../../lib/qc/shown-verdict.mjs";
 
 const SCANNED_CODES = new Set(["percentage_notation", "em_dash", "first_person_plural"]);
 
@@ -67,9 +68,35 @@ export function layerSpoken(card) {
   };
 }
 
+const QUIET_SENTENCE = new Set(["nothing_raised", "nothing_to_raise", ""]);
+
+/**
+ * B458. The old six layers, plus the sentence label and tier the reader sees.
+ * layerSpoken is unchanged so the series back to B437 still uses that tally.
+ */
+export function layerSpokenWithLabel(card) {
+  const layers = layerSpoken(card);
+  const state = shownState(card);
+  const tier = typeof card?.tier === "string" && card.tier ? card.tier : shownTier(state);
+  const raised = !QUIET_SENTENCE.has(state) || (tier != null && tier !== "quiet");
+  return {
+    ...layers,
+    sentence: {
+      raised,
+      label: shownLabel(card) || state || null,
+    },
+  };
+}
+
 export function quietOf(card) {
   if (!card) return false;
   const layers = layerSpoken(card);
+  return Object.values(layers).every((layer) => !layer.raised);
+}
+
+export function quietWithLabel(card) {
+  if (!card) return false;
+  const layers = layerSpokenWithLabel(card);
   return Object.values(layers).every((layer) => !layer.raised);
 }
 
@@ -78,14 +105,22 @@ function editorialRaisedWithoutHouseStyle(card) {
   return concerns.some((row) => !isScannedHouseStyle(row));
 }
 
-/** Confirmed facts, and no layer speaking except a scanned house-style concern. */
-export function evidenceQuietOf(card) {
-  if (!card) return false;
-  const layers = layerSpoken(card);
+function evidenceQuietFrom(card, layers) {
   return Object.entries(layers).every(([name, layer]) => {
     if (name === "editorial") return !editorialRaisedWithoutHouseStyle(card);
     return !layer.raised;
   });
+}
+
+/** Confirmed facts, and no layer speaking except a scanned house-style concern. */
+export function evidenceQuietOf(card) {
+  if (!card) return false;
+  return evidenceQuietFrom(card, layerSpoken(card));
+}
+
+export function evidenceQuietWithLabel(card) {
+  if (!card) return false;
+  return evidenceQuietFrom(card, layerSpokenWithLabel(card));
 }
 
 /**
@@ -104,15 +139,15 @@ export function houseStyleMentions(card) {
   return codes;
 }
 
-export function tallyLeaveAlone(cards) {
+function tallyFrom(cards, quietFn, evidenceFn) {
   if (!Array.isArray(cards)) throw new Error("tallyLeaveAlone: cards are missing");
   const mentions = {};
   const statements = {};
   let combinedQuiet = 0;
   let evidenceLeaveAlone = 0;
   for (const card of cards) {
-    if (quietOf(card)) combinedQuiet += 1;
-    if (evidenceQuietOf(card)) evidenceLeaveAlone += 1;
+    if (quietFn(card)) combinedQuiet += 1;
+    if (evidenceFn(card)) evidenceLeaveAlone += 1;
     const codes = houseStyleMentions(card);
     const seen = new Set();
     for (const code of codes) {
@@ -130,6 +165,14 @@ export function tallyLeaveAlone(cards) {
     houseStyleMentions: mentions,
     houseStyleStatements: statements,
   };
+}
+
+export function tallyLeaveAlone(cards) {
+  return tallyFrom(cards, quietOf, evidenceQuietOf);
+}
+
+export function tallyLeaveAloneWithLabel(cards) {
+  return tallyFrom(cards, quietWithLabel, evidenceQuietWithLabel);
 }
 
 /**
