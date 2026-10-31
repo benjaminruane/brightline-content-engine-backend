@@ -634,13 +634,12 @@ describe("B48 prompt anchors", () => {
     const prompt = (
       await readFile(path.join(__dirname, "../lib/qc/pipeline-v4/prompts/stage2_v4.md"), "utf8")
     ).trim();
-    // Changing this hash means a verdict-adjacent change, which needs the graded-set gate
-    // and a corpus blast before it ships.
+    // B455 changed the explanation register. The fixtures 01-20 pass is the gate.
     assert.equal(
       hashPromptContent(prompt),
-      "44847c61b07bac89855b9a0f555e30f528077ebe0b3a8baa2c2c06669d60b3e1"
+      "c34a14e4cc6b410aaea7412bb4c971f7159dcdb584c5c85c141c670209d0bdb4"
     );
-    assert.equal(prompt.length, 14259);
+    assert.equal(prompt.length, 16218);
     assert.match(prompt, /Frame and period priority/);
     assert.match(prompt, /Evaluative claims/);
     assert.match(

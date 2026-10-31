@@ -340,10 +340,10 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
     assert.equal(green.displayVerdict, "supported_full");
   }, 20000);
 
-  test("Stage 5 prompt tells a non-green card to lead with the finding", () => {
-    assert.match(STAGE5, /Lead with the finding on a card that is not green/);
+  test("Stage 5 prompt leads with what the source contains", () => {
+    assert.match(STAGE5, /Lead with what the source contains/);
     assert.match(STAGE5, /Do not open by restating the draft/);
     assert.match(STAGE5, /still address every `claimInventory` item/);
-    assert.match(STAGE5, /never assert support the excerpts do not carry/);
+    assert.match(STAGE5, /Do not say the source contains a fact the passages do not carry/);
   });
 });
