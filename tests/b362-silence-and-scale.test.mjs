@@ -142,8 +142,7 @@ describe("B362 silence subject, last finding, empty slot, scale and cause", () =
     const s9 = await replayCard(DOC, 9);
     assert.equal(s9.displayVerdict, "conflict");
     assert.equal(s9.supportState, "conflicting");
-    assert.match(s9.evidenceSummary, /AGIC/);
-    assert.match(s9.evidenceSummary, /does not mention/);
+    assert.match(s9.evidenceSummary, /The statement attributes this to AGIC; the source credits GIC\./);
     assert.match(conflictText(s9), new RegExp(GIC_SLICE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }, 20000);
 

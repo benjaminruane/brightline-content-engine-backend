@@ -306,7 +306,8 @@ describe("B352 editorial source-awareness", () => {
 
     const s13 = await replayCard(CLEAN, 13);
     assert.equal(s13.displayVerdict, "supported_full");
-    assert.match(s13.evidenceSummary, /GBP 0\.365/);
+    assert.equal(s13.evidenceSummary, "");
+    assert.match(excerptText(s13), /36\.5 pence per share/);
 
     const derived = (DOC_ACTIONS.entries || []).filter((e) => e.provenance === "derived");
     assert.equal(derived.length >= 2, true);

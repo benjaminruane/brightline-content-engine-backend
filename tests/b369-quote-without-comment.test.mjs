@@ -154,7 +154,9 @@ async function sweepPayload(payload, flagsByIndex = {}) {
     const flags = flagsByIndex[i] || {};
     const card = await replayCard(payload, i, flags);
     const comment = String(card.evidenceSummary || "").trim();
-    if (hasShownQuote(card) && !comment) {
+    const backed = card.displayVerdict === "supported_full" || card.displayVerdict === "confirmed";
+    const differenceMissing = (card.silences || []).some((s) => s.id === "source_difference_missing");
+    if (hasShownQuote(card) && !comment && !backed && !differenceMissing) {
       emptyQuote.push(i);
     }
     fills.push({ index: i, card });

@@ -331,7 +331,7 @@ const lines = [
   "",
   "`lib/qc/framing-fidelity.mjs`. The judge no longer receives the commentary. The note the reader sees is built from a phrase copied out of the sentence. The model's own note is not shown.",
   "",
-  "`lib/qc/pipeline-v3/stage7-assemble-card.mjs`. The primary passage is no longer cut to 300 characters. The account is attached after the verdict, the framing demotion, the omission check, and the actor check.",
+  "`lib/qc/pipeline-v3/stage7-assemble-card.mjs`. The primary passage is no longer cut to 300 characters. The account is attached after the verdict, the framing demotion, the omission check, the actor check, the scale check, and the role check. When one of those checks has already written a fixed sentence, that sentence is the difference and the model is not asked.",
   "",
   "The screen, `SourceQuote.jsx` and `sourceQuoteLayout.js`. A passage longer than 80 characters, or one with a line break, steps out on its own line at the craft note's 72-character measure.",
   "",

@@ -104,6 +104,34 @@ describe("B456 source account", () => {
     assert.equal(accountKind({ displayVerdict: "supported_full", supportState: "supported" }), "full");
   });
 
+  test("a check that already wrote a fixed sentence keeps it, and the model is not asked", async () => {
+    const role = "The statement attributes this to AGIC; the source credits GIC.";
+    const kept = await buildSourceAccount({
+      statement: "An earlier purchase from AGIC raised the stake.",
+      passage: "3i acquired equity from GIC.",
+      sources: [{ text: "3i acquired equity from GIC." }],
+      displayVerdict: "conflict",
+      supportState: "conflicting",
+      displayVerdictReason: "role_party_mismatch",
+      evidenceSummary: `${role} The source does not mention the earlier terms.`,
+      statementIndex: 3,
+    });
+    assert.equal(kept.sourceDifference, role);
+    const scale = "The source names a valuation uplift in TCR, not gains across essentially all of its investments.";
+    const scaled = await buildSourceAccount({
+      statement: "Gains were broad.",
+      passage: "TCR was revalued.",
+      sources: [{ text: "TCR was revalued." }],
+      displayVerdict: "conflict",
+      supportState: "conflicting",
+      displayVerdictReason: "scale_set_one_holding",
+      evidenceSummary: scale,
+      statementIndex: 4,
+    });
+    assert.equal(scaled.sourceDifference, scale);
+    assert.equal(assertsAgreement(scale), false);
+  });
+
   test("a certifying sentence is counted, and a quoted source word is not", () => {
     assert.equal(assertsAgreement('The source confirms the statement.'), true);
     assert.equal(assertsAgreement('This matches the statement.'), true);

@@ -287,8 +287,8 @@ describe("B372 part 2 generic company", () => {
     const card = await replayCard(HICL_CLEAN, 6);
     assert.equal(card.displayVerdict, "supported_full");
     assert.equal(card.concernLevel, "none");
-    assert.match(card.evidenceSummary, /Fortysouth/i);
-    assert.equal(/\bhowever\b/i.test(card.evidenceSummary) && /\bnot\b/i.test(card.evidenceSummary), false);
+    assert.match(card.sourceQuote || "", /Fortysouth/i);
+    assert.equal(card.evidenceSummary, "");
   });
 
   test("no antecedent is unchanged", () => {

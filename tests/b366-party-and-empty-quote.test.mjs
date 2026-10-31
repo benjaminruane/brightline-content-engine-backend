@@ -232,8 +232,13 @@ describe("B366 part one. A country is not a party", () => {
     assert.equal(sept8.evidenceSummary.startsWith(ACTOR_MAIT), true);
     const oct8 = await replayCard(OCT_DOC, 8);
     assert.equal(oct8.displayVerdict, "conflict");
-    assert.match(oct8.evidenceSummary, /MAIT/);
-    assert.match(oct8.evidenceSummary, /Action/);
+    assert.match(oct8.statement, /MAIT/);
+    assert.match(oct8.sourceQuote || "", /Action/);
+    assert.equal(/The reviewer should/.test(oct8.evidenceSummary), false);
+    assert.equal(
+      (oct8.silences || []).some((s) => s.id === "source_difference_missing"),
+      true
+    );
     const sept9 = await replayCard(SEPT_DOC, 9);
     assert.match(sept9.evidenceSummary, /The statement attributes this to AGIC; the source credits GIC\./);
     assert.notEqual(sept9.displayVerdict, "supported_full");

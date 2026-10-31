@@ -210,7 +210,9 @@ describe("B354 commentary inventory", () => {
       }
     );
     assert.equal(card.commentaryNotReviewed, false);
-    assert.equal(card.evidenceSummary, "9% matches the source.");
+    assert.equal(card.evidenceSummary, "");
+    assert.equal(card.sourceAccount, true);
+    assert.match(card.sourceQuote, /9%/);
     assert.deepEqual(card.commentaryUnaddressed, []);
   });
 });

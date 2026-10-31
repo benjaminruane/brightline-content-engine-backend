@@ -191,16 +191,15 @@ describe("B354 actor of the action", () => {
       verdict: "confirmed",
       commentary: recorded,
     });
-    assert.equal(card.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
+    assert.equal(card.evidenceSummary, ACTOR_SENTENCE);
     assert.equal(/\b2\.2% matches the source\./.test(card.evidenceSummary), false);
     assert.equal(
       card.evidenceSummary.includes(
         "The reviewer should consider whether the term 'significant' is necessary or if additional context is needed to support this characterization."
       ),
-      true
+      false
     );
     assert.equal(card.evidenceSummary.endsWith("2.2% matches the source."), false);
-    assert.equal(card.evidenceSummary.endsWith(ACTOR_SENTENCE), false);
     assert.equal(/The source also states/.test(card.evidenceSummary), false);
   });
 
