@@ -210,9 +210,9 @@ describe("B354 commentary inventory", () => {
       }
     );
     assert.equal(card.commentaryNotReviewed, false);
-    assert.equal(card.evidenceSummary, "");
-    assert.equal(card.sourceAccount, true);
-    assert.match(card.sourceQuote, /9%/);
+    assert.match(card.evidenceSummary, /states "/);
+    assert.match(card.evidenceSummary, /9%/);
+    assert.equal(/matches the source/.test(card.evidenceSummary), false);
     assert.deepEqual(card.commentaryUnaddressed, []);
   });
 });

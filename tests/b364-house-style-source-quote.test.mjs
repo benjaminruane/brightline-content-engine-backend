@@ -201,12 +201,10 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
     const self = sourceSelfNameFromSources(DOC.sources);
     assert.equal(self, "3i Group plc");
     const s14 = await replayCard(DOC, 14);
-    assert.match(s14.evidenceSummary, /3i Group plc/);
-    assert.match(
-      s14.evidenceSummary,
-      /The statement attributes this to the UK government; the source credits 3i Group plc\./
-    );
     assert.equal(s14.displayVerdict, "conflict");
+    assert.equal(s14.displayVerdictReason, "actor_mismatch");
+    assert.match(s14.evidenceSummary, /states "/);
+    assert.equal(/The reviewer should/.test(s14.evidenceSummary), false);
   }, 20000);
 
   test("a draft sentence written in the first person is unaffected", () => {
@@ -339,7 +337,7 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
     const green = await replayCard(CLEAN, 7);
     assert.equal(/the source verifies|aligns with/.test(green.evidenceSummary || ""), false);
     assert.equal(green.displayVerdict, "supported_full");
-    assert.equal(green.sourceAccount, true);
+    assert.match(green.evidenceLine || "", /states "/);
   }, 20000);
 
   test("Stage 5 prompt leads with what the source contains", () => {

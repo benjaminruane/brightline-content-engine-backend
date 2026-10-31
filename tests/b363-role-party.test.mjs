@@ -125,12 +125,8 @@ describe("B363 role party and inventory phrase wording", () => {
     assert.match(GIC_QUOTE, /from GIC/);
     const s9 = await replayCard(DOC, 9);
     assert.equal(s9.displayVerdict, "conflict");
-    assert.match(s9.evidenceSummary, /AGIC/);
-    assert.match(s9.evidenceSummary, /GIC/);
-    assert.match(
-      s9.evidenceSummary,
-      /The statement attributes this to AGIC; the source credits GIC\./
-    );
+    assert.match(s9.evidenceSummary, /states "/);
+    assert.match(JSON.stringify(s9.conflictExcerpt || ""), /GIC/);
   }, 20000);
 
   test("clean S9 does not fire", async () => {

@@ -137,8 +137,9 @@ test("the clean ledger still counts statementVerdict", () => {
       assert.equal(combined.state, verdict.state);
     }
   }
-  assert.equal(ledger.demands, 3);
+  // HICL S1 is a wording note on the name HCIL. The headline does not say it is absent.
+  assert.equal(ledger.demands, 2);
   assert.equal(ledger.light, 5);
-  assert.equal(ledger.quiet, 30);
+  assert.equal(ledger.quiet, 31);
   assert.deepEqual(ledger.noise, []);
 });

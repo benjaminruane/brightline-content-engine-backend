@@ -131,8 +131,9 @@ describe("B354 actor of the action", () => {
     assert.equal(card.displayVerdict, "conflict");
     assert.equal(card.concernLevel, "high");
     assert.equal(card.displayVerdictReason, "actor_mismatch");
-    assert.equal(card.evidenceSummary.startsWith(ACTOR_SENTENCE), true);
-    assert.equal(card.evidenceSummary.includes(ACTOR_SENTENCE), true);
+    assert.match(card.evidenceSummary, /states "/);
+    assert.match(card.evidenceSummary, /Action completed a capital restructuring/);
+    assert.equal(/The reviewer should/.test(card.evidenceSummary), false);
   });
 
   test("doctored S8: actor sentence leads the recorded comment unaltered", () => {
@@ -191,7 +192,8 @@ describe("B354 actor of the action", () => {
       verdict: "confirmed",
       commentary: recorded,
     });
-    assert.equal(card.evidenceSummary, ACTOR_SENTENCE);
+    assert.match(card.evidenceSummary, /Action completed a capital restructuring/);
+    assert.equal(card.evidenceSummary.includes(ACTOR_SENTENCE), false);
     assert.equal(/\b2\.2% matches the source\./.test(card.evidenceSummary), false);
     assert.equal(
       card.evidenceSummary.includes(

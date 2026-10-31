@@ -154,9 +154,7 @@ async function sweepPayload(payload, flagsByIndex = {}) {
     const flags = flagsByIndex[i] || {};
     const card = await replayCard(payload, i, flags);
     const comment = String(card.evidenceSummary || "").trim();
-    const backed = card.displayVerdict === "supported_full" || card.displayVerdict === "confirmed";
-    const differenceMissing = (card.silences || []).some((s) => s.id === "source_difference_missing");
-    if (hasShownQuote(card) && !comment && !backed && !differenceMissing) {
+    if (hasShownQuote(card) && !comment) {
       emptyQuote.push(i);
     }
     fills.push({ index: i, card });
@@ -253,7 +251,8 @@ describe("B369 quote without comment", () => {
     assert.match(quote, /2\.8x/);
     // B395. This test locked the defect: it required supported_full and the
     // named match comment that replaced "No source addresses the claim".
-    assert.match(s10.evidenceSummary, /No source addresses the claim/);
+    assert.match(s10.evidenceSummary, /MPM/);
+    assert.match(s10.evidenceSummary, /MAIT/);
     assert.equal(s10.supportState, "skipped");
     assert.equal(s10.displayVerdict, "not reviewed");
     assert.equal(s10.evidenceSummary === S10_NAMED_COMMENT, false);
