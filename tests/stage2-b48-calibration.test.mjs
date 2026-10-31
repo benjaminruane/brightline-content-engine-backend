@@ -634,12 +634,12 @@ describe("B48 prompt anchors", () => {
     const prompt = (
       await readFile(path.join(__dirname, "../lib/qc/pipeline-v4/prompts/stage2_v4.md"), "utf8")
     ).trim();
-    // B455 changed the explanation register. The fixtures 01-20 pass is the gate.
+    // B456 took the reader account out of this prompt. The fixtures 01-20 pass is the gate.
     assert.equal(
       hashPromptContent(prompt),
-      "c34a14e4cc6b410aaea7412bb4c971f7159dcdb584c5c85c141c670209d0bdb4"
+      "3d7a3d104c0606e10c92f811295acb75d7f01ef0a97a69078ca964de3a89302c"
     );
-    assert.equal(prompt.length, 16218);
+    assert.equal(prompt.length, 14249);
     assert.match(prompt, /Frame and period priority/);
     assert.match(prompt, /Evaluative claims/);
     assert.match(

@@ -24,7 +24,7 @@ describe("framing-fidelity detector", () => {
     });
     assert.equal(det.fire, true);
     assert.equal(det.evaluativePhrase, "defensible position");
-    assert.match(det.note, /uncertain/);
+    assert.equal(det.note, 'The sentence says "defensible position". The passage does not.');
   });
 
   test("is quiet on mild praise when the judge treats it as fair colour", async () => {
@@ -170,7 +170,7 @@ describe("stage7 framing-fidelity emit", () => {
       card.framingFidelityConcerns[0],
       buildFramingFidelityConcern({
         statement,
-        note: "The source says strong in Sweden but under-represented elsewhere, not dominant across the Nordics — confirm the wording is fair.",
+        note: 'The sentence says "dominant in the Nordics". The passage does not.',
       })
     );
     assert.equal(card.materiality.level, "material");

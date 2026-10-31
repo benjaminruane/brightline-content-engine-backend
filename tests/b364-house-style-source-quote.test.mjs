@@ -326,7 +326,8 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
   test("October card quote supports the two financing transactions the comment names", async () => {
     const s6 = await replayCard(CLEAN, 6);
     assert.match(primaryText(s6), /two financing transactions/);
-    assert.match(s6.evidenceSummary, /two financing transactions/);
+    assert.match(s6.sourceQuote, /two financing transactions/);
+    assert.equal(/confirms|verifies|aligns/.test(s6.evidenceSummary || ""), false);
   }, 20000);
 
   test("confirmation inside a conflict is marked Separately", async () => {
@@ -336,8 +337,9 @@ describe("B364 house style, source name, second passage, confirmation mark", () 
     assert.match(marked, /Separately, the source confirms a like-for-like sales growth of 6\.3%/);
     assert.equal(/Additionally,/.test(marked), false);
     const green = await replayCard(CLEAN, 7);
-    assert.match(green.evidenceSummary, /Additionally, the source verifies/);
+    assert.equal(/the source verifies|aligns with/.test(green.evidenceSummary || ""), false);
     assert.equal(green.displayVerdict, "supported_full");
+    assert.equal(green.sourceAccount, true);
   }, 20000);
 
   test("Stage 5 prompt leads with what the source contains", () => {

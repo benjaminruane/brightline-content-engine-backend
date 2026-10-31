@@ -95,6 +95,9 @@ function compactCard(fixtureId, card, index, occurrence, outputType) {
       .map(findingRow)
       .filter(Boolean),
     displayedEvidenceProse: clip(card?.displayedEvidenceProse || ""),
+    sourceAccount: card?.sourceAccount === true,
+    sourceQuote: typeof card?.sourceQuote === "string" ? card.sourceQuote : "",
+    sourceDifference: typeof card?.sourceDifference === "string" ? card.sourceDifference : "",
     editorialVerdict: card?.editorialVerdict ?? null,
     editorialConcerns: (Array.isArray(card?.editorialConcerns) ? card.editorialConcerns : []).map(concernRow),
     complianceVerdict: card?.complianceVerdict ?? null,

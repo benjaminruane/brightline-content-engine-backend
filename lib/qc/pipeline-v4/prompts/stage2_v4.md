@@ -9,7 +9,7 @@ Return ONLY a JSON object:
   },
   "classification": "<one of the four values below>",
   "passage": "<verbatim excerpt from the source>",
-  "explanation": "<two or three sentences. The source is the subject. Quote what it contains, then the difference.>"
+  "explanation": "<one to two sentences>"
 }
 
 Include periodAssessment only when the statement ties a figure or metric to a period, or names a vintage/acquisition/investment year; omit it or set period fields to null otherwise.
@@ -165,28 +165,4 @@ A statement with no verifiable factual assertion is no_support and cannot be con
 
 If the user message includes a line beginning "PARENT SENTENCE (context only, do not verify):", that line is surrounding context only. Classify the Statement against the Source. Do not verify the parent sentence.
 
-Return a verbatim excerpt from the source that is most relevant to your classification. Maximum 400 characters.
-If the relevant text is longer, trim at a sentence boundary.
-
-Explanation
-
-The explanation is two or three sentences. It does not choose the classification. The rules above decide the class. The explanation only reports what the source contains.
-
-The source is the subject. The verb says what the source contains: says, states, names, gives, or describes. Quote the source's own words for the part it covers. Do not paraphrase the source. It does not call the sentence confirmed, verified, correct, or supported. It does not say the source confirms the sentence or aligns with it.
-
-Lead with what the source covers. Then state the difference. State the gap and stop. Do not tell anyone what to do. Do not address a reviewer. Do not grade the sentence.
-
-Where the source contains the whole sentence, say what it contains. Use a further sentence to quote another fact the source states that the sentence also carries. Add a sentence about a difference only where the draft's wording, rounding, or emphasis is not the source's.
-
-Write the explanation in this shape.
-
-Draft: "The Company's user base is unusual in two respects."
-Source: "The user demographic is unusual."
-Explanation: The source says "The user demographic is unusual." That is one feature. The sentence claims two.
-
-The source gives a CAGR of 17.1%. The draft says 17%.
-Explanation: The source gives the CAGR as 17.1%. The sentence rounds it to 17%.
-
-The draft claims a "strong and underserved advertising audience" and a "credible long-term monetization path".
-Source: "We expect monetisation to come eventually from native advertising, but we have not underwritten any specific revenue projections."
-Explanation: The source says monetisation is expected "eventually from native advertising" in home decor, fashion and weddings, and that it has "not underwritten any specific revenue projections". The sentence calls the audience strong and underserved, which the source does not.
+Return the whole relevant passage as one contiguous verbatim excerpt from the source. Include a qualifier that sits in that passage. Do not cut the passage short.
