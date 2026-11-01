@@ -121,7 +121,31 @@ function compactCard(fixtureId, card, index, occurrence, outputType) {
       classification: row?.classification ?? null,
       writtenFor: row?.writtenFor ?? null,
       explanation: clip(row?.explanation || ""),
+      ...(Array.isArray(row?.classificationRewrites) && row.classificationRewrites.length
+        ? {
+            classificationRewrites: row.classificationRewrites.map((item) => ({
+              rule: item?.rule ?? null,
+              from: item?.from ?? null,
+              to: item?.to ?? null,
+              evidence: clip(item?.evidence || ""),
+            })),
+          }
+        : {}),
     })),
+    ...(Array.isArray(card?.classificationRewrites) && card.classificationRewrites.length
+      ? {
+          classificationRewrites: card.classificationRewrites.map((item) => ({
+            rule: item?.rule ?? null,
+            from: item?.from ?? null,
+            to: item?.to ?? null,
+            evidence: clip(item?.evidence || ""),
+            sourceIndex: item?.sourceIndex ?? null,
+            sourceLabel: item?.sourceLabel ?? null,
+            passage: typeof item?.passage === "string" ? clip(item.passage) : null,
+            spanClass: item?.spanClass ?? null,
+          })),
+        }
+      : {}),
     partialGround: card?.partialGround ?? null,
     wordingNoteWithheld: card?.wordingNoteWithheld ?? null,
     silences: Array.isArray(card?.silences) ? card.silences : [],
