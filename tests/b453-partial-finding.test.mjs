@@ -27,15 +27,22 @@ test("a partial card carries one finding and the summary names the gap", () => {
   assert.equal(findings[0].note, said);
 });
 
-test("a louder card does not gain a partial finding", () => {
+test("a louder partial card still carries the stored partial sentence", () => {
   const card = {
     statement: "Revenue grew.",
     displayVerdict: "supported_partial",
     statementVerdict: { state: "not_in_source", tier: "demands" },
     sentenceState: "not_in_source",
+    sentenceLabel: "Not in the source",
     partialGround: { recorded: true, source: "evidence_summary", text: summary },
   };
-  assert.equal(cardEvidenceFindings(card, []).length, 0);
+  const findings = cardEvidenceFindings(card, []);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].rule, "partial");
+  assert.match(findings[0].note, /credible M&A roadmap/);
+  assert.equal(card.sentenceState, "not_in_source");
+  assert.equal(card.displayVerdict, "supported_partial");
+  assert.equal(card.sentenceLabel, "Not in the source");
 });
 
 test("a missing explanation is still the unrecorded line", () => {
