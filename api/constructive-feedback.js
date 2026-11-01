@@ -36,11 +36,14 @@ function extractRows(body) {
 
 function finishPiece(bodyText, { readiness, draftText, notes }, silences) {
   const labelled = prependReadiness(readiness, bodyText);
-  const stripped = stripUnquotedCraft(labelled, { draftText, notes });
-  if (Array.isArray(silences) && stripped.length < labelled.length) {
+  const removed = [];
+  const stripped = stripUnquotedCraft(labelled, { draftText, notes, droppedParagraphs: removed });
+  if (Array.isArray(silences) && removed.length) {
     silences.push({
       id: "unquoted_craft",
       reason: "a paragraph was removed",
+      count: removed.length,
+      content: removed,
     });
   }
   return stripped;
