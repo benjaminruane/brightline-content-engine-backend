@@ -277,9 +277,9 @@ async function writeJson(filePath, value) {
 }
 
 /**
- * @param {{ dir: string, label: string, ceilingUsd?: number }} options
+ * @param {{ dir: string, label: string, ceilingUsd?: number, full?: boolean }} options
  */
-export async function runPaidPass({ dir, label, ceilingUsd = 40 } = {}) {
+export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false } = {}) {
   if (typeof dir !== "string" || !dir) throw new Error("paid pass: dir is missing");
   if (typeof label !== "string" || !label) throw new Error("paid pass: label is missing");
   loadLocalEnvFiles({ liveMeasurement: true });
@@ -410,8 +410,17 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40 } = {}) {
       throw err;
     }
     const rawCards = Array.isArray(result?.qcCards) ? result.qcCards : [];
+    const rawNow = Array.isArray(globalThis.__b464Raw) ? globalThis.__b464Raw.splice(0) : [];
     const cards = rawCards.map((card, index) =>
-      compactCard(id, card, index, freeze[index]?.occurrence ?? 0, outputType)
+      full
+        ? {
+            ...card,
+            fixtureId: id,
+            outputType,
+            occurrence: freeze[index]?.occurrence ?? 0,
+            index: Number.isFinite(card?.index) ? card.index : index,
+          }
+        : compactCard(id, card, index, freeze[index]?.occurrence ?? 0, outputType)
     );
     assertMatchesFreeze({
       fixtureId: id,
@@ -431,6 +440,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40 } = {}) {
       wallMs: Date.now() - t0,
       noteSpend: result?.reading?.spend ?? null,
       wordingNotesWithheld: result?.reading?.wordingNotesWithheld ?? null,
+      ...(full ? { reading: result?.reading ?? null, rawReplies: rawNow } : {}),
       ...noteFields,
     });
     const after = addViews(resumeBase, spendView(getLlmSpend(), pricing));
