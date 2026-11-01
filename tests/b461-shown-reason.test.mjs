@@ -63,7 +63,7 @@ test("an agreement note is not the reason, and the stored passage is", () => {
   };
   const account = readerEvidenceAccount(card);
   assert.equal(account.source, "quote");
-  assert.equal(account.text, "The source states \"Occupancy is 96 percent.\".");
+  assert.equal(account.text, "The source states \"Occupancy is 96 percent.\"");
   assert.equal(account.text.includes("confirms"), false);
 });
 
@@ -74,7 +74,7 @@ test("a certifying sentence stays withheld", () => {
     sourceQuote: "Revenue was 10.",
   };
   const account = readerEvidenceAccount(card);
-  assert.equal(account.text, "The source states \"Revenue was 10.\".");
+  assert.equal(account.text, "The source states \"Revenue was 10.\"");
   assert.equal(account.withheld.length, 1);
   assert.equal(account.withheld[0].phrase, "the draft does not establish");
   assert.equal(account.text.includes("does not establish"), false);
@@ -89,7 +89,7 @@ test("a beyond card is in To look at", () => {
   assert.equal(cls.needsAttention, true);
 });
 
-test("a summary that cuts the list says so, and names editorial notes", () => {
+test("every non-zero check is its own summary line", () => {
   const summary = summariseReview([
     { sentenceState: "not_in_source", displayVerdict: "not_supported" },
     { sentenceState: "conflicts", displayVerdict: "conflict" },
@@ -98,10 +98,10 @@ test("a summary that cuts the list says so, and names editorial notes", () => {
     { sentenceState: "nothing_raised", displayVerdict: "supported_full", editorialVerdict: "concern" },
   ], { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true });
   const bullets = summaryBulletsFromReview(summary);
-  assert.equal(bullets.length, 4);
-  assert.match(bullets[3], /more point/);
-  assert.match(bullets[3], /not shown/);
-  assert.match(bullets[3], /editorial/);
+  assert.equal(bullets.length, 6);
+  assert.equal(bullets.some((line) => /not shown/.test(line)), false);
+  assert.equal(bullets.some((line) => /editorial notes/.test(line)), true);
+  assert.equal(bullets.some((line) => /could not be fully checked/.test(line)), true);
 });
 
 test("a partial headline carries the stored partial sentence", () => {

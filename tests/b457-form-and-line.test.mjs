@@ -86,7 +86,7 @@ describe("B457 evidence line", () => {
       quote: "Urban last-mile logistics is supported.",
       noteText: "A note was written for this sentence and could not be shown.",
     });
-    assert.equal(line, 'note states "Urban last-mile logistics is supported.".');
+    assert.equal(line, 'note states "Urban last-mile logistics is supported."');
     assert.equal(/could not be shown/.test(line), false);
   });
 
