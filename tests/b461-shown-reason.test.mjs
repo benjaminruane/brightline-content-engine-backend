@@ -113,7 +113,9 @@ test("a partial headline carries the stored partial sentence", () => {
   };
   const findings = cardEvidenceFindings(card, []);
   assert.equal(findings.length, 1);
-  assert.match(findings[0].note, /credible M&A roadmap/);
+  assert.equal(findings[0].rule, "partial");
+  assert.equal(findings[0].note, "");
+  assert.match(readerEvidenceAccount(card).text, /credible M&A roadmap/);
   assert.equal(card.sentenceState, "beyond");
   assert.equal(card.displayVerdict, "supported_partial");
 });

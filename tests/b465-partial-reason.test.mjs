@@ -34,7 +34,8 @@ test("08:10 joins the compliant account to the difference the explanation alread
   const reason = partialReason(card);
   assert.equal(reason, detail.reason);
   assert.match(reason, /^The source states base case revenue growth of 9% CAGR/);
-  assert.match(reason, /but does not specifically attribute this growth to structural exposure to medical implants and aerospace build rate increases\.$/);
+  assert.match(reason, /years\. Does not specifically attribute this growth to structural exposure to medical implants and aerospace build rate increases\.$/);
+  assert.equal(reason.includes(". but"), false);
   assert.equal(endorsementHit(maskVerbatimQuotes(reason, sourceCorpus(card))), null);
   const explanation = card.matchExplanations.map((row) => row.explanation).join(" ");
   for (const quote of quotesIn(reason)) {

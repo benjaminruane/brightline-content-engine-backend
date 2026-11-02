@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { cardEvidenceFindings, shownEvidenceProse } from "../lib/qc/evidence-findings.mjs";
 import { PARTIAL_UNRECORDED, partialSentence } from "../lib/qc/partial-sentence.mjs";
+import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
 import { READER_LINES } from "../lib/qc/reader-lines.mjs";
 
 const summary = "The source does not mention a 'credible M&A roadmap,' which creates a gap in the statement. It does confirm the rest.";
@@ -24,7 +25,8 @@ test("a partial card carries one finding and the summary names the gap", () => {
   const findings = cardEvidenceFindings(card, []);
   assert.equal(findings.length, 1);
   assert.equal(findings[0].rule, "partial");
-  assert.equal(findings[0].note, said);
+  assert.equal(findings[0].note, "");
+  assert.equal(readerEvidenceSentence(card), said);
 });
 
 test("a louder partial card still carries the stored partial sentence", () => {
@@ -39,7 +41,8 @@ test("a louder partial card still carries the stored partial sentence", () => {
   const findings = cardEvidenceFindings(card, []);
   assert.equal(findings.length, 1);
   assert.equal(findings[0].rule, "partial");
-  assert.match(findings[0].note, /credible M&A roadmap/);
+  assert.equal(findings[0].note, "");
+  assert.match(readerEvidenceSentence(card), /credible M&A roadmap/);
   assert.equal(card.sentenceState, "not_in_source");
   assert.equal(card.displayVerdict, "supported_partial");
   assert.equal(card.sentenceLabel, "Not in the source");
