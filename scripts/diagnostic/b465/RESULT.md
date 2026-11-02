@@ -247,5 +247,5 @@ tests/b465-partial-reason.test.mjs. tests/b465-quoted-endorsement.test.mjs. src/
 
 No existing assertion had to move. The partial editor's own tests still expect the explanation when the card has no compliant account, and that is still what they get.
 
-Part 4 is a separate read. It is not in this file.
+Part 4 is the second look, in scripts/diagnostic/b465/NOTES.md. 8 of 113 wording notes change the claim a reader would act on. Discounted USD 1.5578. List USD 1.5578. 196 calls. Unpriced 0.
 

@@ -1,0 +1,917 @@
+{
+  "answers": [
+    {
+      "key": "01:2",
+      "statement": "Monthly recurring revenue has grown from USD 164'000 to USD 438'000 over the same period, representing growth of more than 150% year on year.",
+      "note": "The source states MRR grew from $164K to $438K, representing +151% Y/Y. The statement says \"more than 150%,\" which matches the source's 151% figure.",
+      "changes": false,
+      "reason": "Rounding 151% to \"more than 150%\" conveys the same magnitude and would not alter a reader's action.",
+      "raw": "{\"changes\":false,\"reason\":\"Rounding 151% to \\\"more than 150%\\\" conveys the same magnitude and would not alter a reader's action.\"}"
+    },
+    {
+      "key": "01:3",
+      "statement": "The Company is profitable and has raised just USD 1 million to date.",
+      "note": "The source states Shopify is profitable and largely bootstrapped, having raised just $1mm to date. The statement conveys the same claim in different words.",
+      "changes": false,
+      "reason": "The difference is only in wording while preserving the same factual claim about Shopify's profitability and $1mm fundraising.",
+      "raw": "{\"changes\":false,\"reason\":\"The difference is only in wording while preserving the same factual claim about Shopify's profitability and $1mm fundraising.\"}"
+    },
+    {
+      "key": "01:6",
+      "statement": "Customer acquisition has been almost entirely organic, with paid marketing remaining underdeveloped - paid channels account for 10-15% of sign-ups.",
+      "note": "The source states roughly 10-15% of customers sign up via paid channels and describes marketing as rudimentary, matching the statement's claim.",
+      "changes": false,
+      "reason": "The note indicates the draft matches the source, so there is no difference that would change a reader's action.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the draft matches the source, so there is no difference that would change a reader's action.\"}"
+    },
+    {
+      "key": "01:7",
+      "statement": "We see significant headroom to accelerate growth through marketing investment, international expansion, and continued development of the App Store ecosystem.",
+      "note": "The source identifies the same three growth levers-marketing, international expansion and product localization, and business development to expand App Store applications-as enormous opportunities to accelerate growth. The statement restates these in slightly different words.",
+      "changes": false,
+      "reason": "The difference is only in wording; the same three growth levers are conveyed, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The difference is only in wording; the same three growth levers are conveyed, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "01:8",
+      "statement": "The team, led by founder-CEO Mr. Lütke, has demonstrated strong product and management instincts despite Mr. Lütke being a first-time CEO.",
+      "note": "The source describes Tobi Lütke as a young, first-time CEO who is thoughtful and has good product and management instincts, which matches the statement's claim in different words.",
+      "changes": false,
+      "reason": "The note indicates the wording differs but conveys the same claim, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the wording differs but conveys the same claim, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "01:9",
+      "statement": "Shopify's 24 employees are based in Ottawa, where the Company has recruited strong design and engineering talent at 60-70% of comparable Silicon Valley or New York costs.",
+      "note": "The source states Shopify's 24 employees are located in Ottawa and that the company recruits top development and design talent at 60%-70% of the cost of similar talent in Silicon Valley or New York. The statement restates this with \"design and engineering\" in place of \"development and design,\" which conveys the same claim.",
+      "changes": false,
+      "reason": "Swapping \"development and design\" for \"design and engineering\" conveys the same type of talent being recruited at the stated cost advantage, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"Swapping \\\"development and design\\\" for \\\"design and engineering\\\" conveys the same type of talent being recruited at the stated cost advantage, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "02:2",
+      "statement": "Under its ownership, atNorth has expanded to eight operational data centers across the Nordics, alongside several sites under development.",
+      "note": "The source lists Denmark, Finland, Iceland, Norway, and Sweden; the statement refers to these collectively as the Nordics. The figure of eight operational data centers and the mention of several sites under development match the source.",
+      "changes": false,
+      "reason": "Using the collective term \"Nordics\" for the five listed countries doesn't alter the factual claims about data center counts or development status that a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Using the collective term \\\"Nordics\\\" for the five listed countries doesn't alter the factual claims about data center counts or development status that a reader would act on.\"}"
+    },
+    {
+      "key": "02:6",
+      "statement": "Partners Group will reinvest alongside CPP Investments and Equinix and retain up to 10% of the Company going forward.",
+      "note": "The source says Partners Group has committed to reinvest and acquire up to 10% of the Company, alongside CPP Investments and Equinix as new owners. The statement phrases this as reinvesting and retaining up to 10%, which conveys the same assertion.",
+      "changes": false,
+      "reason": "The rephrasing conveys the same ownership stake and role for Partners Group, so a reader's actions would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrasing conveys the same ownership stake and role for Partners Group, so a reader's actions would not change.\"}"
+    },
+    {
+      "key": "02:8",
+      "statement": "This transaction marks a successful control exit from the firm's data center portfolio, although Partners Group remains thematically focused on the data center sector across multiple geographies.",
+      "note": "The source quotes Esther Peiner saying the sale of atNorth marks a successful control exit from their data center portfolio while remaining thematically focused on data center assets across the globe. The statement restates this in paraphrased form.",
+      "changes": false,
+      "reason": "A paraphrase that preserves the same meaning about a successful control exit while remaining focused on global data center assets would not change what a reader does.",
+      "raw": "{\"changes\":false,\"reason\":\"A paraphrase that preserves the same meaning about a successful control exit while remaining focused on global data center assets would not change what a reader does.\"}"
+    },
+    {
+      "key": "04:0",
+      "statement": "We are writing to inform you of a new investment in Pinterest (the \"Company\"), a visual discovery and bookmarking platform that lets users organize images they find interesting onto themed boards.",
+      "note": "The source describes Pinterest as \"a visual discovery and bookmarking platform\" where users create themed boards to pin images they want to remember or organise. The statement restates the same description in slightly different words.",
+      "changes": false,
+      "reason": "A reworded restatement of the same description conveys the same information, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"A reworded restatement of the same description conveys the same information, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "04:1",
+      "statement": "We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million, for approximately 20% on a fully-diluted basis.",
+      "note": "The source describes seeking partnership approval for the investment, while the statement describes it as already committed. The figures (USD 10mm, USD 40mm pre-money, ~20% fully-diluted) match.",
+      "changes": true,
+      "reason": "Shifting from seeking approval to already committed changes the deal's status, which a reader would act on differently.",
+      "raw": "{\"changes\":true,\"reason\":\"Shifting from seeking approval to already committed changes the deal's status, which a reader would act on differently.\"}"
+    },
+    {
+      "key": "04:3",
+      "statement": "Average session length on the Company's platform is approximately 14 minutes, compared to roughly 7 minutes on Facebook and 2-3 minutes on most social bookmarking products.",
+      "note": "The source states the same figures (14 minutes, 7 minutes on Facebook, 2 to 3 minutes on most social bookmarking products). The statement uses \"approximately\" and \"roughly\" where the source gives the figures directly, but the claim is the same.",
+      "changes": false,
+      "reason": "Adding hedges like \"approximately\" and \"roughly\" to the same figures does not alter what a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Adding hedges like \\\"approximately\\\" and \\\"roughly\\\" to the same figures does not alter what a reader would act on.\"}"
+    },
+    {
+      "key": "04:4",
+      "statement": "Users return roughly six times per week on average, and 68% remain active 30 days after first signup.",
+      "note": "The source states approximately 6 sessions per active user per week and a 68% repeat visit rate after the first 30 days. The statement conveys the same figures in different words.",
+      "changes": false,
+      "reason": "The figures conveyed are identical, so a reader would act on the same numbers regardless of the wording.",
+      "raw": "{\"changes\":false,\"reason\":\"The figures conveyed are identical, so a reader would act on the same numbers regardless of the wording.\"}"
+    },
+    {
+      "key": "04:5",
+      "statement": "The median active user pins around eight items per week.",
+      "note": "The source states the median active user pins approximately 8 items per week. The statement says around eight, which is the same claim.",
+      "changes": false,
+      "reason": "Expressing the number as a word versus a digit conveys the identical quantity, so the reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"Expressing the number as a word versus a digit conveys the identical quantity, so the reader would act on the same claim.\"}"
+    },
+    {
+      "key": "04:6",
+      "statement": "These are exceptional engagement metrics for a consumer product at this stage.",
+      "note": "The source repeatedly describes the engagement metrics as \"exceptional\" and calls them \"the strongest single signal of product-market fit we have seen in a consumer investment over the past two years.\" The statement restates this judgement in other words.",
+      "changes": false,
+      "reason": "Rewording a superlative characterization of engagement metrics in equivalent terms does not alter the substantive claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Rewording a superlative characterization of engagement metrics in equivalent terms does not alter the substantive claim a reader would act on.\"}"
+    },
+    {
+      "key": "04:8",
+      "statement": "First, 82% of active users are women - an unusually high concentration.",
+      "note": "The source states approximately 82% of active users are women and describes the demographic as unusual. The statement's \"unusually high concentration\" restates the source's own characterization.",
+      "changes": false,
+      "reason": "The wording difference merely restates the source's own characterization without altering the underlying figure or claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"The wording difference merely restates the source's own characterization without altering the underlying figure or claim a reader would act on.\"}"
+    },
+    {
+      "key": "04:9",
+      "statement": "Second, the user base skews older than typical social products, with heaviest concentration in the 25-44 age range.",
+      "note": "The source states the user base is heavily weighted to the 25 to 44 age range and meaningfully older than typical social product demographics. The statement conveys the same claim in different words.",
+      "changes": false,
+      "reason": "The note describes only a rewording that preserves the same claim about the user base skewing to ages 25-44 and being older than typical social product demographics.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes only a rewording that preserves the same claim about the user base skewing to ages 25-44 and being older than typical social product demographics.\"}"
+    },
+    {
+      "key": "04:12",
+      "statement": "Mr. Silbermann in particular has built a reputation at Google for being unusually focused on users and product.",
+      "note": "The source says references from Silbermann's time at Google describe him as exceptionally product-focused and unusually willing to listen to user feedback. The statement restates this as a reputation at Google for being unusually focused on users and product, which is the same claim in different words.",
+      "changes": false,
+      "reason": "The rewording preserves the same substantive claim about his reputation at Google, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"The rewording preserves the same substantive claim about his reputation at Google, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "04:13",
+      "statement": "The Company currently has 8 employees, including the founders, and 1.5 million monthly active users.",
+      "note": "The source says six full-time employees plus the two founders, which totals eight including founders. The statement's \"8 employees, including the founders\" expresses the same count in other words. MAU of 1.5 million matches.",
+      "changes": false,
+      "reason": "The rewording preserves the same total headcount and the same MAU figure, so a reader's understanding and actions remain the same.",
+      "raw": "{\"changes\":false,\"reason\":\"The rewording preserves the same total headcount and the same MAU figure, so a reader's understanding and actions remain the same.\"}"
+    },
+    {
+      "key": "04:14",
+      "statement": "There is no revenue yet - the founders have deliberately deferred monetization in favour of growing engagement.",
+      "note": "The source says revenue is currently zero and the founders are deferring monetisation in favour of continued growth in user engagement and product depth. The statement restates this in equivalent terms.",
+      "changes": false,
+      "reason": "The note describes an equivalent restatement of the same facts about zero revenue and deferred monetisation, so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes an equivalent restatement of the same facts about zero revenue and deferred monetisation, so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "04:16",
+      "statement": "The Company has no monetization strategy yet.",
+      "note": "The source says \"The product currently has no monetisation strategy,\" while the statement attributes this to \"the Company.\" This is the same assertion in other words.",
+      "changes": false,
+      "reason": "Attributing the lack of monetisation strategy to \"the Company\" versus \"the product\" conveys the same substantive claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Attributing the lack of monetisation strategy to \\\"the Company\\\" versus \\\"the product\\\" conveys the same substantive claim a reader would act on.\"}"
+    },
+    {
+      "key": "04:17",
+      "statement": "The current engagement profile may not survive scaling beyond the early adopter cohort.",
+      "note": "The source states there is a meaningful risk that the unusually strong engagement profile reflects the self-selected current user base rather than a sustainable property, and that it is unknown whether engagement metrics will hold up as the user base broadens beyond early adopters. The statement restates this same concern in different words.",
+      "changes": false,
+      "reason": "The note indicates the restatement conveys the same concern about engagement metrics potentially not holding as the user base broadens, so a reader would act on the same caveat.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the restatement conveys the same concern about engagement metrics potentially not holding as the user base broadens, so a reader would act on the same caveat.\"}"
+    },
+    {
+      "key": "06:0",
+      "statement": "Cirrus Data Services has continued to perform strongly during 2025.",
+      "note": "The source states Cirrus has performed strongly during Northstar's ownership, with revenue and EBITDA growth through the financial year ended 31 December 2025. The statement restates this as continued strong performance during 2025.",
+      "changes": false,
+      "reason": "Both convey that Cirrus performed strongly through 2025, so a reader's takeaway and actions remain the same.",
+      "raw": "{\"changes\":false,\"reason\":\"Both convey that Cirrus performed strongly through 2025, so a reader's takeaway and actions remain the same.\"}"
+    },
+    {
+      "key": "06:3",
+      "statement": "We see continued strong demand for managed IT services in the UK and Irish mid-market and view Cirrus as well positioned to keep gaining share.",
+      "note": "The source states continued growth opportunity in the UK and Irish mid-market, structural demand for managed IT services, and that Cirrus is well-positioned to continue gaining share. The statement restates these points in different words.",
+      "changes": false,
+      "reason": "Rewording the same points about market growth, structural demand, and Cirrus's positioning does not alter the substance a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Rewording the same points about market growth, structural demand, and Cirrus's positioning does not alter the substance a reader would act on.\"}"
+    },
+    {
+      "key": "06:4",
+      "statement": "Moreno Iberica has had a more challenging period.",
+      "note": "The source states the Moreno Iberica investment has progressed more slowly than originally underwritten and references a more challenging Iberian consumer environment and execution challenges. The statement restates this as a more challenging period, which conveys the same assertion in different words.",
+      "changes": false,
+      "reason": "The rewording preserves the same assertion that the investment has progressed more slowly amid difficulties, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The rewording preserves the same assertion that the investment has progressed more slowly amid difficulties, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "06:7",
+      "statement": "The holding period has lengthened from our original underwriting; we now expect a total hold of seven to eight years rather than the originally envisaged five to six years.",
+      "note": "The source states the realisation timeline has lengthened and anticipates a hold period of seven to eight years rather than the originally envisaged five to six years. The statement conveys the same claim with minor rephrasing.",
+      "changes": false,
+      "reason": "The note describes only minor rephrasing while conveying the same timeline figures and claim, so a reader's actions would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes only minor rephrasing while conveying the same timeline figures and claim, so a reader's actions would not change.\"}"
+    },
+    {
+      "key": "07:0",
+      "statement": "We believe the dominant pattern of the next decade will be vertical AI agents - software that doesn't just present a workflow for a human to complete, but completes the workflow itself, with the human stepping in only for exceptions, oversight, and high-stakes calls.",
+      "note": "The source says the next decade of software belongs to vertical-AI agents and describes them as systems that complete workflows themselves, with humans stepping in only for exception handling, oversight, and high-stakes decisions. The statement restates this in slightly different words (\"high-stakes calls\" vs \"high-stakes decisions\") without changing the claim.",
+      "changes": false,
+      "reason": "Swapping \"high-stakes decisions\" for \"high-stakes calls\" is a synonymous rewording that leaves the described role of humans and the claim about vertical-AI agents unchanged.",
+      "raw": "{\"changes\":false,\"reason\":\"Swapping \\\"high-stakes decisions\\\" for \\\"high-stakes calls\\\" is a synonymous rewording that leaves the described role of humans and the claim about vertical-AI agents unchanged.\"}"
+    },
+    {
+      "key": "07:1",
+      "statement": "The workflows where this will hit hardest share three characteristics: they're high-volume and labour-intensive; they're largely deterministic at the level of individual decisions; and their outputs can be verified after the fact.",
+      "note": "The source lists the same three characteristics (high-volume/labour-intensive, deterministic at the individual decision level, outputs verifiable ex post). The statement restates this in different words without changing the claim.",
+      "changes": false,
+      "reason": "The note describes a rewording that preserves the same three characteristics, so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes a rewording that preserves the same three characteristics, so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "07:3",
+      "statement": "This is not a thesis about general intelligence.",
+      "note": "The source says \"This is not a prediction about general intelligence.\" The statement restates the same disclaimer using \"thesis\" instead of \"prediction,\" which does not change the claim.",
+      "changes": false,
+      "reason": "Substituting \"thesis\" for \"prediction\" in the disclaimer preserves the same meaning, so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"Substituting \\\"thesis\\\" for \\\"prediction\\\" in the disclaimer preserves the same meaning, so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "07:4",
+      "statement": "It's a thesis about the specific economic deployment of current and near-future AI capability.",
+      "note": "The source calls it a \"prediction about the specific economic deployment of current and near-future AI capability,\" while the statement calls it a \"thesis.\" The post itself is framed as a thesis, so this is the same assertion in other words.",
+      "changes": false,
+      "reason": "Relabeling a prediction as a \"thesis\" is a synonymous reframing that does not alter what the reader would do.",
+      "raw": "{\"changes\":false,\"reason\":\"Relabeling a prediction as a \\\"thesis\\\" is a synonymous reframing that does not alter what the reader would do.\"}"
+    },
+    {
+      "key": "07:6",
+      "statement": "We've made fifteen investments in this category over the past two years and are continuing to invest actively.",
+      "note": "The source states Quanta Ventures has made fifteen investments in the agent category over the past two years and is actively investing behind the thesis. The statement conveys the same assertion in different words.",
+      "changes": false,
+      "reason": "The reworded statement conveys the same factual assertion about the number of investments and the active thesis, so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"The reworded statement conveys the same factual assertion about the number of investments and the active thesis, so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "08:4",
+      "statement": "It is one of three qualified suppliers globally for hip and knee replacement components meeting both FDA Class II and EU Medical Device Regulation (MDR) requirements at scale.",
+      "note": "The source says \"EU MDR\" while the statement expands it to \"EU Medical Device Regulation (MDR)\". This spells out the acronym without changing the claim.",
+      "changes": false,
+      "reason": "Expanding an acronym to its full name conveys the same regulatory reference, so a reader would act on the identical claim.",
+      "raw": "{\"changes\":false,\"reason\":\"Expanding an acronym to its full name conveys the same regulatory reference, so a reader would act on the identical claim.\"}"
+    },
+    {
+      "key": "08:5",
+      "statement": "Switching costs for medical device customers are very high - supplier qualification typically takes 18 to 24 months and involves clinical trial impact assessments.",
+      "note": "The source says switching costs are \"substantial\"; the statement says \"very high.\" These convey the same judgement in different words. The 18-24 month qualification timeline and clinical trial impact assessments match the source.",
+      "changes": false,
+      "reason": "\"Substantial\" and \"very high\" convey the same qualitative judgment about switching costs, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"\\\"Substantial\\\" and \\\"very high\\\" convey the same qualitative judgment about switching costs, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "08:6",
+      "statement": "Revenue has grown from EUR 312 million in 2020 to EUR 587 million in 2024, a compound annual rate of 17%.",
+      "note": "The source states a CAGR of 17.1%; the statement rounds this to 17%. The figures and dates match the source.",
+      "changes": false,
+      "reason": "Rounding 17.1% to 17% does not meaningfully alter the growth rate a reader would rely on for decisions.",
+      "raw": "{\"changes\":false,\"reason\":\"Rounding 17.1% to 17% does not meaningfully alter the growth rate a reader would rely on for decisions.\"}"
+    },
+    {
+      "key": "08:11",
+      "statement": "- M&A - the European precision machining sector is fragmented, with five actionable targets identified across the EUR 30-80 million enterprise value range.",
+      "note": "The source states the top 10 players account for less than 30% of the market and that five actionable targets have been identified in the EUR 30-80 million enterprise value range. The statement conveys the same claims in condensed form.",
+      "changes": false,
+      "reason": "The note indicates the draft conveys the same claims as the source in condensed form, so a reader would act on identical information.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the draft conveys the same claims as the source in condensed form, so a reader would act on identical information.\"}"
+    },
+    {
+      "key": "08:12",
+      "statement": "- Operating leverage - the balance of EBITDA growth comes from operating leverage on the broader cost base.",
+      "note": "The source attributes approximately 60 bps of margin lift to operating leverage on incremental revenue. The statement describes this as operating leverage on the broader cost base, which restates the same driver without changing the claim.",
+      "changes": false,
+      "reason": "Both phrasings point to operating leverage as the driver of the ~60 bps margin lift, so a reader's action would be the same.",
+      "raw": "{\"changes\":false,\"reason\":\"Both phrasings point to operating leverage as the driver of the ~60 bps margin lift, so a reader's action would be the same.\"}"
+    },
+    {
+      "key": "08:13",
+      "statement": "The base case generates 2.4x MOIC and 19% gross IRR.",
+      "note": "The source says the base case generates a 2.4x gross MOIC and a 19% gross IRR. The statement omits \"gross\" before MOIC but keeps the same figures and the \"gross\" qualifier on IRR.",
+      "changes": false,
+      "reason": "Omitting \"gross\" before MOIC while retaining the figures and the \"gross\" qualifier on IRR does not alter the return expectations a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Omitting \\\"gross\\\" before MOIC while retaining the figures and the \\\"gross\\\" qualifier on IRR does not alter the return expectations a reader would act on.\"}"
+    },
+    {
+      "key": "08:15",
+      "statement": "Principal risks include semiconductor cyclicality, customer concentration in medical implants, foreign exchange exposure, and the upcoming founder transition - each is understood and reflected in our planning, with specific mitigations in place.",
+      "note": "The source lists the same four principal risks (semiconductor cyclicality, customer concentration with the top customer being an orthopaedic implants manufacturer, FX exposure, and founder transition) and describes mitigations/comfort factors for each. The statement restates this in summary form.",
+      "changes": false,
+      "reason": "The note indicates the draft is an accurate summary of the same four risks and mitigations, so a reader's actions would not change.",
+      "raw": "{\"reason\":\"The note indicates the draft is an accurate summary of the same four risks and mitigations, so a reader's actions would not change.\",\"changes\":false}"
+    },
+    {
+      "key": "09:0",
+      "statement": "Six months after closing, our investment in Helvetia Precision Components is tracking modestly ahead of underwriting.",
+      "note": "The source says \"Six months into our investment in HPC, performance is tracking modestly ahead of the base case underwritten at IC.\" The statement restates this in different words without changing the claim.",
+      "changes": false,
+      "reason": "The note explicitly indicates the rewording preserves the original claim, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"The note explicitly indicates the rewording preserves the original claim, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "09:5",
+      "statement": "Andreas Schiller has integrated comfortably into his board role and continues to support customer relationships.",
+      "note": "The source says Schiller \"continues to provide useful customer-facing support,\" which the statement rephrases as continuing to support customer relationships. Same claim, different words.",
+      "changes": false,
+      "reason": "The rephrasing preserves the same underlying claim about Schiller's ongoing customer-facing role, so a reader's understanding and actions would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrasing preserves the same underlying claim about Schiller's ongoing customer-facing role, so a reader's understanding and actions would not change.\"}"
+    },
+    {
+      "key": "10:2",
+      "statement": "It supplies more than 600 customers worldwide, with particular strength in ultra-high-purity solvents used in semiconductor wafer fabrication and pharmaceutical active ingredient manufacturing.",
+      "note": "The source says \"active pharmaceutical ingredient manufacturing\" and the statement says \"pharmaceutical active ingredient manufacturing.\" This is a reordering of the same term, not a different claim.",
+      "changes": false,
+      "reason": "The reordered phrasing refers to the identical concept, so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"The reordered phrasing refers to the identical concept, so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "11:3",
+      "statement": "Net to LPs after carry and expenses, the realisation delivers 2.74x net MOIC and 24.2 percent net IRR.",
+      "note": "The source states the same net MOIC of 2.74x and net IRR of 24.2% to LPs after Meridian carry and fund expenses. The statement restates this in equivalent terms.",
+      "changes": false,
+      "reason": "The note indicates the figures and meaning are identical, just restated in equivalent terms, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the figures and meaning are identical, just restated in equivalent terms, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "11:5",
+      "statement": "International expansion took revenue contribution from outside the Nordic region from 19 percent at entry to 42 percent at exit.",
+      "note": "The source states 81% of revenue was from the Nordic region at entry, which means 19% from outside the Nordic region, matching the statement. The 42% international share at exit also matches.",
+      "changes": false,
+      "reason": "The note indicates the figures reconcile with the source, so a reader's action based on the claim would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the figures reconcile with the source, so a reader's action based on the claim would not change.\"}"
+    },
+    {
+      "key": "11:7",
+      "statement": "Four bolt-on acquisitions, anchored by HeatTech GmbH for SEK 1.1 billion, added meaningful scale.",
+      "note": "The source states four bolt-on acquisitions were completed for a combined EV of SEK 1.8 billion, with HeatTech GmbH as the most significant at SEK 1.1 billion. The statement conveys the same facts, with \"anchored by\" and \"added meaningful scale\" serving as paraphrases of the source's description.",
+      "changes": false,
+      "reason": "The paraphrased wording preserves the same quantitative facts (four acquisitions, SEK 1.8 billion total, HeatTech GmbH at SEK 1.1 billion) that a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"The paraphrased wording preserves the same quantitative facts (four acquisitions, SEK 1.8 billion total, HeatTech GmbH at SEK 1.1 billion) that a reader would act on.\"}"
+    },
+    {
+      "key": "11:8",
+      "statement": "Manufacturing footprint optimisation and the new Polish facility completed the operational picture.",
+      "note": "The source describes consolidating four Swedish facilities into two and relocating component assembly to a new Polish facility opened in 2023 as part of operational improvement. The statement restates this in summary form without changing the claim.",
+      "changes": false,
+      "reason": "The note indicates the summary restates the same consolidation and relocation facts without altering what the reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the summary restates the same consolidation and relocation facts without altering what the reader would act on.\"}"
+    },
+    {
+      "key": "12:7",
+      "statement": "Mikael Bergström, who navigated three generations of founding-family shareholder dynamics with patience and integrity.",
+      "note": "The source identifies Mikael Bergström as chairman and bridge to the founding families, navigating three generations of shareholder dynamics with patience and integrity. The statement condenses this but makes the same assertion.",
+      "changes": false,
+      "reason": "The note indicates the draft condenses the source while preserving the same assertion, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the draft condenses the source while preserving the same assertion, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "13:10",
+      "statement": "Second, the Company's vertical product depth creates very high switching costs.",
+      "note": "The source states that switching costs are very high due to deep integrations with customs authorities, carrier networks, and customer systems built on ten years of domain investment. The statement rephrases this as \"vertical product depth\" creating very high switching costs, which conveys the same claim in different words.",
+      "changes": false,
+      "reason": "Both versions convey the same claim that switching costs are very high due to deep domain-specific integrations, so a reader would act on the same conclusion.",
+      "raw": "{\"changes\":false,\"reason\":\"Both versions convey the same claim that switching costs are very high due to deep domain-specific integrations, so a reader would act on the same conclusion.\"}"
+    },
+    {
+      "key": "14:0",
+      "statement": "We are seeing increasing opportunity in European clinical decision support (CDS) software.",
+      "note": "The source describes European CDS as a structurally attractive category at an inflection point and recommends active sourcing. The statement's \"increasing opportunity\" restates the same judgement in other words.",
+      "changes": false,
+      "reason": "The paraphrase conveys the same investment judgement, so a reader would act on it the same way.",
+      "raw": "{\"changes\":false,\"reason\":\"The paraphrase conveys the same investment judgement, so a reader would act on it the same way.\"}"
+    },
+    {
+      "key": "14:2",
+      "statement": "First, the regulatory pathway under the EU Medical Device Regulation (MDR) has matured.",
+      "note": "The source says \"the regulatory pathway under EU MDR is now well-understood and incumbents have built up significant clearances.\" The statement says the pathway \"has matured,\" which restates the same assertion in other words.",
+      "changes": false,
+      "reason": "Describing the pathway as \"matured\" conveys the same substantive assertion as \"now well-understood,\" so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"Describing the pathway as \\\"matured\\\" conveys the same substantive assertion as \\\"now well-understood,\\\" so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "14:3",
+      "statement": "Incumbents with serious clinical software have built up meaningful regulatory clearances, creating real barriers to entry.",
+      "note": "The source says Medical Device Regulation has created higher barriers to entry for serious clinical software, advantaging incumbents who have invested in the regulatory pathway, and that incumbents have built up significant clearances. The statement restates this in different words without changing the claim.",
+      "changes": false,
+      "reason": "A reworded restatement that preserves the same claim about regulatory barriers advantaging incumbents would not change what a reader does.",
+      "raw": "{\"changes\":false,\"reason\":\"A reworded restatement that preserves the same claim about regulatory barriers advantaging incumbents would not change what a reader does.\"}"
+    },
+    {
+      "key": "14:4",
+      "statement": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
+      "note": "The source says \"payer willingness to reimburse CDS software has improved markedly\" and separately notes reimbursement codes for digital health products improved across major European markets. The statement blends these but conveys the same claim about improved payer reimbursement willingness.",
+      "changes": false,
+      "reason": "Blending the two points still conveys the same actionable claim that payer reimbursement willingness has improved.",
+      "raw": "{\"changes\":false,\"reason\":\"Blending the two points still conveys the same actionable claim that payer reimbursement willingness has improved.\"}"
+    },
+    {
+      "key": "14:6",
+      "statement": "The opportunity is for products that genuinely improve clinical workflows.",
+      "note": "The source says generative AI creates an \"opportunity to genuinely improve clinical workflows.\" The statement rephrases this as the opportunity being for products that genuinely improve clinical workflows, which is the same assertion in different words.",
+      "changes": false,
+      "reason": "The rephrasing preserves the same assertion about the opportunity to improve clinical workflows, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrasing preserves the same assertion about the opportunity to improve clinical workflows, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "14:9",
+      "statement": "National payers create clearer routes to scale once adopted by a national authority.",
+      "note": "The source says European healthcare is dominated by national payers, which gives CDS products a clearer route to scale once adopted by a national authority. The statement restates this same assertion with slightly rearranged phrasing.",
+      "changes": false,
+      "reason": "The note describes only rearranged phrasing of the same assertion, so the actionable claim is unchanged.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes only rearranged phrasing of the same assertion, so the actionable claim is unchanged.\"}"
+    },
+    {
+      "key": "14:12",
+      "statement": "We will provide further detail when the work is sufficiently advanced.",
+      "note": "The source says the team would expect to return with clearer perspectives in the next thesis update. The statement rephrases this as providing further detail when the work is sufficiently advanced, which is the same assertion in other words.",
+      "changes": false,
+      "reason": "The note describes a rephrasing that conveys the same assertion, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes a rephrasing that conveys the same assertion, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "15:10",
+      "statement": "The Atelier 73 growth concept - Atelier 73 is the Company's smaller, design-led store format positioned at a younger urban customer.",
+      "note": "The source describes Atelier 73 as small-format stores targeting younger urban customers with a curated, design-led assortment. The statement restates this as a smaller, design-led store format positioned at a younger urban customer, which is the same assertion in other words.",
+      "changes": false,
+      "reason": "The restatement conveys the same characteristics (small format, design-led, younger urban target) that a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"The restatement conveys the same characteristics (small format, design-led, younger urban target) that a reader would act on.\"}"
+    },
+    {
+      "key": "15:11",
+      "statement": "The format currently operates 18 stores and represents a fifth value driver alongside the four pillars above.",
+      "note": "The source says Atelier 73 operates 18 stores and lists it as the fifth pillar of the investment thesis, following four other pillars. The statement conveys the same claim in different words.",
+      "changes": false,
+      "reason": "The note indicates the wording differs but conveys the same underlying claim about the store count and pillar position.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the wording differs but conveys the same underlying claim about the store count and pillar position.\"}"
+    },
+    {
+      "key": "15:12",
+      "statement": "Atelier 73 has potential to become a meaningful growth pillar.",
+      "note": "The source states the Atelier 73 concept has the potential to become a meaningful third growth pillar. The statement omits \"third\" but otherwise restates the same claim.",
+      "changes": true,
+      "reason": "Omitting \"third\" removes the specific positioning of the concept relative to two existing pillars, which changes the reader's understanding of the company's growth structure.",
+      "raw": "{\"changes\":true,\"reason\":\"Omitting \\\"third\\\" removes the specific positioning of the concept relative to two existing pillars, which changes the reader's understanding of the company's growth structure.\"}"
+    },
+    {
+      "key": "15:17",
+      "statement": "The UK and Nordic launches are the largest single contributor to growth.",
+      "note": "The source says \"The UK and Nordic launches are the largest single contributor to our base case,\" while the statement rephrases this as the largest single contributor to growth. This is the same assertion in different words.",
+      "changes": false,
+      "reason": "The note characterizes the rewording as expressing the same assertion, so a reader's action based on the claim would be unchanged.",
+      "raw": "{\"changes\":false,\"reason\":\"The note characterizes the rewording as expressing the same assertion, so a reader's action based on the claim would be unchanged.\"}"
+    },
+    {
+      "key": "15:18",
+      "statement": "We have direct experience of homeware concepts that have failed in the UK market and have mitigated through detailed commercial diligence, a phased rollout, and a recruited UK country manager subject to deal completion.",
+      "note": "The source says the UK country manager is currently at Heal's and has agreed to join subject to deal completion, and lists the same three mitigations (commercial diligence, phased rollout, identified country manager). The statement restates these points in condensed form.",
+      "changes": false,
+      "reason": "The condensed restatement preserves the same facts and mitigations, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"The condensed restatement preserves the same facts and mitigations, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "15:21",
+      "statement": "We have stress-tested the model for sustained German weakness and the returns remain attractive.",
+      "note": "The source says the model was stress-tested assuming sustained German weakness through 2027 and the returns remain attractive. The statement conveys the same assertion in slightly condensed form.",
+      "changes": false,
+      "reason": "The note describes only a condensation of wording while preserving the same assertion about stress-testing and attractive returns, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes only a condensation of wording while preserving the same assertion about stress-testing and attractive returns, so a reader's action would not change.\"}"
+    },
+    {
+      "key": "15:27",
+      "statement": "Underlying relationships are stable but the dependency is noted.",
+      "note": "The source says the top five wholesale relationships are stable but notes the dependency. The statement restates this in different words without changing the claim.",
+      "changes": false,
+      "reason": "The difference is only rewording while preserving the same claim about stable top-five wholesale relationships and the noted dependency, so a reader's action would be unchanged.",
+      "raw": "{\"changes\":false,\"reason\":\"The difference is only rewording while preserving the same claim about stable top-five wholesale relationships and the noted dependency, so a reader's action would be unchanged.\"}"
+    },
+    {
+      "key": "15:30",
+      "statement": "We have completed comprehensive diligence covering commercial, financial, legal, and ESG dimensions; the conclusions are circulated separately.",
+      "note": "The source describes commercial (Bain), financial/tax (Deloitte), legal (Latham & Watkins), and ESG (ERM) diligence streams, and notes the Bain report is circulated separately. The statement summarises the same four workstreams in different words.",
+      "changes": false,
+      "reason": "Summarising the same four diligence workstreams in different words does not alter what a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Summarising the same four diligence workstreams in different words does not alter what a reader would act on.\"}"
+    },
+    {
+      "key": "17:3",
+      "statement": "All eleven assets are within 15 kilometres of city centres and serve last-mile delivery operations for major e-commerce platforms, grocery delivery operators, and parcel logistics players.",
+      "note": "The source says \"All 11 assets are within 15 kilometres of city centres\" and serve the same tenant categories. The statement spells \"11\" as \"eleven\" but makes the same assertion.",
+      "changes": false,
+      "reason": "Spelling \"11\" as \"eleven\" is a stylistic change that preserves the identical factual assertion.",
+      "raw": "{\"changes\":false,\"reason\":\"Spelling \\\"11\\\" as \\\"eleven\\\" is a stylistic change that preserves the identical factual assertion.\"}"
+    },
+    {
+      "key": "17:6",
+      "statement": "Importantly, embedded rental reversion across the Portfolio is estimated at approximately 18 percent, concentrated in the London and Amsterdam assets where market rents have grown most rapidly over the past three years.",
+      "note": "The source states the 18% reversion is portfolio-wide with the strongest reversion potential in London and Amsterdam. The statement's \"concentrated in\" conveys the same claim as the source's \"strongest reversion potential in\" those markets.",
+      "changes": true,
+      "reason": "\"Concentrated in\" implies the 18% reversion is largely located in London and Amsterdam, whereas the source says it is portfolio-wide with merely the strongest potential in those markets, which could lead a reader to misallocate expectations across the portfolio.",
+      "raw": "{\"changes\":true,\"reason\":\"\\\"Concentrated in\\\" implies the 18% reversion is largely located in London and Amsterdam, whereas the source says it is portfolio-wide with merely the strongest potential in those markets, which could lead a reader to misallocate expectations across the portfolio.\"}"
+    },
+    {
+      "key": "18:1",
+      "statement": "The Company provides software that automates property management workflows - including rent management, maintenance scheduling, tenant communications, and regulatory reporting - for residential property managers across the Nordic region.",
+      "note": "The source describes NSH's platform as covering \"rent collection, maintenance management, tenant communication, and regulatory reporting\" for residential property managers in the Nordics. The statement rephrases these as \"rent management, maintenance scheduling, tenant communications, and regulatory reporting,\" which conveys the same functional scope in different words.",
+      "changes": false,
+      "reason": "The rephrased feature labels convey the same functional scope, so a reader's understanding and actions would not differ.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrased feature labels convey the same functional scope, so a reader's understanding and actions would not differ.\"}"
+    },
+    {
+      "key": "18:2",
+      "statement": "We have invested EUR 158 million for a 60% controlling stake.",
+      "note": "The source recommends an investment of EUR 158 million for a 60% controlling stake, while the statement phrases this as a completed investment. The figures match the source.",
+      "changes": true,
+      "reason": "Framing a recommended investment as a completed one changes whether a reader treats the deal as a proposal to evaluate or as an executed fact.",
+      "raw": "{\"changes\":true,\"reason\":\"Framing a recommended investment as a completed one changes whether a reader treats the deal as a proposal to evaluate or as an executed fact.\"}"
+    },
+    {
+      "key": "19:3",
+      "statement": "Across the remaining eight active portfolio companies, performance has been broadly positive with two notable challenges.",
+      "note": "The source describes strong performance across the substantial majority of investments, with Continental Plastics having a more challenging year and Drift Logistics having a mixed year-matching the statement's characterization of broadly positive performance with two notable challenges among the eight active companies.",
+      "changes": false,
+      "reason": "The note indicates the draft's characterization aligns with the source's description of broadly positive performance with two notable challenges, so a reader's actions would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the draft's characterization aligns with the source's description of broadly positive performance with two notable challenges, so a reader's actions would not change.\"}"
+    },
+    {
+      "key": "19:5",
+      "statement": "Continental Plastics, acquired in March 2023, has had a more difficult 2025 with revenue growth of only 4 percent against an underwriting of 9 percent and broadly flat EBITDA.",
+      "note": "The source says \"more challenging 2025\"; the statement says \"more difficult 2025.\" This is a synonym and does not change the claim. All figures and dates match the source.",
+      "changes": false,
+      "reason": "Swapping \"challenging\" for \"difficult\" is a synonymous rewording that does not alter the claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Swapping \\\"challenging\\\" for \\\"difficult\\\" is a synonymous rewording that does not alter the claim a reader would act on.\"}"
+    },
+    {
+      "key": "19:8",
+      "statement": "Portfolio ESG performance has continued to mature.",
+      "note": "The source says ESG performance across the portfolio has continued to improve through 2025. The statement says it has continued to mature, which is a synonymous restatement of the same claim.",
+      "changes": false,
+      "reason": "\"Improve\" and \"mature\" convey the same directional progress claim, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"\\\"Improve\\\" and \\\"mature\\\" convey the same directional progress claim, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "19:9",
+      "statement": "All eight active portfolio companies have completed or are in the final stages of SBTi submission.",
+      "note": "The source says all eight portfolio companies have completed SBTi submissions or are in the final stages of doing so. The statement says the same with \"active\" added, which matches the source's eight active companies.",
+      "changes": false,
+      "reason": "Adding \"active\" merely clarifies the scope already present in the source and does not alter the substantive claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Adding \\\"active\\\" merely clarifies the scope already present in the source and does not alter the substantive claim a reader would act on.\"}"
+    },
+    {
+      "key": "19:12",
+      "statement": "We expect two further realisations during 2026.",
+      "note": "The source states \"We anticipate two further realisations during 2026.\" The statement uses \"expect\" instead of \"anticipate\" but asserts the same claim.",
+      "changes": false,
+      "reason": "\"Expect\" and \"anticipate\" convey the same forward-looking claim, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"\\\"Expect\\\" and \\\"anticipate\\\" convey the same forward-looking claim, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "20:4",
+      "statement": "Re-up rates from existing LPs were strong at 96 percent by capital, and the Fund welcomed new investors across three of the largest US public pension funds, two Asian sovereign wealth funds, and a number of European and North American family offices and endowments.",
+      "note": "The source states re-up rates were 96% by capital and lists the same new LP categories. The statement adds \"strong,\" which restates the positive characterization the source already conveys through the surrounding context about franchise strength.",
+      "changes": false,
+      "reason": "Adding \"strong\" is an intensifier that restates existing positive context without altering the underlying facts (96% re-up rate, same new LP categories) a reader would rely on.",
+      "raw": "{\"changes\":false,\"reason\":\"Adding \\\"strong\\\" is an intensifier that restates existing positive context without altering the underlying facts (96% re-up rate, same new LP categories) a reader would rely on.\"}"
+    },
+    {
+      "key": "20:7",
+      "statement": "We anticipate 10 to 12 platform investments over the four-year deployment period, with typical equity tickets in the EUR 300 to 700 million range.",
+      "note": "The statement reproduces the source's figures and timeframe verbatim, only dropping \"making\" before \"10 to 12 platform investments\". The claim is the same.",
+      "changes": false,
+      "reason": "Dropping the word \"making\" is a minor grammatical change that leaves the figures, timeframe, and underlying claim identical.",
+      "raw": "{\"changes\":false,\"reason\":\"Dropping the word \\\"making\\\" is a minor grammatical change that leaves the figures, timeframe, and underlying claim identical.\"}"
+    },
+    {
+      "key": "01:1",
+      "statement": "The Company has grown rapidly, with customers increasing from 5'500 a year ago to nearly 10'000 today.",
+      "note": "The source states customers increased from 5,500 a year ago to nearly 10,000 today, matching the statement's figures. The only differences are the digit grouping style and referring to Shopify as \"the Company.\"",
+      "changes": false,
+      "reason": "Digit grouping style and referring to Shopify as \"the Company\" do not alter the factual claim about customer growth.",
+      "raw": "{\"changes\":false,\"reason\":\"Digit grouping style and referring to Shopify as \\\"the Company\\\" do not alter the factual claim about customer growth.\"}"
+    },
+    {
+      "key": "01:5",
+      "statement": "The product is simple enough that a non-technical user can set up a fully functioning online store within a few hours.",
+      "note": "The source says \"The product is simple enough so that anyone can set up a fully functioning online store in a matter of hours\" and that \"A non-techie can start taking orders from a professional-looking online store in a few hours after sign-up.\" The statement conveys the same claim in paraphrased form.",
+      "changes": false,
+      "reason": "The paraphrase preserves the same actionable claim about setup time and ease of use.",
+      "raw": "{\"changes\":false,\"reason\":\"The paraphrase preserves the same actionable claim about setup time and ease of use.\"}"
+    },
+    {
+      "key": "01:11",
+      "statement": "We recommend approval.",
+      "note": "The source says \"We recommend this investment\" and seeks approval for the investment. The statement says \"We recommend approval,\" which conveys the same recommendation in different words.",
+      "changes": false,
+      "reason": "Both phrasings convey the same recommendation to approve, so a reader would act identically.",
+      "raw": "{\"changes\":false,\"reason\":\"Both phrasings convey the same recommendation to approve, so a reader would act identically.\"}"
+    },
+    {
+      "key": "04:2",
+      "statement": "What attracted us was the user engagement profile.",
+      "note": "The source says \"What gives us conviction is the depth of user engagement we have observed\" and \"What persuaded us is the user behaviour we have observed.\" The statement restates the same claim with different words.",
+      "changes": false,
+      "reason": "The reworded phrasing conveys the same claim about conviction stemming from observed user engagement/behavior, so a reader would act on it the same way.",
+      "raw": "{\"changes\":false,\"reason\":\"The reworded phrasing conveys the same claim about conviction stemming from observed user engagement/behavior, so a reader would act on it the same way.\"}"
+    },
+    {
+      "key": "04:11",
+      "statement": "The founders, Mr. Ben Silbermann and Mr. Evan Sharp, are first-time founders but our diligence has been deeply positive.",
+      "note": "The source names the founders as Ben Silbermann and Evan Sharp without honorifics; the statement adds \"Mr.\" but makes the same claim about their identities and first-time founder status.",
+      "changes": false,
+      "reason": "Adding the honorific \"Mr.\" does not alter the identities of the founders or the claim about their first-time founder status.",
+      "raw": "{\"changes\":false,\"reason\":\"Adding the honorific \\\"Mr.\\\" does not alter the identities of the founders or the claim about their first-time founder status.\"}"
+    },
+    {
+      "key": "04:18",
+      "statement": "Defensibility against well-funded competitive responses is uncertain.",
+      "note": "The source states defensibility is uncertain and specifically questions whether the potential moats prove durable against well-funded competitive responses. The statement combines these into one phrasing without changing the claim.",
+      "changes": false,
+      "reason": "The rephrasing preserves the same uncertainty about moat durability against well-funded competition, so a reader's action is unchanged.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrasing preserves the same uncertainty about moat durability against well-funded competition, so a reader's action is unchanged.\"}"
+    },
+    {
+      "key": "05:2",
+      "statement": "Norwell, headquartered in Cleveland, Ohio, supplies the major commercial aircraft original equipment manufacturers and the leading US defense primes.",
+      "note": "The source says Norwell \"counts\" these customers among its long-standing customers; the statement says it \"supplies\" them. Same claim, different word.",
+      "changes": true,
+      "reason": "\"Counts among its long-standing customers\" implies an established, enduring relationship, while \"supplies\" only asserts a current transactional link, so a reader evaluating the depth and history of the customer relationship would act differently on each.",
+      "raw": "{\"changes\":true,\"reason\":\"\\\"Counts among its long-standing customers\\\" implies an established, enduring relationship, while \\\"supplies\\\" only asserts a current transactional link, so a reader evaluating the depth and history of the customer relationship would act differently on each.\"}"
+    },
+    {
+      "key": "06:1",
+      "statement": "Revenue grew to GBP 312 million for the year, up from GBP 187 million at the time of our investment in March 2022 - a compound annual growth rate of approximately 19 percent.",
+      "note": "The source states a CAGR of 18.6 percent; the statement says approximately 19 percent, which is a rounded restatement of the same figure rather than a different claim.",
+      "changes": false,
+      "reason": "Rounding 18.6 percent to approximately 19 percent conveys the same growth rate and would not lead a reader to a different action.",
+      "raw": "{\"changes\":false,\"reason\":\"Rounding 18.6 percent to approximately 19 percent conveys the same growth rate and would not lead a reader to a different action.\"}"
+    },
+    {
+      "key": "06:6",
+      "statement": "Operational changes introduced during 2025 - including a new Chief Commercial Officer and a new Chairman - are expected to begin contributing meaningfully in 2026, and we continue to view the underlying business as fundamentally sound.",
+      "note": "The statement restates the source's description of 2025 operational changes (new CCO, new Chairman) expected to contribute meaningfully in 2026, along with the view that the underlying business is fundamentally sound. These are the same assertions in condensed form.",
+      "changes": false,
+      "reason": "A condensed restatement preserving the same assertions about leadership changes, expected 2026 contribution, and business soundness would not alter what a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"A condensed restatement preserving the same assertions about leadership changes, expected 2026 contribution, and business soundness would not alter what a reader would act on.\"}"
+    },
+    {
+      "key": "06:8",
+      "statement": "Across the portfolio, ESG performance continues to improve.",
+      "note": "The source describes ESG maturation with rising emissions reporting (85% from 72%), SBTi commitments, and female senior management representation up from 26% to 31%. The statement restates this as ESG performance continuing to improve, which conveys the same assertion in general terms.",
+      "changes": false,
+      "reason": "Generalizing specific ESG metrics into a statement that ESG performance continues to improve conveys the same assertion a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Generalizing specific ESG metrics into a statement that ESG performance continues to improve conveys the same assertion a reader would act on.\"}"
+    },
+    {
+      "key": "08:3",
+      "statement": "The Company's competitive position is exceptional.",
+      "note": "The source describes HPC's competitive position as \"enviable\" and details it as one of only three qualified global suppliers with durable customer relationships. \"Exceptional\" restates the same favorable judgement the source already makes.",
+      "changes": false,
+      "reason": "Swapping \"enviable\" for \"exceptional\" conveys the same favorable judgment and would not change a reader's action.",
+      "raw": "{\"changes\":false,\"reason\":\"Swapping \\\"enviable\\\" for \\\"exceptional\\\" conveys the same favorable judgment and would not change a reader's action.\"}"
+    },
+    {
+      "key": "08:10",
+      "statement": "- End-market growth - structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
+      "note": "The source states base case revenue growth of 9% CAGR, with components including organic growth tied to end-market expansion and aerospace build-rate increases of ~40% over five years. The statement restates the same 9% growth figure linked to those end-market drivers.",
+      "changes": false,
+      "reason": "The restated 9% growth figure and its linkage to the same end-market drivers convey the identical claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"The restated 9% growth figure and its linkage to the same end-market drivers convey the identical claim a reader would act on.\"}"
+    },
+    {
+      "key": "08:16",
+      "statement": "In summary, the Company combines a defensible competitive position, structurally growing end markets, a clear operational improvement plan, and a credible M&A roadmap.",
+      "note": "The statement summarizes the four investment thesis points from the source (competitive position, attractive end markets, margin expansion plan, M&A opportunity) using synonymous phrasing. No claim differs from the source.",
+      "changes": false,
+      "reason": "The note indicates only synonymous phrasing with no differing claim, so a reader would act the same way.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates only synonymous phrasing with no differing claim, so a reader would act the same way.\"}"
+    },
+    {
+      "key": "09:7",
+      "statement": "We have lowered our 2026 semiconductor revenue forecast to EUR 105 million from the original underwriting of EUR 122 million.",
+      "note": "The source states the full-year 2026 budget assumes semiconductor revenue of EUR 105 million versus original underwriting of EUR 122 million. The statement calls this a lowered forecast, which restates the same assertion.",
+      "changes": false,
+      "reason": "Describing the reduced figure as a \"lowered forecast\" conveys the same actionable information as the source's comparison of EUR 105 million against EUR 122 million.",
+      "raw": "{\"changes\":false,\"reason\":\"Describing the reduced figure as a \\\"lowered forecast\\\" conveys the same actionable information as the source's comparison of EUR 105 million against EUR 122 million.\"}"
+    },
+    {
+      "key": "09:9",
+      "statement": "Second, a quality issue at our second-largest medical customer was identified in October and is being addressed through a corrective action programme.",
+      "note": "The source says the customer raised the quality concern in October and is satisfied with the corrective action plan; the statement rephrases this as a corrective action programme. Same assertion in other words.",
+      "changes": false,
+      "reason": "Rephrasing \"plan\" as \"programme\" does not alter the assertion a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Rephrasing \\\"plan\\\" as \\\"programme\\\" does not alter the assertion a reader would act on.\"}"
+    },
+    {
+      "key": "09:10",
+      "statement": "The financial impact is small (approximately EUR 3 million in returns and rework) but the customer has placed HPC on enhanced quality monitoring for 12 months.",
+      "note": "The source states approximately EUR 3 million in returns, rework, and credit; the statement omits \"credit\" but keeps the same figure and overall claim. The 12-month enhanced monitoring and the characterisation of limited cost impact match the source.",
+      "changes": false,
+      "reason": "Omitting \"credit\" while retaining the same EUR 3 million figure and overall characterization would not change what a reader does based on the claim.",
+      "raw": "{\"changes\":false,\"reason\":\"Omitting \\\"credit\\\" while retaining the same EUR 3 million figure and overall characterization would not change what a reader does based on the claim.\"}"
+    },
+    {
+      "key": "10:3",
+      "statement": "The Company will be led by its existing Chief Executive, Dr. Annika Brandt.",
+      "note": "The source says \"Chief Executive Officer\" while the statement says \"Chief Executive.\" This is the same role in different words.",
+      "changes": false,
+      "reason": "\"Chief Executive\" and \"Chief Executive Officer\" refer to the same role, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"\\\"Chief Executive\\\" and \\\"Chief Executive Officer\\\" refer to the same role, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "10:4",
+      "statement": "Meridian intends to support an acceleration of the Company's expansion strategy, with a focus on the Asian electronics market and on selective acquisitions in adjacent specialty chemical categories.",
+      "note": "The source says Meridian will support the Company's expansion strategy with particular focus on the rapidly growing Asian electronics market and selective acquisitions in adjacent specialty chemical categories. The statement rephrases this as supporting an acceleration of that strategy, which conveys the same assertion.",
+      "changes": true,
+      "reason": "Changing \"support\" to \"support an acceleration of\" adds a claim of increased pace that a reader could rely on when assessing the strategy's timeline.",
+      "raw": "{\"changes\":true,\"reason\":\"Changing \\\"support\\\" to \\\"support an acceleration of\\\" adds a claim of increased pace that a reader could rely on when assessing the strategy's timeline.\"}"
+    },
+    {
+      "key": "10:6",
+      "statement": "Total invested capital from the Meridian platform in the specialty chemicals sector now exceeds EUR 2 billion across the firm's global investments.",
+      "note": "The source states the acquisition brings Meridian's total invested capital in the specialty chemicals sector to over EUR 2 billion across its global platforms. The statement conveys the same claim in rephrased form.",
+      "changes": false,
+      "reason": "The note describes only a rephrasing that conveys the same claim, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes only a rephrasing that conveys the same claim, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "11:12",
+      "statement": "With this realisation Fund IV becomes one of our strongest vintages.",
+      "note": "The source says \"Fund IV becomes one of our strongest vintages on a returns basis.\" The statement omits \"on a returns basis\" but makes the same assertion.",
+      "changes": true,
+      "reason": "Dropping \"on a returns basis\" removes the specific metric qualifying \"strongest,\" so a reader could interpret the claim as strongest overall rather than strongest by returns.",
+      "raw": "{\"changes\":true,\"reason\":\"Dropping \\\"on a returns basis\\\" removes the specific metric qualifying \\\"strongest,\\\" so a reader could interpret the claim as strongest overall rather than strongest by returns.\"}"
+    },
+    {
+      "key": "12:0",
+      "statement": "After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "note": "The source says the sale occurred \"four and a half years later\" after acquiring NorTech in 2021. The statement's \"more than four years\" is a less precise restatement of the same duration, not a different claim.",
+      "changes": false,
+      "reason": "\"More than four years\" and \"four and a half years\" both convey the same approximate timeframe, so a reader would draw the same conclusion about when the sale occurred.",
+      "raw": "{\"changes\":false,\"reason\":\"\\\"More than four years\\\" and \\\"four and a half years\\\" both convey the same approximate timeframe, so a reader would draw the same conclusion about when the sale occurred.\"}"
+    },
+    {
+      "key": "12:2",
+      "statement": "The transformation since has been substantial.",
+      "note": "The source describes NorTech moving from a Sweden-strong company with a clear ceiling to a genuinely international business across six countries, which restates the same judgement that the transformation has been substantial.",
+      "changes": false,
+      "reason": "The note describes a restatement of the same judgement about the scale of transformation, which does not change what a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes a restatement of the same judgement about the scale of transformation, which does not change what a reader would act on.\"}"
+    },
+    {
+      "key": "12:8",
+      "statement": "And the wider NorTech team across Stockholm and the new international footprint, who built something genuinely exceptional.",
+      "note": "The source says \"The wider NorTech team in Stockholm and across the new international footprint, who have built something exceptional.\" The statement rephrases this with \"across Stockholm and the new international footprint\" and \"genuinely exceptional,\" which conveys the same assertion in different words.",
+      "changes": false,
+      "reason": "The rephrasing preserves the same assertion about the team and their achievement, so a reader would act on the same claim.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrasing preserves the same assertion about the team and their achievement, so a reader would act on the same claim.\"}"
+    },
+    {
+      "key": "13:14",
+      "statement": "In summary, the Company is a high-quality vertical SaaS asset with a defensible competitive position.",
+      "note": "The source's conclusion describes CloudPivot as \"a high-quality vertical SaaS asset with strong unit economics, a defensible competitive position, and a clear growth runway.\" The statement restates the same assertion in condensed form.",
+      "changes": false,
+      "reason": "A condensed restatement of the same assertion does not alter the claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"A condensed restatement of the same assertion does not alter the claim a reader would act on.\"}"
+    },
+    {
+      "key": "14:1",
+      "statement": "The category - software that helps clinicians make better, faster, more consistent treatment decisions at the point of care - is at a structural inflection point driven by three forces.",
+      "note": "The source says the European market is at an inflection point with three forces aligning (regulatory pathway maturity, improved payer reimbursement, and generative AI). The statement conveys the same claim using \"structural inflection point driven by three forces.\"",
+      "changes": false,
+      "reason": "The wording difference preserves the same claim about an inflection point driven by the same three forces, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"The wording difference preserves the same claim about an inflection point driven by the same three forces, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "14:5",
+      "statement": "Third, generative AI is creating both opportunity and competitive pressure.",
+      "note": "The source says generative AI creates \"opportunity and pressure\", with pressure described as being on incumbents who lack credible AI strategies. The statement calls this \"competitive pressure\", which restates the same idea in different words.",
+      "changes": false,
+      "reason": "Restating \"pressure\" on incumbents lacking AI strategies as \"competitive pressure\" conveys the same substantive point and would not alter a reader's action.",
+      "raw": "{\"changes\":false,\"reason\":\"Restating \\\"pressure\\\" on incumbents lacking AI strategies as \\\"competitive pressure\\\" conveys the same substantive point and would not alter a reader's action.\"}"
+    },
+    {
+      "key": "15:1",
+      "statement": "The transaction values the Company at an enterprise value of EUR 1.85 billion, representing 12.4x trailing twelve months EBITDA.",
+      "note": "The source states the EV of EUR 1.85 billion represents 12.4x trailing twelve months EBITDA of EUR 149 million. The statement omits the EUR 149 million figure but makes the same assertion in other words.",
+      "changes": false,
+      "reason": "Omitting the EUR 149 million EBITDA figure while retaining the EV and the 12.4x multiple does not alter the valuation claim a reader would act on, since the omitted figure is derivable from the retained ones.",
+      "raw": "{\"changes\":false,\"reason\":\"Omitting the EUR 149 million EBITDA figure while retaining the EV and the 12.4x multiple does not alter the valuation claim a reader would act on, since the omitted figure is derivable from the retained ones.\"}"
+    },
+    {
+      "key": "15:16",
+      "statement": "The principal risks are well understood and reflected in our planning.",
+      "note": "The source states \"The principal risks are well-understood and we have built specific mitigations into our approach.\" The statement rephrases this as risks being understood and reflected in planning, which conveys the same assertion.",
+      "changes": false,
+      "reason": "The rephrasing preserves the same assertion that risks are understood and addressed in the approach, so a reader would act on it the same way.",
+      "raw": "{\"changes\":false,\"reason\":\"The rephrasing preserves the same assertion that risks are understood and addressed in the approach, so a reader would act on it the same way.\"}"
+    },
+    {
+      "key": "15:19",
+      "statement": "The Company's discretionary positioning means demand sensitivity to macroeconomic conditions.",
+      "note": "The source identifies homeware as a discretionary purchase and discusses consumer environment sensitivity (e.g., German weakness, stress-testing a consumer downturn). The statement restates this same point in different words.",
+      "changes": false,
+      "reason": "A reworded restatement of the same point about discretionary homeware and consumer sensitivity would not alter what a reader does.",
+      "raw": "{\"changes\":false,\"reason\":\"A reworded restatement of the same point about discretionary homeware and consumer sensitivity would not alter what a reader does.\"}"
+    },
+    {
+      "key": "15:20",
+      "statement": "Germany has been notably weak in 2025, while Italy and Spain remain strong.",
+      "note": "The source states Germany had -2.8% like-for-like growth in 2025 (actively negative) while Italy and Spain had 5% and 6% like-for-like growth. The statement restates this same assertion in general terms.",
+      "changes": false,
+      "reason": "Restating the same assertion in general terms preserves the directional claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Restating the same assertion in general terms preserves the directional claim a reader would act on.\"}"
+    },
+    {
+      "key": "15:24",
+      "statement": "167 of 184 stores are leased with average remaining term of 7.2 years.",
+      "note": "The source states the Company leases 167 of its 184 store locations with a weighted average remaining term of 7.2 years. The statement omits \"weighted\" but conveys the same assertion.",
+      "changes": false,
+      "reason": "Omitting \"weighted\" from the average remaining lease term description does not alter the lease count, store count, or term figure a reader would rely on.",
+      "raw": "{\"changes\":false,\"reason\":\"Omitting \\\"weighted\\\" from the average remaining lease term description does not alter the lease count, store count, or term figure a reader would rely on.\"}"
+    },
+    {
+      "key": "15:25",
+      "statement": "The model has been stress-tested for modest lease renegotiation.",
+      "note": "The source says the model was stress-tested for 10% of leases being renegotiated upward by 20% at the next break, with modest impact on returns. The statement's \"modest lease renegotiation\" restates this same scenario in looser terms without changing the claim.",
+      "changes": true,
+      "reason": "Collapsing a specific stress test (10% of leases renegotiated upward by 20% at next break) into \"modest lease renegotiation\" removes the quantitative scenario a reader would rely on to assess the stress test's severity and applicability.",
+      "raw": "{\"changes\":true,\"reason\":\"Collapsing a specific stress test (10% of leases renegotiated upward by 20% at next break) into \\\"modest lease renegotiation\\\" removes the quantitative scenario a reader would rely on to assess the stress test's severity and applicability.\"}"
+    },
+    {
+      "key": "15:26",
+      "statement": "The wholesale channel has meaningful customer concentration in its top five accounts.",
+      "note": "The source states the wholesale channel has meaningful customer concentration, with the top five wholesale accounts representing 40% of channel revenue. The statement conveys the same assertion in briefer form.",
+      "changes": false,
+      "reason": "The note indicates the briefer statement conveys the same assertion about concentration and the 40% figure, so a reader would act on the same information.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the briefer statement conveys the same assertion about concentration and the 40% figure, so a reader would act on the same information.\"}"
+    },
+    {
+      "key": "15:29",
+      "statement": "The agreed enterprise value reflects a discount of approximately 10-15% to fair competitive value, in line with the family's stated preference for a partner over the highest price.",
+      "note": "The source says the EUR 1.85 billion enterprise value represents a discount of approximately 10 to 15 percent to what the asset would attract in a fully competitive auction, reflecting the family's stated preference for a partner over the highest price. The statement restates this using \"fair competitive value\" for the auction benchmark, which is the same claim in other words.",
+      "changes": false,
+      "reason": "Rephrasing the auction benchmark as \"fair competitive value\" conveys the same 10-15% discount claim, so a reader would act on it identically.",
+      "raw": "{\"changes\":false,\"reason\":\"Rephrasing the auction benchmark as \\\"fair competitive value\\\" conveys the same 10-15% discount claim, so a reader would act on it identically.\"}"
+    },
+    {
+      "key": "15:31",
+      "statement": "In summary, the Company offers exceptional category positioning, defensible unit economics, and a clear international growth runway.",
+      "note": "The source describes Casa Verde as a category leader in a structurally attractive sector, cites exceptional unit economics, and identifies a clear international expansion runway. The statement restates these same three points as category positioning, defensible unit economics, and international growth runway.",
+      "changes": false,
+      "reason": "The restatement preserves the same three substantive points a reader would rely on, so it would not change what the reader does.",
+      "raw": "{\"changes\":false,\"reason\":\"The restatement preserves the same three substantive points a reader would rely on, so it would not change what the reader does.\"}"
+    },
+    {
+      "key": "16:1",
+      "statement": "The proposed transaction values Bloom at an enterprise value of EUR 310 million for a 72 percent stake.",
+      "note": "The source states the enterprise value is EUR 310 million and the 72% is the controlling stake being acquired for EUR 195 million. The statement combines both figures accurately without changing the claim.",
+      "changes": false,
+      "reason": "The note indicates the figures are combined accurately without altering the underlying claim.",
+      "raw": "{\"changes\":false,\"reason\":\"The note indicates the figures are combined accurately without altering the underlying claim.\"}"
+    },
+    {
+      "key": "17:8",
+      "statement": "Demand growth - driven by continued e-commerce penetration and same-day/next-day delivery expectations - is running well ahead of supply, which is constrained by urban planning priorities and political resistance to logistics development in city centres.",
+      "note": "The source states demand is growing significantly faster than supply, driven by e-commerce penetration and same-day/next-day delivery expectations, and that supply is constrained by urban planning priorities and local political resistance to logistics traffic. The statement restates these same points in different words.",
+      "changes": false,
+      "reason": "The note describes a pure rewording that preserves the same demand drivers and supply constraints, so a reader's action would be unchanged.",
+      "raw": "{\"changes\":false,\"reason\":\"The note describes a pure rewording that preserves the same demand drivers and supply constraints, so a reader's action would be unchanged.\"}"
+    },
+    {
+      "key": "18:9",
+      "statement": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+      "note": "The source describes NSH as market-leading with high switching costs, operating in a structurally underpenetrated market, and praises the founder/technical team as exceptional and stable. The statement restates these same judgements in more general terms (\"defensible competitive position\", \"growing category\", \"credible operational team\") without changing the claim.",
+      "changes": false,
+      "reason": "Generalizing specific superlatives into broader equivalent judgments does not alter the substantive claim a reader would act on.",
+      "raw": "{\"changes\":false,\"reason\":\"Generalizing specific superlatives into broader equivalent judgments does not alter the substantive claim a reader would act on.\"}"
+    },
+    {
+      "key": "19:0",
+      "statement": "Meridian European Industrials Fund IV continues to perform strongly.",
+      "note": "The source describes 2025 as \"an exceptional year\" with net IRR of 19.7%, net MOIC of 2.13x, and strong portfolio performance. The statement's characterization of the Fund as continuing to perform strongly restates that same judgement in other words.",
+      "changes": false,
+      "reason": "Restating the source's judgement of strong performance in other words conveys the same claim and would not change what a reader does.",
+      "raw": "{\"changes\":false,\"reason\":\"Restating the source's judgement of strong performance in other words conveys the same claim and would not change what a reader does.\"}"
+    },
+    {
+      "key": "19:4",
+      "statement": "Helvetia Precision Components, acquired in June 2025, is six months into the hold and tracking modestly ahead of underwriting; the recently-acquired Lumen Specialty Chemicals is on track with its 100-day plan; Brightway Industrial Coatings has had a strong 2025 with revenue and EBITDA growing 14 percent and 21 percent respectively; Eltex Power Systems has performed exceptionally, with revenue growing 23 percent and EBITDA growing 31 percent year-on-year supported by an order backlog that has grown from EUR 285 million at acquisition to EUR 480 million today.",
+      "note": "The source says Eltex's backlog stands at EUR 480 million, up from EUR 285 million at acquisition; the statement calls this \"today\" rather than \"as reported.\" The source also describes Eltex as \"performed strongly,\" while the statement says \"performed exceptionally,\" which restates the same judgement. All figures and dates match the source.",
+      "changes": false,
+      "reason": "Swapping \"today\" for \"as reported\" and \"strongly\" for \"exceptionally\" conveys the same figures and judgement, so a reader's action would not change.",
+      "raw": "{\"changes\":false,\"reason\":\"Swapping \\\"today\\\" for \\\"as reported\\\" and \\\"strongly\\\" for \\\"exceptionally\\\" conveys the same figures and judgement, so a reader's action would not change.\"}"
+    }
+  ],
+  "spend": {
+    "calls": 196,
+    "inputTokens": 217274,
+    "outputTokens": 18858,
+    "cachedInputTokens": 0,
+    "costUsd": 1.55782,
+    "listUsd": 1.55782,
+    "unpricedCalls": 0
+  }
+}
