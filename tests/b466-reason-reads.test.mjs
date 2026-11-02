@@ -11,6 +11,7 @@ import { cardEvidenceFindings } from "../lib/qc/evidence-findings.mjs";
 import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
 import { partialReason, reasonFault, sentenceCount } from "../lib/qc/partial-reason.mjs";
 import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
+import { assertsAgreement } from "../lib/qc/source-account.mjs";
 import { endorsementHit } from "../lib/qc/endorsement-phrases.mjs";
 import { maskVerbatimQuotes, sourceCorpus } from "../lib/qc/quoted-span.mjs";
 
@@ -33,7 +34,7 @@ function clean(text) {
 test("08:10 is two sentences and the difference no longer starts with but", () => {
   const card = cardOf("08:10");
   const reason = partialReason(card);
-  assert.match(reason, /five years\. Does not specifically attribute this growth/);
+  assert.match(reason, /five years\. The source does not specifically attribute this growth/);
   assert.equal(reason.includes(". but"), false);
   assert.equal(sentenceCount(reason) <= 3, true);
   assert.equal(reasonFault(reason), "");
@@ -58,11 +59,17 @@ test("14:3 and 18:9 keep the unrecorded line once", () => {
 
 test("on the stored pass only a missing reason changes, and every reason reads", () => {
   const changed = [];
+  const withheld = [];
   let unrecorded = 0;
   for (const card of pass.cards) {
     const stored = clean(card.displayedEvidenceProse);
     const reason = clean(readerEvidenceSentence(card) || "");
-    if (stored && stored !== PARTIAL_UNRECORDED) assert.equal(reason, stored);
+    const key = `${String(card.fixtureId).padStart(2, "0")}:${card.index}`;
+    if (stored && stored !== PARTIAL_UNRECORDED && assertsAgreement(stored)) {
+      assert.equal(assertsAgreement(reason), false, key);
+      assert.notEqual(reason, "");
+      withheld.push(key);
+    } else if (stored && stored !== PARTIAL_UNRECORDED) assert.equal(reason, stored);
     else if (reason !== stored) {
       changed.push(`${String(card.fixtureId).padStart(2, "0")}:${card.index}`);
     }
@@ -89,5 +96,7 @@ test("on the stored pass only a missing reason changes, and every reason reads",
     return af - bf || ai - bi;
   });
   assert.deepEqual(changed, ["04:12", "04:13", "08:10", "08:12", "14:4", "15:9", "15:30", "18:6"]);
+  withheld.sort();
+  assert.deepEqual(withheld, ["08:3", "14:2"]);
   assert.equal(unrecorded <= 2, true);
 });
