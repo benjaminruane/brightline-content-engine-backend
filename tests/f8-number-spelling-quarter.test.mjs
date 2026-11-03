@@ -38,15 +38,14 @@ describe("F8 number_spelling quarter-notation filter", () => {
     assert.equal(out.length, 0);
   });
 
-  test("keeps a genuine number_spelling violation", () => {
+  test("the model number_spelling concern is dropped; the scan is the detector", () => {
     const statement = "The Fund made 7 new investments across the portfolio.";
     const out = applyDeterministicStyleFilters(
       [spellingConcern(statement, "7 new investments")],
       statement,
       statement
     );
-    assert.equal(out.length, 1);
-    assert.equal(out[0].concernCode, "number_spelling");
+    assert.equal(out.length, 0);
   });
 
   test("does not drop other concern types citing a quarter", () => {

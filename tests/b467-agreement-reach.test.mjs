@@ -36,13 +36,13 @@ describe("B467 agreement reach", () => {
     assert.equal(assertsAgreement('The passage quotes "supported by the board" and the statement adds a date.'), false);
   });
 
-  test("08:3 and 14:2 no longer assert agreement", () => {
+  test("08:3 and 14:2 keep the difference and drop the agreement", () => {
     const one = readerEvidenceSentence(card("08", 3));
     const two = readerEvidenceSentence(card("14", 2));
     assert.equal(assertsAgreement(one), false);
     assert.equal(assertsAgreement(two), false);
-    assert.match(one, /enviable competitive position/);
-    assert.match(two, /regulatory pathway under EU MDR/);
+    assert.match(one, /'exceptional' is a broader evaluative claim/);
+    assert.match(two, /'matured' implies a broader conclusion/);
     assert.doesNotMatch(one, /\bsupports\b/i);
     assert.doesNotMatch(two, /\bsupports\b/i);
   });

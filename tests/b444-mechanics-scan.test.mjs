@@ -110,8 +110,13 @@ describe("B444 mechanics scan", () => {
     assert.equal(commentary.includes("\n- percentage_notation:"), false);
     assert.equal(commentary.includes("\n- em_dash:"), false);
     assert.equal(commentary.includes("\n- first_person_plural:"), false);
+    assert.equal(commentary.includes("\n- oxford_comma:"), false);
+    assert.equal(commentary.includes("\n- number_spelling:"), false);
     assert.equal(commentary.includes("FIRST-PERSON REMOVAL"), false);
-    assert.match(commentary, /oxford_comma:/);
+    assert.match(commentary, /thousand_separator:/);
+    assert.match(commentary, /currency_format:/);
+    assert.match(commentary, /english_variant:/);
+    assert.match(commentary, /date_format:/);
     assert.match(commentary, /Flag an unintended switch in voice/);
     const release = buildEditorialStyleSystemPrompt({
       outputTypeLabel: getOutputTypeLabel(OUTPUT_TYPE.PRESS_RELEASE),

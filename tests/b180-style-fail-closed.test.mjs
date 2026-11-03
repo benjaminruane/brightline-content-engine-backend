@@ -80,14 +80,14 @@ describe("B180 span-free statement-scoped filters", () => {
   });
 
   test("T7 a rule not in STYLE_RULE_STATEMENT_SCOPED, with no span: KEPT", () => {
-    const statement = "The advisers included legal, tax, and operations specialists.";
+    const statement = "The date was written 12/03/2024.";
     const out = applyDeterministicStyleFilters(
-      [spanless("oxford_comma", statement)],
+      [spanless("date_format", statement)],
       statement,
       statement
     );
     assert.equal(out.length, 1);
-    assert.equal(out[0].concernCode, "oxford_comma");
+    assert.equal(out[0].concernCode, "date_format");
   });
 });
 

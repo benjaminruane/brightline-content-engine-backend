@@ -53,14 +53,12 @@ describe("B467 source awareness scope", () => {
     assert.equal(after.concerns.length, 0);
   });
 
-  test("the three stored drops are shown again", () => {
-    const keys = ["16:0", "15:24", "09:12"];
-    for (const key of keys) {
-      const [fixture, index] = key.split(":");
-      const restored = restoredSourceAwarenessConcerns(card(fixture, Number(index)));
-      assert.equal(restored.length, 1, key);
-      assert.equal(card(fixture, Number(index)).editorialVerdict, "clean");
-    }
+  test("relevance is shown again, and the two form drops stay dropped", () => {
+    const relevance = restoredSourceAwarenessConcerns(card("09", 12));
+    assert.equal(relevance.length, 1);
+    assert.equal(card("09", 12).editorialVerdict, "clean");
+    assert.equal(restoredSourceAwarenessConcerns(card("16", 0)).length, 0);
+    assert.equal(restoredSourceAwarenessConcerns(card("15", 24)).length, 0);
     const hyperbole = card("04", 6);
     assert.equal(restoredSourceAwarenessConcerns(hyperbole).length, 0);
   });

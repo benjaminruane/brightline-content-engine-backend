@@ -83,7 +83,7 @@ describe("F14 number_spelling spelled-out 0–12", () => {
     assert.equal(out.length, 0);
   });
 
-  test("keeps a genuine number_spelling violation on numeral 7", () => {
+  test("the model number_spelling concern is dropped; the scan is the detector", () => {
     const statement = "The Fund made 7 investments in the first year.";
     const out = applyDeterministicStyleFilters(
       [
@@ -94,7 +94,6 @@ describe("F14 number_spelling spelled-out 0–12", () => {
       statement,
       statement
     );
-    assert.equal(out.length, 1);
-    assert.equal(out[0].concernCode, "number_spelling");
+    assert.equal(out.length, 0);
   });
 });
