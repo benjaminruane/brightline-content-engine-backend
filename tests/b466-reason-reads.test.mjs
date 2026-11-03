@@ -60,6 +60,8 @@ test("14:3 and 18:9 keep the unrecorded line once", () => {
 test("on the stored pass only a missing reason changes, and every reason reads", () => {
   const changed = [];
   const withheld = [];
+  const disagreement = [];
+  const DISAGREEMENT = new Set(["01:0", "18:8", "19:7"]);
   let unrecorded = 0;
   for (const card of pass.cards) {
     const stored = clean(card.displayedEvidenceProse);
@@ -69,7 +71,10 @@ test("on the stored pass only a missing reason changes, and every reason reads",
       assert.equal(assertsAgreement(reason), false, key);
       assert.notEqual(reason, "");
       withheld.push(key);
-    } else if (stored && stored !== PARTIAL_UNRECORDED) assert.equal(reason, stored);
+    } else if (stored && stored !== PARTIAL_UNRECORDED && DISAGREEMENT.has(key)) {
+      assert.notEqual(reason, stored, key);
+      disagreement.push(key);
+    } else if (stored && stored !== PARTIAL_UNRECORDED) assert.equal(reason, stored, key);
     else if (reason !== stored) {
       changed.push(`${String(card.fixtureId).padStart(2, "0")}:${card.index}`);
     }
@@ -98,5 +103,7 @@ test("on the stored pass only a missing reason changes, and every reason reads",
   assert.deepEqual(changed, ["04:12", "04:13", "08:10", "08:12", "14:4", "15:9", "15:30", "18:6"]);
   withheld.sort();
   assert.deepEqual(withheld, ["08:3", "14:2"]);
+  disagreement.sort();
+  assert.deepEqual(disagreement, ["01:0", "18:8", "19:7"]);
   assert.equal(unrecorded <= 2, true);
 });

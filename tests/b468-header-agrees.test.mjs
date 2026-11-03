@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
+import { shownLabel, shownState } from "../lib/qc/shown-verdict.mjs";
 import { attentionHeader } from "../../brightline-content-engine-frontend/src/modules/reading/attentionHeader.js";
 
 const pass = JSON.parse(readFileSync(
@@ -30,8 +31,8 @@ function groups() {
 
 function headerOf(rows) {
   return attentionHeader(rows.map((card) => ({
-    sentenceState: card.sentenceState,
-    sentenceLabel: card.sentenceLabel,
+    sentenceState: shownState(card),
+    sentenceLabel: shownLabel(card),
     displayVerdict: card.displayVerdict,
     facts: card.readingFacts || [],
   })));
@@ -43,17 +44,19 @@ function countIn(line, pattern) {
 }
 
 describe("B468 header agrees", () => {
-  test("draft 19 does not announce a conflict the cards do not show", () => {
+  test("draft 19 counts the label the reader sees", () => {
     const rows = groups().get("19");
     assert.equal(rows.length, 14);
-    const line = headerOf(rows);
-    assert.equal(line.includes("conflict"), false);
-    assert.match(line, /2 facts are not in the source, across 2 of your 14 statements/);
-    assert.match(line, /1 worth a glance/);
-    const labels = rows.map((card) => card.sentenceLabel);
-    assert.equal(labels.filter((label) => label === "Conflicts with the source").length, 0);
-    assert.equal(labels.filter((label) => label === "Not in the source").length, 2);
-    assert.equal(labels.filter((label) => label === "Goes beyond the source").length, 1);
+    assert.equal(
+      headerOf(rows),
+      "1 statement conflicts with the source. 1 fact is not in the source, across 1 of your 14 statements. 1 worth a glance",
+    );
+    const stored = rows.map((card) => card.sentenceLabel);
+    assert.equal(stored.filter((label) => label === "Conflicts with the source").length, 0);
+    assert.equal(stored.filter((label) => label === "Not in the source").length, 2);
+    const shown = rows.map((card) => shownLabel(card));
+    assert.equal(shown.filter((label) => label === "Conflicts with the source").length, 1);
+    assert.equal(shown.filter((label) => label === "Goes beyond the source").length, 1);
   });
 
   test("draft 02 still leads with the look", () => {
@@ -66,11 +69,11 @@ describe("B468 header agrees", () => {
     let mismatches = 0;
     for (const [id, rows] of groups()) {
       const line = headerOf(rows);
-      const labels = rows.map((card) => card.sentenceLabel);
+      const labels = rows.map((card) => shownLabel(card));
       const conflicts = labels.filter((label) => label === "Conflicts with the source").length;
       const looks = labels.filter((label) => label === "Needs a look").length;
       const light = labels.filter((label) => label === "Goes beyond the source" || label === "Partly in the source").length;
-      const notInSource = rows.filter((card) => card.sentenceLabel === "Not in the source");
+      const notInSource = rows.filter((card) => shownLabel(card) === "Not in the source");
       let facts = 0;
       let across = 0;
       for (const card of notInSource) {

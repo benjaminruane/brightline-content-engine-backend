@@ -32,23 +32,30 @@ const PROBES = [
 ];
 
 describe("B468 clause kept", () => {
-  test("08:3 and 14:2 state the difference and drop the agreement", () => {
+  test("08:3 and 14:2 keep the source clause and the difference", () => {
     const one = readerEvidenceSentence(card("08", 3));
     const two = readerEvidenceSentence(card("14", 2));
-    assert.equal(one, "However, 'exceptional' is a broader evaluative claim that the source does not state.");
-    assert.equal(two, "However, 'matured' implies a broader conclusion about the regulatory environment that the source does not state.");
+    assert.match(one, /The source describes the company's competitive position as 'enviable'/);
+    assert.match(one, /'exceptional' is a broader evaluative claim that the source does not state/);
+    assert.match(two, /The source states that the regulatory pathway under EU MDR is now well-understood/);
+    assert.match(two, /'matured' implies a broader conclusion/);
+    assert.equal(one.startsWith("However"), false);
+    assert.equal(two.startsWith("However"), false);
     assert.equal(screenSentence(card("08", 3)), one);
     assert.equal(screenSentence(card("14", 2)), two);
     assert.equal(assertsAgreement(one), false);
     assert.equal(assertsAgreement(two), false);
   });
 
-  test("the cut keeps the second sentence of the stored prose", () => {
+  test("the cut keeps the source clause and the second sentence", () => {
     const prose = card("08", 3).displayedEvidenceProse;
     const parts = readerSentences(prose);
+    const shown = readerEvidenceSentence(card("08", 3));
     assert.equal(parts.length, 2);
     assert.match(parts[0], /\bsupports\b/);
-    assert.equal(parts[1], readerEvidenceSentence(card("08", 3)));
+    assert.match(shown, /enviable/);
+    assert.ok(shown.endsWith(parts[1]));
+    assert.equal(shown === parts[1], false);
   });
 
   test("the B462 probes are still an empty reason", () => {
