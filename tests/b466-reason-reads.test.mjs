@@ -100,7 +100,8 @@ test("on the stored pass only a missing reason changes, and every reason reads",
     const [bf, bi] = b.split(":").map(Number);
     return af - bf || ai - bi;
   });
-  assert.deepEqual(changed, ["04:12", "04:13", "08:10", "08:12", "14:4", "15:9", "15:30", "18:6"]);
+  // 11:9 and 15:12 had no stored reason. The check did not run, so the shown sentence is the one that says so.
+  assert.deepEqual(changed, ["04:12", "04:13", "08:10", "08:12", "11:9", "14:4", "15:9", "15:12", "15:30", "18:6"]);
   withheld.sort();
   assert.deepEqual(withheld, ["08:3", "14:2"]);
   disagreement.sort();

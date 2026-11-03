@@ -79,8 +79,8 @@ describe("B469 contradiction floor", () => {
   test("no absence headline quotes the source stating the draft", () => {
     const quoted = card("19", 7);
     assert.equal(shownLabel(quoted), "Not in the source");
-    assert.equal(readerEvidenceSentence(quoted), "14, not in the source.");
-    assert.equal(readerEvidenceSentence(card("01", 0)), "Canadian, not in the source.");
+    assert.equal(readerEvidenceSentence(quoted), "The source does not give the 14 percent figure.");
+    assert.equal(readerEvidenceSentence(card("01", 0)), "The source does not describe the company as Canadian.");
     assert.equal(pass.cards.filter((row) => backedAbsence(row)).length, 1);
     assert.equal(pass.cards.filter((row) => absenceOverQuotedFact(row, readerEvidenceSentence(row) || "")).length, 0);
   });
@@ -100,7 +100,8 @@ describe("B469 contradiction floor", () => {
       const reason = readerEvidenceSentence(row) || "";
       if (reason) assert.equal(reasonFault(reason), "", keyOf(row));
     }
-    assert.equal(heavier, 3);
+    // B470 adds 11:9 and 15:12, which leave Nothing raised because the check did not run.
+    assert.equal(heavier, 5);
     assert.equal(lighter, 0);
   });
 });
