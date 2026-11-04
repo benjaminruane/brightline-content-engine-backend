@@ -16,11 +16,11 @@ describe("readEnvironmentSummary", () => {
     assert.equal(summary.reviseActionList, false);
   });
 
-  test("unset QC_PIPELINE_V4 falls back to v3 and is not ok", () => {
+  test("there is one route, and the summary is not ok without the editorial switch", () => {
     const summary = readEnvironmentSummary({
       [AUTHORING_ORGANISATION_ENV]: "Brightline",
     });
-    assert.equal(summary.pipelineRoute, "v3");
+    assert.equal(summary.pipelineRoute, "v4");
     assert.equal(summary.authoringOrganisation, "Brightline");
     assert.equal(summary.ok, false);
   });

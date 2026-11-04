@@ -45,7 +45,7 @@ Ids come from `docs/BACKLOG.md`. Next free number in that prefix. Gaps are fine.
 
 Full contract: `docs/ARCHITECTURE.md`. Do not cite it for sprint status.
 
-- Production is v4 (`QC_PIPELINE_V4=1` or `options.pipelineRoute === "v4"`). Unset env still falls back to v3. v3 is still imported on every request.
+- There is one pipeline. The request handler calls `runPipelineV4`. There is no second route and no flag that chooses one.
 - Models are pinned snapshots in `lib/qc/model-config.mjs` (`gpt-4o-2024-08-06` for QC stages). Never write a floating alias into a spec.
 - Temperature 0 on QC LLM stages. `seed=1` on Stage 2. That does not pin `hasConflict` (**B61**).
 - One sentence, one card. Claim spans never add cards. They may upgrade a partial to confirmed. They may never downgrade, never flip `hasConflict`, never override a sentence-level conflict.

@@ -1,7 +1,6 @@
 /**
- * Verbatim mirror of Stage 2 prompt + JSON validation from production
- * `lib/qc/pipeline-v3/stage2-match-sources.mjs` (do not edit independently;
- * keep in sync when production Stage 2 prompt/validation changes).
+ * Frozen historical Stage 2 prompt, dated 2026-05-03.
+ * It is not the live matcher prompt. The live prompt is lib/qc/pipeline-v4/prompts/stage2_v4.md.
  *
  * Excludes: model name, Langfuse wiring, matchAllSources orchestration.
  */
@@ -13,7 +12,7 @@ export const ALLOWED_CLASSIFICATIONS = new Set([
   "no_support",
 ]);
 
-// Mirrors production Stage 2 (lib/qc/pipeline-v3/stage2-match-sources.mjs) — Stage 2 prompt v2; see tests/r1_2_mini_eval/results_v2.md.
+// Frozen historical Stage 2 prompt, dated 2026-05-03. See tests/r1_2_mini_eval/results_v2.md.
 export const STAGE2_SYSTEM_PROMPT = `
 Decision rule for mixed cases:
 If the statement contains multiple verifiable facts AND any one of those facts is directly contradicted by a specific statement in the source, the classification is \`conflicting\` — regardless of how many other facts in the statement are confirmed. Do not hedge a contradicted fact as \`partially_confirmed\`. \`partially_confirmed\` is reserved for statements where some facts are confirmed and others are absent from the source (not contradicted).

@@ -194,15 +194,7 @@ Evidence quality now flows: Stage 2 LLM rubric, Stage 3 aggregation, Stage 4 exc
 
 ## 8. Pipeline routing
 
-| Mechanism | Behaviour |
-|-----------|-----------|
-| `QC_PIPELINE_V4=1` | Selects v4 (`runPipelineV4` in `lib/qc/pipeline-v4/index.mjs`). |
-| Unset or other | Falls back to legacy v3 (`lib/qc/pipeline-v3/`). |
-| Request body | `options.pipelineRoute === "v4"` also selects v4. |
-
-Production is configured to run v4. v3 remains in the tree as the unset-env fallback and is still statically imported on every Review request. `qcCard.pipelineVersion` is stamped from the route `assembleCard` runs under.
-
-R4.2 (remove v3) is parked. Handler logs `[handler] route selected: v4|v3` and does not print the env var.
+There is one route. `api/analyse-statements.js` calls `runPipelineV4` in `lib/qc/pipeline-v4/index.mjs`. There is no flag and no second route. `qcCard.pipelineVersion` on that path is `v4`.
 
 ---
 

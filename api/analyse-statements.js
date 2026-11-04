@@ -5,7 +5,6 @@
 // even if the implementation module fails to import or initialize.
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
-import { runPipelineV3 } from "../lib/qc/pipeline-v3/qc-pipeline-v3.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
@@ -258,12 +257,7 @@ export default async function handler(req, res) {
       metadata: draftMetadata,
     });
 
-    const useV4 =
-      process.env.QC_PIPELINE_V4 === "1" || (body?.options && body.options.pipelineRoute === "v4");
-    console.log(`[handler] route selected: ${useV4 ? "v4" : "v3"}`);
-    if (useV4) {
-      updateTraceMetadata(traceId, { pipelineRoute: "v4" });
-    }
+    updateTraceMetadata(traceId, { pipelineRoute: "v4" });
 
     const requestStartedAt = Date.now();
     beginRequestBudget({
@@ -272,36 +266,34 @@ export default async function handler(req, res) {
       model: STAGE_MODELS["editorial-review"]?.model,
     });
 
-    if (useV4) {
-      const gate = preflightReview({
-        draftText,
-        sources: v3Sources,
-        editorialSystemTokens: 9088,
-        complianceSystemTokens: 3000,
-        stage2SystemTokens: 4000,
-        stage5SystemTokens: 1600,
-      });
-      if (gate.refuse) {
-        logPreflightRefusal(gate);
-        return res.status(200).json(
-          buildIncompleteReviewResponse({
-            cause: INCOMPLETE_CAUSES.TOO_LARGE,
-            expectedSentences: gate.estimate.statementCount,
-            reachedSentences: 0,
-            pipelineVersion: "v4",
-            extraMeta: {
-              preflight: {
-                wordCount: gate.estimate.wordCount,
-                statementCount: gate.estimate.statementCount,
-                totalTokens: gate.estimate.totalTokens,
-                tpmFloorMs: gate.estimate.tpmFloorMs,
-                idleWallMs: gate.estimate.idleWallMs,
-                capMs: gate.capMs,
-              },
+    const gate = preflightReview({
+      draftText,
+      sources: v3Sources,
+      editorialSystemTokens: 9088,
+      complianceSystemTokens: 3000,
+      stage2SystemTokens: 4000,
+      stage5SystemTokens: 1600,
+    });
+    if (gate.refuse) {
+      logPreflightRefusal(gate);
+      return res.status(200).json(
+        buildIncompleteReviewResponse({
+          cause: INCOMPLETE_CAUSES.TOO_LARGE,
+          expectedSentences: gate.estimate.statementCount,
+          reachedSentences: 0,
+          pipelineVersion: "v4",
+          extraMeta: {
+            preflight: {
+              wordCount: gate.estimate.wordCount,
+              statementCount: gate.estimate.statementCount,
+              totalTokens: gate.estimate.totalTokens,
+              tpmFloorMs: gate.estimate.tpmFloorMs,
+              idleWallMs: gate.estimate.idleWallMs,
+              capMs: gate.capMs,
             },
-          })
-        );
-      }
+          },
+        })
+      );
     }
 
     if (outputType) {
@@ -314,9 +306,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const pipelineResult = useV4
-      ? await runPipelineV4(draftText, v3Sources, pipelineOptions)
-      : await runPipelineV3(draftText, v3Sources, pipelineOptions);
+    const pipelineResult = await runPipelineV4(draftText, v3Sources, pipelineOptions);
     const nothingReviewed = pipelineResult?.nothingReviewed === true;
     const outcome = reviewOutcomeFromPipeline(pipelineResult);
     if (!nothingReviewed && !outcome.complete) {
@@ -325,7 +315,7 @@ export default async function handler(req, res) {
           cause: INCOMPLETE_CAUSES.ERROR,
           expectedSentences: outcome.expectedSentences,
           reachedSentences: outcome.reachedSentences,
-          pipelineVersion: useV4 ? "v4" : "v3",
+          pipelineVersion: "v4",
         })
       );
     }
@@ -407,7 +397,7 @@ export default async function handler(req, res) {
       ...(Array.isArray(pipelineResult?.draftMarks) ? { draftMarks: pipelineResult.draftMarks } : {}),
       excludedSources,
       meta: {
-        pipelineVersion: useV4 ? "v4" : "v3",
+        pipelineVersion: "v4",
         stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
         reviewOptions: effectiveReviewOptions,

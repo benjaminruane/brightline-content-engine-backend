@@ -1,6 +1,6 @@
 # R1.2 — Stage 2 `gpt-4o-mini` eval (run-once harness)
 
-This folder is **not** wired into `npm test`. It compares **gpt-4o-mini** to locked ground truth using the **same Stage 2 system prompt and validation** as production (`stage2_eval_mirror.mjs` mirrors `lib/qc/pipeline-v3/stage2-match-sources.mjs`).
+This folder is **not** wired into `npm test`. It compares **gpt-4o-mini** to locked ground truth. `stage2_eval_mirror.mjs` holds a frozen historical prompt dated 2026-05-03. It is not the live matcher prompt.
 
 ## Locked ground truth (47 pairs)
 
@@ -68,7 +68,7 @@ The locked CSV (`locked_ground_truth_v1.csv`) has **quoted statements that conta
 
 | File | Purpose |
 |------|---------|
-| `stage2_eval_mirror.mjs` | Verbatim Stage 2 prompt + `normalizeValidResponse` (keep in sync with production). |
+| `stage2_eval_mirror.mjs` | Frozen historical Stage 2 prompt, dated 2026-05-03, plus `normalizeValidResponse`. Not the live matcher prompt. |
 | `build_inputs.mjs` | XLSX / CSV → `inputs.json`. |
 | `run_eval.mjs` | Calls mini, aggregates metrics, writes `results.md`. |
 | `run_r1_2_2.mjs` | R1.2.2: v2 API runs + `results_v2.md` (see section above). |

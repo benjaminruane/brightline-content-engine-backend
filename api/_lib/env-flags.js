@@ -47,9 +47,6 @@ function unrecognisedLoose(raw) {
 
 export function listUnrecognisedFlags(env = process.env) {
   const names = [];
-  const pipelineRaw = rawPresent(env, "QC_PIPELINE_V4");
-  if (pipelineRaw !== "" && pipelineRaw !== "1") names.push("QC_PIPELINE_V4");
-
   const editorialRaw = rawPresent(env, "BRIGHTLINE_EDITORIAL_REVIEW");
   if (editorialRaw !== "" && editorialRaw.trim() !== "1") names.push("BRIGHTLINE_EDITORIAL_REVIEW");
 
@@ -85,7 +82,7 @@ export function listUnrecognisedFlags(env = process.env) {
 }
 
 export function readEnvironmentSummary(env = process.env) {
-  const pipelineRoute = env.QC_PIPELINE_V4 === "1" ? "v4" : "v3";
+  const pipelineRoute = "v4";
   const authoringOrganisation = (env[AUTHORING_ORGANISATION_ENV] || "").trim() || null;
   const editorialReview = isEditorialReviewEnabled(env);
   return {
