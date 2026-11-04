@@ -101,7 +101,8 @@ describe("B469 contradiction floor", () => {
       if (reason) assert.equal(reasonFault(reason), "", keyOf(row));
     }
     // B470 adds 11:9 and 15:12, which leave Nothing raised because the check did not run.
-    assert.equal(heavier, 5);
+    // B473 adds 04:1, which leaves Nothing raised because committed is later than seeking approval.
+    assert.equal(heavier, 6);
     assert.equal(lighter, 0);
   });
 });
