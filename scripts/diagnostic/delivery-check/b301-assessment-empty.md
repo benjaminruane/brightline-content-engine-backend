@@ -109,7 +109,7 @@ Ben would not see the B285 sentence on a real evidence-only Meridian Review. He 
 
 The field is `qcCard.evidenceSummary`, mirrored onto `qcCard.reasoningParagraph`. The frontend builder concatenates those into `evidenceFinding` (`reviewerSynthesisPayload.js` L11-16). Blank means both were empty.
 
-They are filled in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` L757-845:
+They are filled in `lib/qc/assemble-card.mjs` L757-845:
 
 ```
 const rawCommentary = typeof entry?.commentaryResult?.commentary === "string" ? ... : "";
@@ -212,7 +212,7 @@ Frontend never infers the state from an empty string. `assessmentCopyForReason(r
 
 ## Part 4. B302. Absent options cannot write clean
 
-`reviewEnabled` in `stage7-assemble-card.mjs`: if `assemblyContext.reviewOptions` is missing, it logs `[ASSEMBLE_CARD] reviewOptions missing; ${key} treated as not requested` and returns false. `resolveAssembledVerdict` then writes `not_reviewed`. `safeEditorialDefaults` is `not_reviewed` on both editorial and compliance, never `clean`.
+`reviewEnabled` in `assemble-card.mjs`: if `assemblyContext.reviewOptions` is missing, it logs `[ASSEMBLE_CARD] reviewOptions missing; ${key} treated as not requested` and returns false. `resolveAssembledVerdict` then writes `not_reviewed`. `safeEditorialDefaults` is `not_reviewed` on both editorial and compliance, never `clean`.
 
 v3 `runPipelineV3` now passes `reviewOptions: asReviewOptions(options)` so the production v3 path always has an object. Direct `assembleCard` callers without the object hit the loud missing path.
 

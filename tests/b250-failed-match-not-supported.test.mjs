@@ -6,7 +6,7 @@ import { afterEach, describe, test, vi } from "vitest";
 import * as observability from "../lib/observability.js";
 import { matchAllSources } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { aggregateVerdict } from "../lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 
 const STATEMENT = "Northaven Logistics sold its Scandinavian depot network for EUR 90 million.";
 const SOURCE = {

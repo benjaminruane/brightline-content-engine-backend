@@ -11,7 +11,7 @@ import {
   NOT_REVIEWED_REASONS,
 } from "../lib/qc/not-reviewed-reason.mjs";
 import { runEditorialComplianceReview } from "../lib/qc/editorial-compliance-reviewer.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 
 const STATEMENT = "The company generated EUR 92 million of revenue in FY2024.";
 

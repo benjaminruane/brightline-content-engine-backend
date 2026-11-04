@@ -55,7 +55,7 @@ Forbidden in the finding slot (old canned strings, never to appear):
 
 Honest strings:
 
-- Card `evidenceSummary` / `reasoningParagraph` on a miss: empty. Flag `commentaryNotReviewed: true`. CONFIRMED `stage7-assemble-card.mjs` L745-749, L796.
+- Card `evidenceSummary` / `reasoningParagraph` on a miss: empty. Flag `commentaryNotReviewed: true`. CONFIRMED `assemble-card.mjs` L745-749, L796.
 - Export on a miss: `Not checked.` CONFIRMED `export-review-data.mjs` L9, L17.
 - Editorial miss (already shipped, not invented here): `The editorial check could not be completed for this statement. Please review it manually.`
 - Counts: `classifyEvidence` returns `notChecked` when `commentaryNotReviewed` is true. CONFIRMED `review-summary.mjs` L27. Frontend copy `src/utils/summariseReview.js` L17 so B246 cannot drift.

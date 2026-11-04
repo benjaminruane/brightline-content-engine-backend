@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { afterEach, describe, test, vi } from "vitest";
 import * as observability from "../lib/observability.js";
 import { generateCommentary } from "../lib/qc/pipeline-v4/stage5-generate-commentary.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 import { evidenceFindingForExport, renderCanonicalExportText } from "../lib/qc/export-review-data.mjs";
 

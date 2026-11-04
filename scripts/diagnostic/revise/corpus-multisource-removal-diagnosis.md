@@ -151,7 +151,7 @@ Mapped from the aggregated supportState, not per-source:
   supported -> none
   partial   -> moderate
   conflicting / else -> high
-CONFIRMED: lib/qc/pipeline-v3/stage7-assemble-card.mjs
+CONFIRMED: lib/qc/assemble-card.mjs
   mapSupportStateToConcernLevel L420-L424; applied L575.
 So concernLevel follows the winning aggregate, not a losing silent source.
 ```
@@ -160,7 +160,7 @@ So concernLevel follows the winning aggregate, not a losing silent source.
 
 ```
 Card citation badges: qcCard.supportRefIds / supportRefTitles from
-  confirmingMatches only. CONFIRMED: stage7-assemble-card.mjs L579-L587;
+  confirmingMatches only. CONFIRMED: assemble-card.mjs L579-L587;
   frontend StatementReviewCard.jsx ~L488 ("must come from supportRefIds").
 supportSpans: widened multipassage pass; goes ONLY into supportSpans; must
   NEVER feed aggregateVerdict. CONFIRMED: pipeline-v4/index.mjs L302-L303,

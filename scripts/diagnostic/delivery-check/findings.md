@@ -16,7 +16,7 @@ Card ids below are `F<fixtureId>:S<index>` (occurrence 0 on every lift-1 row).
 
 **Verdict: the live qcCard is ~60 fields; the UI paints a badge, commentary, concerns, and a magnifier, and leaves most of the evidence payload unused, including the dedicated conflict excerpt.**
 
-Source of the payload: `assembleCard` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`, returned unchanged as `statements[].qcCard` from `api/analyse-statements.js`. Wrapper fields `id`, `text`, `draftSpan` sit beside the card. Types are what assembly actually emits, which is not always what `lib/qc/qc-api-schema.mjs` declares.
+Source of the payload: `assembleCard` in `lib/qc/assemble-card.mjs`, returned unchanged as `statements[].qcCard` from `api/analyse-statements.js`. Wrapper fields `id`, `text`, `draftSpan` sit beside the card. Types are what assembly actually emits, which is not always what `lib/qc/qc-api-schema.mjs` declares.
 
 Render tags:
 

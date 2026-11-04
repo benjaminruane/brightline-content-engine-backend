@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, test, vi } from "vitest";
 import * as observability from "../lib/observability.js";
 import { runEditorialComplianceReview } from "../lib/qc/editorial-compliance-reviewer.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 
 const STATEMENT = "The company generated EUR 92 million of revenue in FY2024.";

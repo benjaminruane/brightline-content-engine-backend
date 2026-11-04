@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import { claimAnchors } from "../../../lib/qc/excerpt-sentences.mjs";
 import { extractVerifiableAnchors } from "../../../lib/qc/claim-spans.mjs";
-import { assembleCard } from "../../../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../../../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../../../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 import { namedClaimTermsInPassages } from "../../../lib/qc/commentary-inventory.mjs";
 

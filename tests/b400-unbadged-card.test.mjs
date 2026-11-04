@@ -18,7 +18,7 @@ import {
   factualBadgeForStatement,
   isUnbadgedResidueEnabled,
   statementIsFactualResidue,
-} from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+} from "../lib/qc/assemble-card.mjs";
 
 const ON = { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true };
 

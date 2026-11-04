@@ -10,7 +10,7 @@
 
 The four chrome excerpts are a fallback, not a chosen chrome block.
 
-The stored cards have `excerptMatchType` `none`, `selectedExcerptReason` null, and empty `supportSpans`. Stage 4's window is 300 characters, so it is not the source of a 13,667-character passage. Assembly calls the fallback when a supported or partial card has no pointer and no span. From `lib/qc/pipeline-v3/stage7-assemble-card.mjs`:
+The stored cards have `excerptMatchType` `none`, `selectedExcerptReason` null, and empty `supportSpans`. Stage 4's window is 300 characters, so it is not the source of a 13,667-character passage. Assembly calls the fallback when a supported or partial card has no pointer and no span. From `lib/qc/assemble-card.mjs`:
 
 ```javascript
 if (!gatedPrimary?.passage && (supportState === "supported" || supportState === "partial")) {

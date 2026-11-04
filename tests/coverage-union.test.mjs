@@ -10,7 +10,7 @@ import {
   unionCoversWindow,
   unionIntervals,
 } from "../lib/qc/coverage-union.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { validateQcResponse } from "../lib/qc/qc-api-schema.mjs";
 
 afterEach(() => {

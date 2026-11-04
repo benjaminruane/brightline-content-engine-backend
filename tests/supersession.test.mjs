@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { collectBackstopFigures } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import {
   extractClaimPeriod,

@@ -3,7 +3,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 
 const STATEMENT = "Oakfield Partners closed Fund III at EUR 400 million in March 2025.";
 

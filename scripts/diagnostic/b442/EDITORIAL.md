@@ -185,7 +185,7 @@ The acquirer sentence contains "a leading manufacturer" and drew nothing. The "l
 
 ## Drops
 
-B438 records a filter drop as a silence with an id, a reason, and a count. It does not record the rule id. CONFIRMED `lib/qc/editorial-compliance-reviewer.mjs` lines 2077 to 2081, and `lib/qc/pipeline-v3/stage7-assemble-card.mjs` lines 1501 to 1506. The source-awareness function does know the code, and it logs it. That code is not copied onto the card. CONFIRMED `lib/qc/editorial-source-awareness.mjs` lines 107 to 116. `scripts/diagnostic/b441/progress.log` does not contain those lines.
+B438 records a filter drop as a silence with an id, a reason, and a count. It does not record the rule id. CONFIRMED `lib/qc/editorial-compliance-reviewer.mjs` lines 2077 to 2081, and `lib/qc/assemble-card.mjs` lines 1501 to 1506. The source-awareness function does know the code, and it logs it. That code is not copied onto the card. CONFIRMED `lib/qc/editorial-source-awareness.mjs` lines 107 to 116. `scripts/diagnostic/b441/progress.log` does not contain those lines.
 
 On this file the only editorial drop record is `source_awareness`. 26 concerns, 25 statements. Five of those statements are in the clean set, one drop each. 22 of the 25 statements have no editorial concern left. Three kept a different concern: fixture 06 index 1 and index 9 kept `percentage_notation`, and fixture 15 index 18 kept `sentence_length`. The dropped id on those three is not on the card.
 
@@ -193,7 +193,7 @@ The other recorded editorial filters wrote no silence. They write one only when 
 
 68 concerns reached a card and 26 were removed by source awareness before that. The 26 cannot be split by rule. No rule can be called mostly dropped from this file.
 
-The duplication judge, which can remove an editorial concern when the evidence verdict is conflicting, does not write a silence. CONFIRMED `lib/qc/pipeline-v3/stage7-assemble-card.mjs` lines 937 to 1000. Those drops, if any, are not in this file.
+The duplication judge, which can remove an editorial concern when the evidence verdict is conflicting, does not write a silence. CONFIRMED `lib/qc/assemble-card.mjs` lines 937 to 1000. Those drops, if any, are not in this file.
 
 ## Left as found
 

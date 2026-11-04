@@ -132,7 +132,7 @@ The open-wording statement is GP Industries S2, which has no other type. Two fur
 
 ## Part 3
 
-Q1. Claude is wrong about the contract. The field is `displayVerdict`. `assembleCard` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` sets it from `mapSupportStateToDisplayVerdict` (the map is at line 444, the assignment at line 681). The map returns `supported_full`, `supported_partial`, `conflict`, `not reviewed`, or `not_supported`. There is no value for a sentence with no factual badge. The frontend `evidenceDisplayVerdictLabel` maps a blank and the string "not reviewed" to "Not reviewed". `verdictToTone` maps a blank to amber, and "not reviewed" falls through to amber.
+Q1. Claude is wrong about the contract. The field is `displayVerdict`. `assembleCard` in `lib/qc/assemble-card.mjs` sets it from `mapSupportStateToDisplayVerdict` (the map is at line 444, the assignment at line 681). The map returns `supported_full`, `supported_partial`, `conflict`, `not reviewed`, or `not_supported`. There is no value for a sentence with no factual badge. The frontend `evidenceDisplayVerdictLabel` maps a blank and the string "not reviewed" to "Not reviewed". `verdictToTone` maps a blank to amber, and "not reviewed" falls through to amber.
 
 Q2. Read aloud, the card says "Not reviewed", in amber. That is the state the owner rejected at the end of B396. The agreed design, an outline mark and the model's note with no factual badge, is not a card the contract can show.
 

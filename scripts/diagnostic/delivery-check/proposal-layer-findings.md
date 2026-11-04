@@ -69,7 +69,7 @@ Lift-1 F18 index 5: `The Company employs 142 people across Stockholm, Oslo, and 
 
 **Verdict: NOT CONFIRMED on the named file (0 cards). CONFIRMED in assembly code. Lift-1 compacted cards are the wrong shape for this check.**
 
-`assembleCard` (`stage7-assemble-card.mjs` after `4a89a16`): `primaryExcerpt: hasRealExcerpt ? primaryPassage : null` (string or null). `conflictExcerpt` is still `entry.excerptResult.conflictExcerpt` (Stage 4 `{ sourceLabel, passage }` or null). Export still reads `primaryExcerptText`.
+`assembleCard` (`assemble-card.mjs` after `4a89a16`): `primaryExcerpt: hasRealExcerpt ? primaryPassage : null` (string or null). `conflictExcerpt` is still `entry.excerptResult.conflictExcerpt` (Stage 4 `{ sourceLabel, passage }` or null). Export still reads `primaryExcerptText`.
 
 Lift-1 cards store `primaryExcerpt` as a passage **string** (including `""`) and `conflictExcerpt` as `""`, not as an object. That is the accuracy compact, not the live wire.
 
@@ -137,7 +137,7 @@ Same family as B95/B124/B86 (presence check vs configured name). Different from 
 
 **Suppression.**
 
-- Duplication judge (`judgeEditorialDuplication`): runs only on v4 assembly when `verdict === "conflicting"` and there is at least one editorial concern (`stage7-assemble-card.mjs`). Prompt: suppress only when the editorial concern is the **same factual disagreement** as the evidence-conflict explanation. Voice, register, delete-the-sentence, first person: **INDEPENDENT**. “When in doubt, classify as INDEPENDENT.” First-person on S0 and a delete direction on a figure-conflict card are exactly the independent class. Empty `evidenceExplanation` (skipCommentary) still runs the judge but gives it nothing to match; fail-closed is `[]` (keep all). Missing API key: keep all.
+- Duplication judge (`judgeEditorialDuplication`): runs only on v4 assembly when `verdict === "conflicting"` and there is at least one editorial concern (`assemble-card.mjs`). Prompt: suppress only when the editorial concern is the **same factual disagreement** as the evidence-conflict explanation. Voice, register, delete-the-sentence, first person: **INDEPENDENT**. “When in doubt, classify as INDEPENDENT.” First-person on S0 and a delete direction on a figure-conflict card are exactly the independent class. Empty `evidenceExplanation` (skipCommentary) still runs the judge but gives it nothing to match; fail-closed is `[]` (keep all). Missing API key: keep all.
 - Apply: `plannedWrites` drops a statement if more than one accepted write (`list.length !== 1`). Frontend `collisionStatementIds`: bulk accept leaves colliding rows `unset`; choosing a second write unchooses the first (`withRowChoice`). That is collision handling, not “evidence wins” or “editorial wins.”
 
 **Count of incompatible pairs on the saved payload: NOT COUNTABLE (0 statements in the named file).**

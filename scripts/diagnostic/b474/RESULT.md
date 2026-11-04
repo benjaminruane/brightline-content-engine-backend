@@ -24,7 +24,7 @@ Stored pass: 261 cards. gitSha on the file: 273b678b.
 | Editorial prompt | Nothing of the source. The payload builder discards the excerpt and the evidence block. | lib/qc/editorial-compliance-reviewer.mjs:1405 |
 | Editorial style prompt | Nothing of the source. The style payload builder discards the excerpt and the evidence block. | lib/qc/editorial-compliance-reviewer.mjs:1454 |
 | Compliance prompt | A name and a publication state for each source that has one. Not the source text. | lib/source-publication-state.mjs:36 |
-| Editorial source awareness | Selected passages already on the card: primary excerpt, conflict excerpt, support spans, and match passages. Not the whole document. | lib/qc/pipeline-v3/stage7-assemble-card.mjs:1601 |
+| Editorial source awareness | Selected passages already on the card: primary excerpt, conflict excerpt, support spans, and match passages. Not the whole document. | lib/qc/assemble-card.mjs:1601 |
 | Reading note | The whole text of every source, joined with a newline. The joiner adds no document label. | lib/qc/reading-review.mjs:72 |
 | Route selector | v4 when QC_PIPELINE_V4 is exactly 1, or the request sets pipelineRoute to v4. Otherwise v3. | api/analyse-statements.js:262 |
 | Supersession notes, v4 | The notes resolveSupersession returned. An empty array when it returned none. | lib/qc/pipeline-v4/index.mjs:729 |
@@ -49,7 +49,7 @@ In process, these functions are handed the source array: excerpt selection, the 
 
 To notice that kind of revision it would have to be given the text of both sources, or the passage from each that states the transaction, and which source is later.
 
-The field that stores the result is `supersededSourceNotes`. v4 assigns whatever `resolveSupersession` returned, at `lib/qc/pipeline-v4/index.mjs`. The fallback card `safeCard` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` starts that field as an empty array. The assembled card copies `entry.supersededSourceNotes` when the entry has an array. `buildSkippedEvidenceQcCard` does not set the field.
+The field that stores the result is `supersededSourceNotes`. v4 assigns whatever `resolveSupersession` returned, at `lib/qc/pipeline-v4/index.mjs`. The fallback card `safeCard` in `lib/qc/assemble-card.mjs` starts that field as an empty array. The assembled card copies `entry.supersededSourceNotes` when the entry has an array. `buildSkippedEvidenceQcCard` does not set the field.
 
 Cards on this pass with a non-empty supersededSourceNotes array: 0 of 261. The writer exists. On this pass it recorded nothing.
 

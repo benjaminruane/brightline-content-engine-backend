@@ -107,7 +107,7 @@ Files:
 - `lib/qc/model-fingerprints.mjs` **(new)** — pure collection and formatting.
   `collectStage2Fingerprints` reads the distinct set from
   `card.stage2SourceFingerprints`, already assembled at
-  `lib/qc/pipeline-v3/stage7-assemble-card.mjs:721` and used by both v3 and v4.
+  `lib/qc/assemble-card.mjs:721` and used by both v3 and v4.
 - `api/analyse-statements.js` — builds the record from `qcCards` and adds
   `meta.modelConfig`. `ranAt` reuses the existing `runStartedAt`.
 

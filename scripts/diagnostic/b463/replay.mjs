@@ -333,7 +333,7 @@ lines.push("");
 lines.push("- `lib/qc/drop-record.mjs`. The one shape, and the helpers that copy a silence or a rewrite into it.");
 lines.push("- `lib/qc/reading-review.mjs`. Note rejections, a refused note, a stripped reassurance, a wording note, and date lines past the limit.");
 lines.push("- `lib/qc/editorial-compliance-reviewer.mjs`. Concern drops, a category move, and the compliance fidelity gate.");
-lines.push("- `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. The duplication judge, the merge, source awareness, forward looking, the gap sentence, the assemble failure, and the copy of classification rewrites.");
+lines.push("- `lib/qc/assemble-card.mjs`. The duplication judge, the merge, source awareness, forward looking, the gap sentence, the assemble failure, and the copy of classification rewrites.");
 lines.push("- `lib/qc/editorial-source-awareness.mjs`. The dropped concern keeps its text.");
 lines.push("- `lib/qc/reader-prose-guard.mjs`. A withheld sentence is stored and not rewritten.");
 lines.push("- `lib/qc/pipeline-v4/index.mjs`. Dropped marks on the card, coverage drops on the review, and a skipped commentary.");

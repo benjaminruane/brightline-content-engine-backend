@@ -58,7 +58,7 @@ async function main() {
   } = await import("../../lib/qc/pipeline-v4/stage2-match-multipassage.mjs");
   const { aggregateVerdict } = await import("../../lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs");
   const { selectExcerpts } = await import("../../lib/qc/pipeline-v4/stage4-select-excerpts.mjs");
-  const { assembleCard } = await import("../../lib/qc/pipeline-v3/stage7-assemble-card.mjs");
+  const { assembleCard } = await import("../../lib/qc/assemble-card.mjs");
 
   const stageModel = STAGE_MODELS["stage2-matching"];
   if (!hasProviderApiKey(stageModel.provider)) {

@@ -32,7 +32,7 @@ Added R6 as two recordings because one draft cannot be both near the word limit 
 | r3-evidence-only | same on card 1 | `Not reviewed` / `clean` |
 | r6-near-limit | live draft word count / statement texts joined | `153` / `146` |
 
-Cause of the R3 rows: `lib/qc/pipeline-v3/stage7-assemble-card.mjs` L515 `editorialVerdict: editorialOn ? "not_reviewed" : "clean"`. CONFIRMED. Screen uses `reviewOptions`, not that field. **B247**.
+Cause of the R3 rows: `lib/qc/assemble-card.mjs` L515 `editorialVerdict: editorialOn ? "not_reviewed" : "clean"`. CONFIRMED. Screen uses `reviewOptions`, not that field. **B247**.
 
 Cause of R6: Stage 1 omitted the last sentence. CONFIRMED no `This note covers` in `r6-near-limit.json`. **B248**.
 

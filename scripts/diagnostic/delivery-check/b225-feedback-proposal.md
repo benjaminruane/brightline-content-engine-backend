@@ -202,7 +202,7 @@ Same pattern for compliance at L32–36. Evidence at L3–7 uses `qcCard.assessm
 
 None of those fields exist on a v4 card. Backend stores:
 
-- evidence in `qcCard.evidenceSummary` / `reasoningParagraph` (`lib/qc/pipeline-v3/stage7-assemble-card.mjs` L741–788, L805)
+- evidence in `qcCard.evidenceSummary` / `reasoningParagraph` (`lib/qc/assemble-card.mjs` L741–788, L805)
 - editorial in `qcCard.editorialConcerns[].note` (and `editorialNote` only when clean)
 - classification in `qcCard.summaryClass` (stamped in `api/analyse-statements.js` L317)
 
@@ -215,7 +215,7 @@ One object per **row**, not per finding. Empty notes. The model is given the sen
 
 Constructive feedback does **not** share this bug. `collectConcernInputs` (`lib/qc/constructive-feedback.mjs` L76–88) reads `editorialConcerns[].note`. Its flatten is later: "weave … into a single editor's observation" (L615). Different flatten, different place.
 
-Card assembly `applyConcernDuplicateMerges` (`stage7-assemble-card.mjs` L377–402) only merges overlapping same-signal concerns. It does not merge evidence into editorial. Not this bug.
+Card assembly `applyConcernDuplicateMerges` (`assemble-card.mjs` L377–402) only merges overlapping same-signal concerns. It does not merge evidence into editorial. Not this bug.
 
 **Smallest honest fix (not built):** in `editorialConcernFromRow`, pass `qcCard.editorialConcerns[].note` (all of them). Never fall back to `assessmentExplanation`. Same for compliance (`complianceConcerns[].note`). For evidence, pass `evidenceSummary`. Prefer one payload item per concern, not per statement, so two findings on one sentence stay two descriptions. Add nothing to the synthesize-review prompt until the payload is honest; the model cannot name a note it never received.
 

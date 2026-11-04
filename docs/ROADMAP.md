@@ -654,7 +654,7 @@ Sprint 2 review-quality fixes, shipped through diagnose-first + read-only shadow
 
 ### Recency anchoring + first-person FP fixes (closed 2026-08-19)
 
-**Recency anchoring + first-person-plural false positive + no-op suggestion fixes** (shipped 2026-08-19). `recencySourceIndices()` in `stage7-assemble-card.mjs` anchors to supporting source (confirmed/partially_confirmed); `STYLE_RULE_DETERMINISTIC_FILTERS.first_person_plural` requires a real first-person pronoun in the cited span; `suppressNoOpSuggestions()` drops any house-style concern whose `suggestedRewrite` equals the statement text (general guard). Shadow-gated: Nordholt clean+dirty drafts verified four targeted transitions + zero verdict/hasConflict movement. Tag: `review-recency-anchor-firstperson`.
+**Recency anchoring + first-person-plural false positive + no-op suggestion fixes** (shipped 2026-08-19). `recencySourceIndices()` in `assemble-card.mjs` anchors to supporting source (confirmed/partially_confirmed); `STYLE_RULE_DETERMINISTIC_FILTERS.first_person_plural` requires a real first-person pronoun in the cited span; `suppressNoOpSuggestions()` drops any house-style concern whose `suggestedRewrite` equals the statement text (general guard). Shadow-gated: Nordholt clean+dirty drafts verified four targeted transitions + zero verdict/hasConflict movement. Tag: `review-recency-anchor-firstperson`.
 
 ### Cheap-fixes arc — per cent / number_spelling / extractPercents (closed 2026-08-19)
 
@@ -726,7 +726,7 @@ Also in this ship: Stage 2 concurrency raised to 24; claim-span shadow caches sh
 
 **R2.7.2 — Stage 2 semantic frame matching.** Shipped (`r2.7.2-frame-matching`; production sign-off **2026-06-01** after explicit-vs-explicit gating re-test). Distinguishes numeric equivalence from semantic frame equivalence across metric, basis/scope, and period dimensions. Metric and basis land reliably. **PERIOD is scoped to EXPLICIT-vs-EXPLICIT only:** a deterministic backstop (`applyPeriodGateBackstop`) compares normalised tokens (Q[1-4] YYYY or bare YYYY). Non-overlapping periods cannot contradict: `confirmed` and `conflicting` become `no_support`. Overlapping but unequal tokens (quarter vs containing year) still downgrade `confirmed` to `conflicting` when roles match. **LIMITATION:** when the source states the period as a **RELATIVE** reference ('over the same period', 'today'), gpt-4o resolves it unreliably at temp 0 — it resolves to whichever period confirms the match — across both prose and structured-field prompt mechanisms. Relative-source-period resolution descoped to **R2.7.2.1**. Mechanism retained: Stage-2-internal structured `periodAssessment` field + deterministic backstop. Verified: explicit mismatch (draft 2018 vs source 2019) → conflicting; explicit match (2019) → supported; metric mismatch (revenue vs GMV) → conflicting; paraphrase regression → confirmed.
 
-**fix-pipelineversion-label** (same session): `qcCard.pipelineVersion` in shared `stage7-assemble-card.mjs` now stamps from `assemblyContext.pipelineRoute` instead of hardcoding `"v3"`, aligning per-card label with handler `meta.pipelineVersion` on v4 runs.
+**fix-pipelineversion-label** (same session): `qcCard.pipelineVersion` in shared `assemble-card.mjs` now stamps from `assemblyContext.pipelineRoute` instead of hardcoding `"v3"`, aligning per-card label with handler `meta.pipelineVersion` on v4 runs.
 
 ### R6.11 — Editorial schema-fallback observability (chapter closed 2026-06-25)
 
@@ -786,7 +786,7 @@ Closed 2026-05-31, tag `r6.3-principle-based-suppression`. Replaces R3.4's rule-
 
 **Why principle-based not rule-ID:** Rule-ID matching is the wrong granularity. Two concerns from the same rule code on different statements may differ in whether they duplicate the Evidence finding. Per-instance LLM judgment handles per-instance variance; rule-ID matching produces brittle coverage gaps as new rules are added.
 
-**Architecture:** Judge lives in new module `lib/qc/editorial-duplication-judge.mjs`. Suppression branch lives in `stage7-assemble-card.mjs` (replaced R3.4 logic, which is fully removed). Editorial review continues to run in parallel with Evidence — judge is downstream at card-assembly time only. `assembleCard` is now async, ripples to callers `qc-pipeline-v3.mjs` and `pipeline-v4/index.mjs` (await Promise.all).
+**Architecture:** Judge lives in new module `lib/qc/editorial-duplication-judge.mjs`. Suppression branch lives in `assemble-card.mjs` (replaced R3.4 logic, which is fully removed). Editorial review continues to run in parallel with Evidence — judge is downstream at card-assembly time only. `assembleCard` is now async, ripples to callers `qc-pipeline-v3.mjs` and `pipeline-v4/index.mjs` (await Promise.all).
 
 **Failure mode:** Schema-validation failure after one retry → suppress nothing, emit canary `editorial_duplication_judge_failed`. System errs toward showing the reviewer everything.
 
@@ -1248,7 +1248,7 @@ No spec until trigger conditions met. Do not schedule ahead of dogfooding signal
 
 Two related issues observed across multiple R6.2a / R6.2a.1 test runs:
 
-(a) **Dedupe gap on functionally-identical concerns. SHIPPED 2026-05-30** — `r5.2a-concern-dedupe`. Backend `lib/qc/pipeline-v3/stage7-assemble-card.mjs`: added DUPLICATE_TEXT_SIMILARITY_THRESHOLD (0.85), normaliseConcernText and concernTextSimilarity helpers (token-set Jaccard on normalised text), and a dedupe pass inside mergeConcernGroup that runs after span grouping. When two concerns under the SAME concernCode have ≥85% normalised text similarity, the later one is dropped. Single survivors emit as unnumbered concerns (no "(i)" prefix), restoring the natural single-concern shape. ≥2 survivors continue to emit with "(i)/(ii)" labelling unchanged. New canary `${signalName}_duplicate_concerns_deduped` fires when the dedupe collapses a group. Validated across three live runs — previously duplicated concerns (R6.2a Run D, R6.2a.1 Runs D + F) now emit as single concerns; multi-concern path untouched. Item (b) (threshold tuning) remains in place and evidence-gated.
+(a) **Dedupe gap on functionally-identical concerns. SHIPPED 2026-05-30** — `r5.2a-concern-dedupe`. Backend `lib/qc/assemble-card.mjs`: added DUPLICATE_TEXT_SIMILARITY_THRESHOLD (0.85), normaliseConcernText and concernTextSimilarity helpers (token-set Jaccard on normalised text), and a dedupe pass inside mergeConcernGroup that runs after span grouping. When two concerns under the SAME concernCode have ≥85% normalised text similarity, the later one is dropped. Single survivors emit as unnumbered concerns (no "(i)" prefix), restoring the natural single-concern shape. ≥2 survivors continue to emit with "(i)/(ii)" labelling unchanged. New canary `${signalName}_duplicate_concerns_deduped` fires when the dedupe collapses a group. Validated across three live runs — previously duplicated concerns (R6.2a Run D, R6.2a.1 Runs D + F) now emit as single concerns; multi-concern path untouched. Item (b) (threshold tuning) remains in place and evidence-gated.
 
 (b) **Threshold tuning** (original watch item content). Merge canary fires (`editorial_duplicate_concerns_merged`, `compliance_duplicate_concerns_merged`) — initial test runs produced zero merges, all correctly per 80% threshold. If reviewer use surfaces under-merging — especially nested Compliance concerns on the same phrase (e.g. forward-looking + comparative basis) — revisit threshold (lower overlap to 60–65%, or add containment rule).
 
@@ -1448,7 +1448,7 @@ Discussed and parked 2026-05-27.
 
 ### R3.4 — Rule-ID Editorial suppression on Evidence conflict (superseded)
 
-**R3.4 superseded by R6.3 (closed 2026-05-31).** R6.3 removed the `SUPPRESSED_ON_EVIDENCE_CONFLICT` set and the rule-ID suppression branch entirely from `stage7-assemble-card.mjs`. Editorial concern suppression on Evidence conflict is now handled by per-instance LLM judgment via `editorial-duplication-judge.mjs`. The R3.4 entry is retained here as historical context; no further code references remain.
+**R3.4 superseded by R6.3 (closed 2026-05-31).** R6.3 removed the `SUPPRESSED_ON_EVIDENCE_CONFLICT` set and the rule-ID suppression branch entirely from `assemble-card.mjs`. Editorial concern suppression on Evidence conflict is now handled by per-instance LLM judgment via `editorial-duplication-judge.mjs`. The R3.4 entry is retained here as historical context; no further code references remain.
 
 ### R3.1 — Editorial+Style consolidation routing
 

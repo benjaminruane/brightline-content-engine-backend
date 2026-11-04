@@ -26,7 +26,7 @@ The card-face census of 2026-09-10 (`findings.md`) already had this class on the
 
 ## Method
 
-**WRITE (qcCard).** Keys assigned in `assembleCard` / `safeCard` (`lib/qc/pipeline-v3/stage7-assemble-card.mjs`), `buildSkippedEvidenceQcCard` (`lib/qc/evidence-skipped-fast-path.mjs`), `notReviewedEditorialResult` (`lib/qc/pipeline-v4/index.mjs`), editorial-reviewer mutations (`lib/qc/editorial-compliance-reviewer.mjs`), and `stmt.qcCard.summaryClass = classifyCard(...)` (`api/analyse-statements.js`). Additive: `decomposed`, `claimUpgrade`, `claims`, `coverageUnion`. Spread `...editorialOut` is why `suppressInQcWorkbench` is written even though it is not a literal key on the `const card = { ... }` object.
+**WRITE (qcCard).** Keys assigned in `assembleCard` / `safeCard` (`lib/qc/assemble-card.mjs`), `buildSkippedEvidenceQcCard` (`lib/qc/evidence-skipped-fast-path.mjs`), `notReviewedEditorialResult` (`lib/qc/pipeline-v4/index.mjs`), editorial-reviewer mutations (`lib/qc/editorial-compliance-reviewer.mjs`), and `stmt.qcCard.summaryClass = classifyCard(...)` (`api/analyse-statements.js`). Additive: `decomposed`, `claimUpgrade`, `claims`, `coverageUnion`. Spread `...editorialOut` is why `suppressInQcWorkbench` is written even though it is not a literal key on the `const card = { ... }` object.
 
 **READ.** Static `qcCard.prop` in both repos; `card.prop` in files that mention `qcCard` or that are known card consumers (`lib/qc/review-summary.mjs`, `lib/revise-actions/silence.mjs`, and the rest of `lib/revise-actions/`). Bracket literals and destructuring included.
 
@@ -230,7 +230,7 @@ Not re-filed: **B147** (`conflictValues` null), **B158** (conflict excerpt layou
 
 ## D5 postscript. assembleCard vacant values (2026-09-19)
 
-Read-only. Every key `assembleCard` assigns on the v4 `const card = { ... }` object plus the `...editorialOut` spread and the two optional claim-span / coverage blocks. "Ever non-empty" means a v4 live card can carry a useful value, not the constant empty/null/zero/false/"none" the assembler always writes. From `lib/qc/pipeline-v3/stage7-assemble-card.mjs` L779-839. Do not act on this table.
+Read-only. Every key `assembleCard` assigns on the v4 `const card = { ... }` object plus the `...editorialOut` spread and the two optional claim-span / coverage blocks. "Ever non-empty" means a v4 live card can carry a useful value, not the constant empty/null/zero/false/"none" the assembler always writes. From `lib/qc/assemble-card.mjs` L779-839. Do not act on this table.
 
 | Key | Ever non-empty on a v4 card? |
 |---|---|

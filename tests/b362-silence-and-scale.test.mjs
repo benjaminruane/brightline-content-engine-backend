@@ -11,7 +11,7 @@ import { describe, test } from "vitest";
 
 import { stripOmissionOverclaimWhenDisplayed } from "../lib/qc/card-honesty.mjs";
 import { excerptsAreSame } from "../lib/qc/excerpt-pair.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 import { buildClaimInventory } from "../lib/qc/commentary-inventory.mjs";
 import {

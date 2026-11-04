@@ -9,7 +9,7 @@
 
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { assembleCard } from "../../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../../lib/qc/assemble-card.mjs";
 import { loadAllFixtures } from "./lib/fixtures.mjs";
 import { RUNS_DIR } from "./lib/paths.mjs";
 import { loadPipelineSources } from "./lib/sources.mjs";

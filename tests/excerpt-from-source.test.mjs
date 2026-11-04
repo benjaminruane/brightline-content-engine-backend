@@ -7,7 +7,7 @@ import {
   recoverExcerptFromSource,
   DEFAULT_SIMILARITY_FLOOR,
 } from "../lib/qc/excerpt-from-source.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import {
   CHECK_NOT_CHECKED_LABEL,
   classifyCard,

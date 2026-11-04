@@ -172,12 +172,12 @@ All three claims are correct, and here is where each is set.
 | `unsupportedSpans[].start/end` | **statement** | `lib/qc/pipeline-v4/stage2-match-sources.mjs:181-189` (`statement.indexOf(raw)`) | Yes — `:139`, `:1528`, and `lib/qc/qc-api-schema.mjs:174` |
 | `claims[].draftStart/draftEnd` | **whole draft** | `lib/qc/claim-spans.mjs:455-456` (`draftStart = charStart + localStart`) | No — only the `local*` / `draft*` naming |
 | `claims[].localStart/localEnd` | statement | `lib/qc/claim-spans.mjs:430-432` | No |
-| `charStart` / `charEnd` | whole draft | `lib/qc/pipeline-v3/stage7-assemble-card.mjs:710-711` | No |
-| `draftSpan.startChar/endChar` | whole draft | `lib/qc/pipeline-v3/stage7-assemble-card.mjs:778` | By name only |
+| `charStart` / `charEnd` | whole draft | `lib/qc/assemble-card.mjs:710-711` | No |
+| `draftSpan.startChar/endChar` | whole draft | `lib/qc/assemble-card.mjs:778` | By name only |
 | `editorialConcerns[]/complianceConcerns[].span[].startChar/endChar` | **statement** | `lib/qc/editorial-compliance-reviewer.mjs:707-709` (`statementText.indexOf`) | JSDoc at `:698` says "in statement text"; the field name does not |
 | `coverageUnion.union` | statement | `lib/qc/coverage-union.mjs:52-53` | Yes — `:2` |
-| `evidenceTrace`, `citationHovers` | **no offsets** — hardcoded `[]` | `stage7-assemble-card.mjs:779, 789` | — |
-| `primaryExcerptStart/End` | **no offsets** — always `null` | `stage7-assemble-card.mjs:768-769` | — |
+| `evidenceTrace`, `citationHovers` | **no offsets** — hardcoded `[]` | `assemble-card.mjs:779, 789` | — |
+| `primaryExcerptStart/End` | **no offsets** — always `null` | `assemble-card.mjs:768-769` | — |
 
 The only genuine frame conversions in the codebase are
 `lib/qc/claim-spans.mjs:455-456` (statement → draft) and `:477-478`

@@ -79,7 +79,7 @@ Flag `QC_ACTOR_OF_THE_ACTION`, same style as `QC_NARRATIVE_COHERENCE` (**B348**)
 
 Off means the check does not run. `applyActorOfTheAction` returns null on the first line. No `actor_mismatch`, no leading sentence, no verdict change. Output is not written and then suppressed. Detector `actorMismatch` / `leadingActor` stays in `lib/qc/actor-of-the-action.mjs`. It is not narrowed against the labelled hundred.
 
-P34 callers of `applyActorOfTheAction`: `lib/qc/pipeline-v3/stage7-assemble-card.mjs` (the production writer; now a no-op when the flag is off). Tests that still need a firing stub the flag on.
+P34 callers of `applyActorOfTheAction`: `lib/qc/assemble-card.mjs` (the production writer; now a no-op when the flag is off). Tests that still need a firing stub the flag on.
 
 Health reports `actorOfTheAction` next to `narrativeCoherence`, default false.
 

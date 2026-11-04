@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { noteEndorsement } from "../lib/qc/reading-contract.mjs";
 import { attachReadingView, settleWriterNote } from "../lib/qc/reading-review.mjs";
 import { identityOf } from "../lib/qc/worked-record.mjs";

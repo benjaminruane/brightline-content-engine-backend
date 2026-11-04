@@ -179,8 +179,8 @@ builds the reviser prompt:
 | Field | Populated by | Ever populated for evidence? | Reaches the reviser prompt? |
 |---|---|---|---|
 | `suggestedDirection` | `editorial-compliance-reviewer.mjs`, per concern | **No** — only on `editorialConcerns` / `complianceConcerns` | **Yes** — L658 and L674, the only directive that does |
-| `suggestedImprovement` | Nothing. Hardcoded `null` at `stage7-assemble-card.mjs` L537 and L782, `commentary-builder.mjs` L274 (with `suggestedImprovementMode: "none"`), `evidence-skipped-fast-path.mjs` L57 | **No** — never populated at all, for any kind | **No** — 0 references |
-| `suggestedRewrite` | `stage7-assemble-card.mjs` L197-198, from editorial/compliance concerns | No | **No** — `collectEditorialConcerns` (L365-380) copies only `kind`, `rule`, `note`, `suggestedDirection` and **drops it** |
+| `suggestedImprovement` | Nothing. Hardcoded `null` at `assemble-card.mjs` L537 and L782, `commentary-builder.mjs` L274 (with `suggestedImprovementMode: "none"`), `evidence-skipped-fast-path.mjs` L57 | **No** — never populated at all, for any kind | **No** — 0 references |
+| `suggestedRewrite` | `assemble-card.mjs` L197-198, from editorial/compliance concerns | No | **No** — `collectEditorialConcerns` (L365-380) copies only `kind`, `rule`, `note`, `suggestedDirection` and **drops it** |
 | `editorialSuggestedDirection` | `editorial-compliance-reviewer.mjs` L1774, card-level roll-up | No | **No** — 0 references; the prompt reads the per-concern field instead |
 | `complianceSuggestedDirection` | `editorial-compliance-reviewer.mjs` L1834 | No | **No** — 0 references |
 | `recommendedAction` | `commentary-builder.mjs` L142-143, conflict narrative only | Yes, for `conflict` | **Only as prose.** Embedded into `commentary`, surfaced via `evidenceSummary` / `reasoningParagraph`, extracted by `extractEvidenceReason` (L104-109) and emitted as `Reason:`. Never as a field. |

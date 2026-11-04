@@ -17,7 +17,7 @@ import {
   sourceNameVocabulary,
 } from "../lib/qc/actor-of-the-action.mjs";
 import { markConfirmingInsideConflict } from "../lib/qc/card-honesty.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 import { rolePartyMismatch } from "../lib/qc/role-party.mjs";
 import { readSourceSelfName, sourceSelfNameFromSources } from "../lib/qc/source-self-name.mjs";

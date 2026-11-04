@@ -50,7 +50,7 @@ Not trustworthy without overlays. Mechanisms that would make an "unreachable" mo
 
 ### c. What this census gets wrong about v3 / v4
 
-It will look like v3 is "in Production" because the handler imports it and because `stage7-assemble-card.mjs` lives under `pipeline-v3/` and *is* live. The assembler is shared. Stages 1 to 5 under `pipeline-v3/` are the fallback route. Architecture still says unset `QC_PIPELINE_V4` falls back to v3. Production has `QC_PIPELINE_V4=1`. Frontend Review payloads can also send `pipelineRoute: "v4"`; the handler ORs those two.
+It will look like v3 is "in Production" because the handler imports it and because `assemble-card.mjs` lives under `pipeline-v3/` and *is* live. The assembler is shared. Stages 1 to 5 under `pipeline-v3/` are the fallback route. Architecture still says unset `QC_PIPELINE_V4` falls back to v3. Production has `QC_PIPELINE_V4=1`. Frontend Review payloads can also send `pipelineRoute: "v4"`; the handler ORs those two.
 
 It will under-count v4 Stage 2 if you only look at `stage2-match-sources.mjs`. The live path also runs `stage2-match-multipassage.mjs` (widened support spans) and, with `QC_STAGE2_SPAN=1` in Production, the span-elicit prompt. Default in code for that flag is OFF. Production overrides it ON. A census that trusted the code default would mark span elicit FLAG OFF. That would be wrong on this deploy.
 
@@ -357,13 +357,13 @@ Every claim is CONFIRMED with file:line, or HYPOTHESIS.
 
 ```
 all pipeline-v3                 7 files   1,875 raw
-live (stage7-assemble-card)     1 file      815 raw   LIVE
+live (assemble-card)     1 file      815 raw   LIVE
 flag-off rest                   6 files   1,060 raw   FLAG_OFF
 ```
 
 **CONFIRMED** Production selects v4: `api/analyse-statements.js:244-263` (`QC_PIPELINE_V4 === "1"` OR `pipelineRoute === "v4"`). Production env `QC_PIPELINE_V4=1`.
 
-**CONFIRMED** stage7 is live from v4: `lib/qc/pipeline-v4/index.mjs:12` imports `assembleCard` from `../pipeline-v3/stage7-assemble-card.mjs`.
+**CONFIRMED** stage7 is live from v4: `lib/qc/pipeline-v4/index.mjs:12` imports `assembleCard` from `../assemble-card.mjs`.
 
 Remaining importers of `qc-pipeline-v3.mjs`: only `api/analyse-statements.js`. Remaining importers of stage7: v3 runner, v4 runner, plus tests and diagnostic gates.
 
@@ -423,7 +423,7 @@ If the upgrade code (conditions a-d, the dead if) were deleted: Production verdi
 
 **CONFIRMED** Stage 1b still runs when the flag is on (default ON): `lib/qc/pipeline-v4/index.mjs:249-287` `extractClaimSpans` then `matchClaimSourcePairs`. Production does not set `QC_CLAIM_SPANS`, so this is live cost (extra Stage 2 calls on decomposed sentences).
 
-**CONFIRMED** claim rows are stamped on the qcCard: `lib/qc/pipeline-v3/stage7-assemble-card.mjs:802-805`.
+**CONFIRMED** claim rows are stamped on the qcCard: `lib/qc/assemble-card.mjs:802-805`.
 
 **CONFIRMED** Suggest reads them: `lib/build-revision-prompt.mjs:508-548` `extractDecomposedClaims`; `lib/revise-author-statement.mjs:93-108` prefers claim-level unsupported text over `unsupportedSpans`.
 

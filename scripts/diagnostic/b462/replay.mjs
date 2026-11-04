@@ -346,7 +346,7 @@ lines.push("- `lib/qc/evidence-line.mjs`. Collapses whitespace, picks the bearin
 lines.push("- `lib/qc/reader-reason.mjs`. Passes the statement into the evidence line. Removes a stop that sits after a quote which already ended.");
 lines.push("- `lib/qc/source-account.mjs`. Exports the agreement patterns so the drift test can name them.");
 lines.push("- `lib/qc/summary-bullets.mjs`. Returns every non-zero check.");
-lines.push("- `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. Passes the statement into the evidence line. The verbatim check stays on the full passage.");
+lines.push("- `lib/qc/assemble-card.mjs`. Passes the statement into the evidence line. The verbatim check stays on the full passage.");
 lines.push("- `src/modules/drafting/readerReason.js`. The same phrase check, the same sentence, and the same one stop.");
 lines.push("- `src/modules/drafting/reviewSummaryDisplay.js`. Returns every non-zero check.");
 lines.push("- `tests/b462-endorsement-parity.test.mjs`. The drift lock, the five probes, and the 261 reasons.");

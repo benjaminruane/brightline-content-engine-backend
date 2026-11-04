@@ -67,7 +67,7 @@ EA_E3 mark  (eval-ablation EA_E3; not claim-spans CS_E3; not corpus E3:S0:ic_mem
 ```
 
 CONFIRMED: conflicting forces concernLevel high
-(`mapSupportStateToConcernLevel` in stage7-assemble-card.mjs: conflicting -> high).
+(`mapSupportStateToConcernLevel` in assemble-card.mjs: conflicting -> high).
 Card actually shows concernLevel=high.
 
 Note: multipassage `supportSpans[0].classification` remains "confirmed" on the

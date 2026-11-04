@@ -21,7 +21,7 @@ Browser: skipped. No layout, control, or copy change. No Review. The 29 Septembe
 
 For E1 and E2, `excerptNotLocatable` is set in `assembleCard` after Stage 4 has already chosen a `primaryExcerpt` from `sourceMatches` only. The honesty gate then demotes a `supported_full` card to Unverifiable. A located `supportSpan` on the same statement is never offered to that gate.
 
-Quoted `lib/qc/pipeline-v3/stage7-assemble-card.mjs`:
+Quoted `lib/qc/assemble-card.mjs`:
 
 ```
     const gatedPrimary = gateExcerpt({
@@ -80,7 +80,7 @@ export function rewriteSpanFromSource(span, sources) {
   }
 ```
 
-Quoted `lib/qc/pipeline-v3/stage7-assemble-card.mjs`:
+Quoted `lib/qc/assemble-card.mjs`:
 
 ```
     const outSupportSpans = supportSpans.map((span) => rewriteSpanFromSource(span, assemblyContext?.sources));
@@ -512,7 +512,7 @@ A list of eight fixes would re-break the next time Stage 4 and span rewrite disa
 
 **Invariant.** A card may not assert anything that its own stored evidence contradicts, and may not report that it could not find something it is holding.
 
-**Where.** `assembleCard` (`lib/qc/pipeline-v3/stage7-assemble-card.mjs`), after spans are rewritten and before `qcCard` is returned. Optional cheap helpers in `excerpt-locate.mjs` so Stage 4 can share them. Not a new model call. Not a Stage 2 prompt change.
+**Where.** `assembleCard` (`lib/qc/assemble-card.mjs`), after spans are rewritten and before `qcCard` is returned. Optional cheap helpers in `excerpt-locate.mjs` so Stage 4 can share them. Not a new model call. Not a Stage 2 prompt change.
 
 **What it checks, mechanically.**
 

@@ -402,7 +402,7 @@ export function mapBenLabel(raw) {
 
 /**
  * Card displayVerdict is supported_full / supported_partial / conflict / not_supported
- * (lib/qc/pipeline-v3/stage7-assemble-card.mjs L413-417). Map onto the label vocabulary.
+ * (lib/qc/assemble-card.mjs L413-417). Map onto the label vocabulary.
  */
 export function mapDisplayVerdict(raw) {
   const s = String(raw ?? "")

@@ -13,7 +13,7 @@ import {
   buildClaimInventory,
   unaddressedInventory,
 } from "../lib/qc/commentary-inventory.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const FIXTURE_DIR = path.join(ROOT, "tests/fixtures/real-runs-2026-09-29");

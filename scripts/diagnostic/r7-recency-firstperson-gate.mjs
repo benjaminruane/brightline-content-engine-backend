@@ -22,7 +22,7 @@ import { loadLocalEnvFiles } from "./lib/env.mjs";
 loadLocalEnvFiles();
 
 const { runPipelineV4 } = await import("../../lib/qc/pipeline-v4/index.mjs");
-const { assembleCard } = await import("../../lib/qc/pipeline-v3/stage7-assemble-card.mjs");
+const { assembleCard } = await import("../../lib/qc/assemble-card.mjs");
 const { selectRecencySource, extractSourceAsOfDate } = await import("../../lib/qc/source-recency.mjs");
 const { applyDeterministicStyleFilters, suppressNoOpSuggestions } = await import(
   "../../lib/qc/editorial-compliance-reviewer.mjs"

@@ -14,7 +14,7 @@ Q3. A character offset when the shown string is `source.slice(start, end)`. Stag
 
 Q4. The extracted text stored on the source, after the B405 strip for any file extracted since that change. The card then stores its own excerpt string, which may be a slice of that text or a decorated quote.
 
-Q5. `excerptNotLocatable` is set in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` (line 1131) when a pointer was rejected or could not be recovered. The card then shows `The matching passage could not be located in the named source.` (`cardExcerptDisplay.js` lines 11-12) and does not show a passage.
+Q5. `excerptNotLocatable` is set in `lib/qc/assemble-card.mjs` (line 1131) when a pointer was rejected or could not be recovered. The card then shows `The matching passage could not be located in the named source.` (`cardExcerptDisplay.js` lines 11-12) and does not show a passage.
 
 ## 2. Citation popover
 

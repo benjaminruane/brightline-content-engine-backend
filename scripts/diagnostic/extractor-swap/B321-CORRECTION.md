@@ -30,7 +30,7 @@ C1 BLOCKING. **PARTLY.** `scripts/diagnostic/extractor-swap/verify-swap.mjs` L26
 
 C2 BLOCKING. **TRUE.** Re-read of all twenty `outputs/dNN-gate7.json` files. `displayVerdict` identical on 16 of 20. Quote identical on 13 of 20. Moved: d04 `conflict` to `supported_partial`, d07 `null` to `supported_partial`, d13 `conflict` to `supported_partial`, d17 `conflict` to `supported_full`. Quote-only: d10, d11, d12.
 
-C3 BLOCKING. **The harness never read it.** The assembled v4 card never writes `evidenceVerdict` as a stored field. `lib/qc/pipeline-v3/stage7-assemble-card.mjs` passes `evidenceVerdict: verdict` only as an argument to `computeCardMateriality` (Stage 3 `verdictResult.verdict`). The card object stamps `displayVerdict`, not `evidenceVerdict`. `docs/ARCHITECTURE.md` lists `displayVerdict` / `supportState` on qcCard and does not list `evidenceVerdict`. This is not a v4 drop of a field the card used to carry. The kill condition ("the v4 card no longer carries evidenceVerdict at all: stop, do not proceed to Part 3") does not fire: the comparison was never against a card field, and `displayVerdict` is still present. Filed as **B323**. Not fixed here.
+C3 BLOCKING. **The harness never read it.** The assembled v4 card never writes `evidenceVerdict` as a stored field. `lib/qc/assemble-card.mjs` passes `evidenceVerdict: verdict` only as an argument to `computeCardMateriality` (Stage 3 `verdictResult.verdict`). The card object stamps `displayVerdict`, not `evidenceVerdict`. `docs/ARCHITECTURE.md` lists `displayVerdict` / `supportState` on qcCard and does not list `evidenceVerdict`. This is not a v4 drop of a field the card used to carry. The kill condition ("the v4 card no longer carries evidenceVerdict at all: stop, do not proceed to Part 3") does not fire: the comparison was never against a card field, and `displayVerdict` is still present. Filed as **B323**. Not fixed here.
 
 C4 BLOCKING. **TRUE.** Recorded `outputs/d17-recheck.json`: `displayVerdict` `supported_full`, `hasRealExcerpt` false, `excerptNotLocatable` true, `primaryExcerpt` empty. B259 (`lib/qc/excerpt-locate.mjs` `gateExcerpt`, `cardExcerptDisplay.js` `resolveCardExcerpt`) hides the bogus span. The evidence row stays (`StatementReviewCard.jsx` L1019, `evidenceRequested`). The reviewer still sees Confirmed plus "The matching passage could not be located in the named source."
 
@@ -84,7 +84,7 @@ The assembled card does not carry `evidenceVerdict`. Consumers across both repos
 
 | consumer | what it reads | currently reading nothing from the card field? |
 |----------|---------------|-----------------------------------------------|
-| `lib/qc/pipeline-v3/stage7-assemble-card.mjs` | passes Stage 3 `verdict` into `computeCardMateriality({ evidenceVerdict })` | No. Argument, not a card field. |
+| `lib/qc/assemble-card.mjs` | passes Stage 3 `verdict` into `computeCardMateriality({ evidenceVerdict })` | No. Argument, not a card field. |
 | `lib/qc/materiality.mjs` | function argument `evidenceVerdict` | No. |
 | `lib/qc/pipeline-v3/qc-pipeline-v3.mjs` L74 | `entry.verdictResult?.verdict` as editorial context | No. |
 | `lib/qc/pipeline-v4/index.mjs` L209 | hardcoded `null` on skipped-evidence editorial context | N/A. |

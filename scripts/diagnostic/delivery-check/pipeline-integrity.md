@@ -45,9 +45,9 @@ Reported: **no** = nothing on the card, screen, or payload a reviewer reads. **o
 | 27 | editorial-compliance-reviewer | FILTER | A concern never appears on the card | Fidelity gate, style filters, no-op / no-change / evidence-language suppress, evaluative bounds | operator (`FIDELITY_DROP`, style log) | open |
 | 28 | editorial-duplication-judge (stage7) | FILTER | An editorial concern is suppressed | Judge returns that index as duplicate of the conflict | operator (`editorial_concern_suppressed_by_judgment`) | open |
 | 29 | editorial-duplication-judge | CATCH | Suppression does not run (concerns kept) | Schema fail or throw returns `[]` | operator canary | closed on suppress |
-| 30 | stage7-assemble-card | DEFAULT | `not_reviewed` is replaced by `clean` | Editorial or compliance **off**; `resolveAssembledVerdict` L515 | payload yes as `clean`; screen says Not reviewed (**B247**) | open |
-| 31 | stage7-assemble-card | TRUNCATION | Concern text in the Langfuse canary only | `SUPPRESSED_CONCERN_TEXT_MAX_LEN=200` | n/a for the card | open |
-| 32 | stage7-assemble-card | DEFAULT | Empty card shell | `safeCard` when assembly has nothing | no | open |
+| 30 | assemble-card | DEFAULT | `not_reviewed` is replaced by `clean` | Editorial or compliance **off**; `resolveAssembledVerdict` L515 | payload yes as `clean`; screen says Not reviewed (**B247**) | open |
+| 31 | assemble-card | TRUNCATION | Concern text in the Langfuse canary only | `SUPPRESSED_CONCERN_TEXT_MAX_LEN=200` | n/a for the card | open |
+| 32 | assemble-card | DEFAULT | Empty card shell | `safeCard` when assembly has nothing | no | open |
 | 33 | editorial-compliance-reviewer | DEFAULT | Requested check did not complete | Schema fail after retry → `not_reviewed` (B202) | **yes** (card) | open |
 | 34 | pipeline-v4 stage6 CATCH | CATCH | Requested check did not complete | `runEditorialComplianceReview` throws → `not_reviewed` | **yes** (card) | open |
 | 35 | source prep (`analyse-statements`) | FILTER | Source never enters Stage 2 | Empty text or `unsupported_scanned` | **yes** (`excludedSources`, Sources drawer) | open for the rest |
@@ -87,7 +87,7 @@ Eleven-sentence Oakfield draft, two sources. Instrument proof: Stage 1 lost the 
 | stage4-select-excerpts | 10 | 9 | 1 | no |
 | editorial-compliance-reviewer | 10 | 10 | 0 | n/a |
 | stage5-generate-commentary | 10 | 10 | 0 | no |
-| stage7-assemble-card | 10 | 10 | 0 | n/a |
+| assemble-card | 10 | 10 | 0 | n/a |
 
 Notes. Stage 1 log: dropped 1 non-claim. Uncovered: `This note covers the March 2025 close.` Stage 2 lost 0 rows because fail-open still emits a pair. Multipassage lost 8: `WIDENED_SCOPE` skipped `no_support` pairs. Stage 4 lost 1 excerpt: the `not_supported` card has no primary excerpt by design. Fidelity/style filters dropped concerns on statements 7, 2, 5; cards still arrived.
 
@@ -106,7 +106,7 @@ Twenty compound sentences, one source. Built to exceed `MAX_DECOMPOSED_SENTENCES
 | stage4-select-excerpts | 20 | 20 | 0 | no |
 | editorial-compliance-reviewer | 20 | 20 | 0 | n/a |
 | stage5-generate-commentary | 20 | 20 | 0 | no |
-| stage7-assemble-card | 20 | 20 | 0 | no |
+| assemble-card | 20 | 20 | 0 | no |
 
 Notes. Eight 1b fallbacks `over_sentence_cap` (statements 12 to 19). Those sentences still got whole-sentence Stage 2 cards. Stage 2 sentence pairs 20; extra 24 Stage 2 generations were claim×source for the 12 decomposed sentences (Langfuse `stage2-match-sources` 44). Stage 7 `reported=no` because editorial concern count in (reviewer) and out (card) differed: duplication judge ran 9 times.
 
@@ -125,7 +125,7 @@ Six compound sentences, three sources.
 | stage4-select-excerpts | 5 | 4 | 1 | no |
 | editorial-compliance-reviewer | 5 | 5 | 0 | n/a |
 | stage5-generate-commentary | 5 | 5 | 0 | no |
-| stage7-assemble-card | 5 | 5 | 0 | n/a |
+| assemble-card | 5 | 5 | 0 | n/a |
 
 Notes. Stage 1 again dropped a cover-note sentence as non-claim: `This note covers the March 2025 close, and it is for internal reporting only.` 1b reverted three candidates `fewer_than_two_claims`. Multipassage skipped 3 `no_support` pairs. Stage 4 one null primary excerpt.
 
@@ -157,7 +157,7 @@ Schema-invalid Stage 2 pairs: 0 / 0 / 0 on these three runs. Catch-to-`no_suppor
 | Fallback `maxLen` / `minLen` | 240 / 25 | same |
 | Stage 2 passage cap | 400 chars | `trimPassageToLimit` |
 | Stage 4 excerpt cap | 300 chars | architecture §5.4 / `trimExcerptTo300` |
-| Suppressed-concern canary text | 200 chars | `stage7-assemble-card.mjs` |
+| Suppressed-concern canary text | 200 chars | `assemble-card.mjs` |
 | `LONG_SOURCE_SOFT_CHAR_WARN` | 60_000 | `analyse-statements.js`; warn only |
 | `DEFAULT_MAX_FILE_SIZE_BYTES` | 25MB | `extract-text-from-source.mjs` |
 | `MAX_PDF_MB` | 10 (env override) | same, X1.2 |
@@ -185,7 +185,7 @@ Schema-invalid Stage 2 pairs: 0 / 0 / 0 on these three runs. Catch-to-`no_suppor
 | editorial + compliance, check ON, schema/catch fail | **open**, but stamped `not_reviewed` (honest) |
 | editorial + compliance, check OFF | **open**, stamped `clean` (**B247**) |
 | editorial-duplication-judge fail | **closed** on suppress (keeps concerns) |
-| stage7-assemble-card | **open** (defaults, suppress, off-check `clean`) |
+| assemble-card | **open** (defaults, suppress, off-check `clean`) |
 
 A stage that fails open silently is the pipeline-scale version of the rule from this week. Stage 1 and Stage 2 are that. Stage 6 when ON is the counterexample: it proceeds with less and says `not_reviewed`.
 

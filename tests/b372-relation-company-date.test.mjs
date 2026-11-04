@@ -33,7 +33,7 @@ import {
   confirmingPassageVerdict,
   demoteConfirmedClassifications,
 } from "../lib/qc/pipeline-v4/confirming-passage-disagrees.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 import { annotateTokens } from "../lib/revise-actions/conflict-engagement.mjs";
 

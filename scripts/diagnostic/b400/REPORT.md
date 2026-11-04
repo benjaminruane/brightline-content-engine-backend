@@ -32,7 +32,7 @@ A reviewer now sees the existing note, a hollow slate ring, and no badge word.
 
 Backend:
 
-- `lib/qc/pipeline-v3/stage7-assemble-card.mjs`
+- `lib/qc/assemble-card.mjs`
 - `lib/qc/evidence-display-verdict.mjs`
 - `lib/qc/review-summary.mjs`
 - `lib/qc/export-review-data.mjs`

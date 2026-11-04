@@ -126,7 +126,7 @@ Treat the instruction, not this run, as the state of play.
 - **`level`** comes from `computeCardMateriality` (L235–308), which calls
   `scoreFinding` (L144–221) once per finding and takes the max of
   `mechanical < minor < material` (L223–229).
-- Assembled onto the card in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`.
+- Assembled onto the card in `lib/qc/assemble-card.mjs`.
 - The header states it is "additive (read-only vs verdict) … Does not feed
   concernLevel, aggregation, or evidence verdict."
 

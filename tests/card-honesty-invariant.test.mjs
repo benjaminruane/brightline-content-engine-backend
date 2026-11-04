@@ -12,7 +12,7 @@ import {
   applyOmissionConflictInvariant,
   stripContrastiveOnConfirmingSentences,
 } from "../lib/qc/card-honesty.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { applyEmptyConfirmationRefusal } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 

@@ -12,7 +12,7 @@ import {
   editorialRulesForRun,
 } from "../lib/qc/editorial-compliance-reviewer.mjs";
 import { isNarrativeCoherenceEnabled } from "../lib/qc/narrative-coherence.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import {
   confirmingPassageDisagrees,
   demoteConfirmedClassifications,

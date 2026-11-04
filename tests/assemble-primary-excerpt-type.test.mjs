@@ -4,7 +4,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 
 function entryWithExcerpts({ primaryExcerpt, conflictExcerpt = null, verdict = "confirmed" }) {
   const statement = "Revenue reached EUR 92 million.";

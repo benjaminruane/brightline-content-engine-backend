@@ -18,7 +18,7 @@ import {
   validateUnsupportedSpan,
 } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { hashPromptContent } from "../lib/qc/llm-cache.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { validateQcResponse } from "../lib/qc/qc-api-schema.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

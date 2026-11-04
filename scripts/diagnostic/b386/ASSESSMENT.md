@@ -54,7 +54,7 @@ The segment is $5.9 million of $12.1 million. The draft says it contributed the 
 
 This is not the G1 path and not the G2 path. Stage 2 returned `confirmed` with an empty passage. The Stage 2 writer refuses that as `not_reviewed`. Stage 7 then searches the source for a sentence that carries some of the statement's anchors (`locateClaimSentencesInSources`) and, if it finds one, forces green:
 
-```984:989:lib/qc/pipeline-v3/stage7-assemble-card.mjs
+```984:989:lib/qc/assemble-card.mjs
     if (recoveredEmptyConfirmation && hasRealExcerpt) {
       supportState = "supported";
       displayVerdict = "supported_full";
@@ -106,7 +106,7 @@ GP Industries doctored S4. Three substitutions. The span is characters 0 to 114 
 
 The elicit prompt asks for one JSON string, `unsupportedSpan`, not a list (`prompts/stage2_v4_span_elicit.md`). `buildUnsupportedSpans` pushes one object per source match. A second error in the same sentence has nowhere to go unless it is inside that one string.
 
-The review card does not paint `unsupportedSpans`. A search of the frontend finds no read of that field. B342 already recorded that it is stored and never painted. The draft highlight uses `draftSpan`, which assembly sets to the whole sentence (`stage7-assemble-card.mjs`, `draftSpan: { startChar: charStart, endChar: charEnd }`). `StatementAnalysisPanel.jsx` copies that into `claimSpan`. The reviewer who looks at the draft sees the sentence, not the clause the span named.
+The review card does not paint `unsupportedSpans`. A search of the frontend finds no read of that field. B342 already recorded that it is stored and never painted. The draft highlight uses `draftSpan`, which assembly sets to the whole sentence (`assemble-card.mjs`, `draftSpan: { startChar: charStart, endChar: charEnd }`). `StatementAnalysisPanel.jsx` copies that into `claimSpan`. The reviewer who looks at the draft sees the sentence, not the clause the span named.
 
 ### G7. Conflict, no words marked, conflictValues null
 
@@ -116,7 +116,7 @@ GP Industries doctored S1. Fingerprint class `conflicting`, so the elicit was el
 
 `conflictValues` is not a failed lookup. Assembly writes it as null on every card:
 
-```1356:1356:lib/qc/pipeline-v3/stage7-assemble-card.mjs
+```1356:1356:lib/qc/assemble-card.mjs
       conflictValues: null,
 ```
 
@@ -262,4 +262,4 @@ Seventeen symptoms, eight causes. "Capture" means the stored card predates a che
 4. With the actor check off, a wrong company name on a confirming card is not a conflict. That is the live half of G2 after the date check has run.
 5. Calling `locateClaimSentencesInSources` on a `not_supported` card and showing the result as the passage would attach, on ClearPoint S9, a 2027 sentence that is not the guidance. That would be a new P3 failure. The function is the wrong nearest-miss.
 
-No one-line change met the bar of obviously safe. The recovery assignment at `stage7-assemble-card.mjs` lines 984-987 is the live false green, and changing it changes a verdict. Left unapplied. `conflictValues: null` at line 1356 is the B147 stub. Populating it is a contract change. Left unapplied.
+No one-line change met the bar of obviously safe. The recovery assignment at `assemble-card.mjs` lines 984-987 is the live false green, and changing it changes a verdict. Left unapplied. `conflictValues: null` at line 1356 is the B147 stub. Populating it is a contract change. Left unapplied.

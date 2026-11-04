@@ -23,7 +23,7 @@ import {
   isGeographyName,
   organisationSuffixRaw,
 } from "../lib/qc/party-tokens.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 import { rolePartyMismatch } from "../lib/qc/role-party.mjs";
 

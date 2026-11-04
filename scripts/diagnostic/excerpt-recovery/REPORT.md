@@ -12,7 +12,7 @@ C1 BLOCKING. **PARTLY.** `scripts/diagnostic/extractor-swap/outputs/d17-recheck.
 
 C2 BLOCKING. **TRUE.** Displayed excerpts taken from model output before this spec, both repos:
 
-- Card face: `qcCard.primaryExcerpt` / `primaryExcerptText`, set in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` from `gateExcerpt`, which returned the model's `passage` string on an exact hit. Frontend `cardExcerptDisplay.js` `resolveCardExcerpt` reads those fields.
+- Card face: `qcCard.primaryExcerpt` / `primaryExcerptText`, set in `lib/qc/assemble-card.mjs` from `gateExcerpt`, which returned the model's `passage` string on an exact hit. Frontend `cardExcerptDisplay.js` `resolveCardExcerpt` reads those fields.
 - Drawer span: `qcCard.supportSpans[].passage` was the model's typing; highlight used source offsets from `locatePassageInSource` but the stored passage was still the pointer. Frontend `StatementReviewCard.jsx` disagreement rows and `sourceRelationPrefix.js` render `span.passage`.
 - Export: `lib/qc/export-review-data.mjs` `buildReviewData` copies `qcCard.primaryExcerptText`.
 - Reviewer assessment: `lib/qc/constructive-feedback.mjs` `pickSourceSays` reads `card.primaryExcerpt`.
@@ -63,7 +63,7 @@ B6 **AGREE.** No verdict matcher, rulebook, or supported-count change. QRS still
 
 - `lib/qc/excerpt-from-source.mjs` recovers the slice.
 - `lib/qc/excerpt-locate.mjs` `gateExcerpt` routes through it. `rewriteSpanFromSource` rewrites every support span to a source slice.
-- `stage7-assemble-card.mjs` honesty remap is `unverifiable`. Conflict excerpt recovered the same way.
+- `assemble-card.mjs` honesty remap is `unverifiable`. Conflict excerpt recovered the same way.
 - `evidence-display-verdict.mjs` allowlists `unverifiable` -> Unverifiable. Count class `unverifiable`.
 - Frontend: same label, amber evidence dot, `summariseReview.js` class.
 - Tests `tests/excerpt-from-source.test.mjs`.

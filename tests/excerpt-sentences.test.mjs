@@ -10,7 +10,7 @@ import { describe, test } from "vitest";
 
 import { splitSentences } from "../lib/qc/card-honesty.mjs";
 import { trimExcerptToSentences, MAX_QUOTE_SENTENCES } from "../lib/qc/excerpt-sentences.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { selectExcerpts, trimExcerptTo300 } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

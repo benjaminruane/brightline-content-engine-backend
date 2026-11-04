@@ -74,7 +74,7 @@ Q6. P1 fails if the tick is drawn as a verified green. It holds if the line says
 
 Q1. "This figure matches the fact taken from line 12."
 
-Q2. One model call per source, after extract, writing `facts[]` on the review: subject, element, value, period, and the source line. Stage 2 and Stage 5 stop judging. Stage 7 (`stage7-assemble-card.mjs`) looks the statement's elements up in the table. The contract is that array, stored with the review, and a card that quotes the row it matched. The model is the extractor. P20 in the operating manual is this shape: deterministic code that consumes model prose makes the model the specification.
+Q2. One model call per source, after extract, writing `facts[]` on the review: subject, element, value, period, and the source line. Stage 2 and Stage 5 stop judging. Stage 7 (`assemble-card.mjs`) looks the statement's elements up in the table. The contract is that array, stored with the review, and a card that quotes the row it matched. The model is the extractor. P20 in the operating manual is this shape: deterministic code that consumes model prose makes the model the specification.
 
 Q3. Not measured. The direction is one call instead of the HICL review's 43, and a wrong table is then free to reuse. Reviewer clicks are zero until someone reads the table, which is the cost R3 already counted, moved from sentences to rows. A throwaway extractor on one source is a week. A table the product can stand behind is not a build for 31 October 2026.
 

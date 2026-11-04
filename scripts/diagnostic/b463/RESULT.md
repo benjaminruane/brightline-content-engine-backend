@@ -97,7 +97,7 @@ No assertion was given an exemption.
 - `lib/qc/drop-record.mjs`. The one shape, and the helpers that copy a silence or a rewrite into it.
 - `lib/qc/reading-review.mjs`. Note rejections, a refused note, a stripped reassurance, a wording note, and date lines past the limit.
 - `lib/qc/editorial-compliance-reviewer.mjs`. Concern drops, a category move, and the compliance fidelity gate.
-- `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. The duplication judge, the merge, source awareness, forward looking, the gap sentence, the assemble failure, and the copy of classification rewrites.
+- `lib/qc/assemble-card.mjs`. The duplication judge, the merge, source awareness, forward looking, the gap sentence, the assemble failure, and the copy of classification rewrites.
 - `lib/qc/editorial-source-awareness.mjs`. The dropped concern keeps its text.
 - `lib/qc/reader-prose-guard.mjs`. A withheld sentence is stored and not rewritten.
 - `lib/qc/pipeline-v4/index.mjs`. Dropped marks on the card, coverage drops on the review, and a skipped commentary.

@@ -21,10 +21,10 @@ Rows marked **CITED** were used as authority in a September 2026 spec report.
 | A5 | Stage 1b: `QC_CLAIM_SPANS` default ON; caps 3 claims / 12 sentences (L16) | TRUE | `claim-spans.mjs` L9-10, L97-101: unset env returns true. |
 | A6 | Stage 2: classifications `confirmed` / `partially_confirmed` / `conflicting` / `no_support`; concurrency 24; `seed=1` (L17) | TRUE | `STAGE2_CONCURRENCY = 24` and `STAGE2_SEED = 1` (`stage2-match-sources.mjs` L59-63). Schema fail defaults the pair to `no_support` (`B250`), not stated here. |
 | A7 | Stage 3 conflict-wins, then optional upgrade-only claim rollup; intra-source reducer (L18) | TRUE | `stage3-aggregate-verdict.mjs` L31-37; reducer `applyIntraSourceReducer`; rollup in `claim-spans.mjs`. Missing: supersession can demote a pair before this (`index.mjs` L61-79). Missing: coverage-union can promote partial to confirmed when `QC_MULTISOURCE_COVERAGE` is on, default OFF (`coverage-union.mjs` L10-15). |
-| A8 | Stage 4 returns `{ primaryExcerpt, conflictExcerpt }` each with `passage`, `sourceLabel` (L19) | WRONG on the assembled card | Stage 4 still builds excerpt objects. Assembly writes `primaryExcerpt` as a passage string or null (`stage7-assemble-card.mjs` L751-793). `conflictExcerpt` is still the object. **B158** still open. |
-| A9 | Stage 5 commentary stored as `evidenceSummary` / `reasoningParagraph` (L20) | STALE | True when the call succeeds. A miss now stamps empty strings plus `commentaryNotReviewed: true` (`stage7-assemble-card.mjs` L745-749, L796). The four canned "Specific commentary is unavailable" strings are gone (**B254**). |
+| A8 | Stage 4 returns `{ primaryExcerpt, conflictExcerpt }` each with `passage`, `sourceLabel` (L19) | WRONG on the assembled card | Stage 4 still builds excerpt objects. Assembly writes `primaryExcerpt` as a passage string or null (`assemble-card.mjs` L751-793). `conflictExcerpt` is still the object. **B158** still open. |
+| A9 | Stage 5 commentary stored as `evidenceSummary` / `reasoningParagraph` (L20) | STALE | True when the call succeeds. A miss now stamps empty strings plus `commentaryNotReviewed: true` (`assemble-card.mjs` L745-749, L796). The four canned "Specific commentary is unavailable" strings are gone (**B254**). |
 | A10 | Stage 6: current statement only; two parallel LLM calls per statement (L21) **CITED** `scripts/diagnostic/delivery-check/review-cost-proposal.md` L26, L126 | TRUE as evaluation scope. STALE as a description of the prompt. | `EDITORIAL_EVALUATION_SCOPE` (`editorial-compliance-reviewer.mjs` L76). The same payload then pastes the full marked draft (`L1354-1357`, `L1404-1407`). Cited this month as the reason not to batch sentences. Evaluation rule is still that. Token cost is the full draft every time. |
-| A11 | Stage 7 assembles the qcCard the frontend already expects (L22) | STALE | Assembler is still shared (`pipeline-v3/stage7-assemble-card.mjs`). Additive fields since the rebuild: `commentaryNotReviewed`, `supportSpans`, `disagreementPassages`, and others. Frontend still does not re-derive the evidence verdict. |
+| A11 | Stage 7 assembles the qcCard the frontend already expects (L22) | STALE | Assembler is shared at `lib/qc/assemble-card.mjs`. Additive fields since the rebuild: `commentaryNotReviewed`, `supportSpans`, `disagreementPassages`, and others. Frontend still does not re-derive the evidence verdict. |
 | A12 | Execution: 1b after 1, widened matcher before 3, Stage 6 before Stage 5 (L24) | TRUE | `index.mjs` L575-656. Stage 5 pooled at 24. Stage 6 pooled at 4 (**B268**). |
 | A13 | Stage 1b pre-filter and B64 anchors (L26) | TRUE | `claim-spans.mjs` additive boundaries L13-20; relational connectives L27 onward. |
 | A14 | Upgrade-only rationale (L28) | TRUE | Comment in `claim-spans.mjs` L1-4. |
@@ -63,7 +63,7 @@ Omitted from architecture entirely, and now load-bearing:
 | Stage 5 pool at 24; Stage 6 pool at 4 | **B265** then **B268**. Peak Stage 6 in-flight is 8. |
 | Function `maxDuration` 300 | **B263**. `vercel.json`. |
 | `commentaryNotReviewed` | **B254**. A Stage 5 miss is not a finding. |
-| Editorial/compliance off stamps `clean` in the payload, `Not reviewed` on screen | **B247**. `stage7-assemble-card.mjs` L515. |
+| Editorial/compliance off stamps `clean` in the payload, `Not reviewed` on screen | **B247**. `assemble-card.mjs` L515. |
 | Coverage union, default OFF | Can change a partial to confirmed when the flag is on. |
 | Supersession | Demotes a pair before Stage 3. |
 | `reviewer_decisions` | Persistence is no longer only `review_state`. |

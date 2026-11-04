@@ -39,7 +39,7 @@ The same `silenceOnCard` also sends editorial/compliance findings on that card t
 
 Confirmed from `findings.md` Q1/Q3 and from code:
 
-- Assembly (`stage7-assemble-card.mjs` L577–578, L715–767) stores Stage 4 `{ sourceLabel, passage }` on `qcCard.primaryExcerpt`, and a string duplicate on `qcCard.primaryExcerptText`.
+- Assembly (`assemble-card.mjs` L577–578, L715–767) stores Stage 4 `{ sourceLabel, passage }` on `qcCard.primaryExcerpt`, and a string duplicate on `qcCard.primaryExcerptText`.
 - Schema (`qc-api-schema.mjs` L69–74) already requires `primaryExcerpt` to be `string | null`. The live analyse-statements path never calls `validateQcResponse` (only the evidence-skipped fast path does).
 - `StatementReviewCard.jsx` L697: `typeof qcCard?.primaryExcerpt === "string"`. Object form is dropped.
 - `primaryExcerptText`: zero frontend reads (`docs/R7_SOURCES_DRAWER_DIAGNOSTIC.md` already recorded this). Export reads it (`api/export.js` L117–121).
@@ -277,7 +277,7 @@ Inline. No new production module.
 
 | Path | Change |
 |---|---|
-| `lib/qc/pipeline-v3/stage7-assemble-card.mjs` | `primaryExcerpt: hasRealExcerpt ? primaryPassage : null` (string). Leave `primaryExcerptText` and `primaryRefTitle` as they are. Do not stringify `conflictExcerpt`. |
+| `lib/qc/assemble-card.mjs` | `primaryExcerpt: hasRealExcerpt ? primaryPassage : null` (string). Leave `primaryExcerptText` and `primaryRefTitle` as they are. Do not stringify `conflictExcerpt`. |
 | `src/modules/drafting/StatementReviewCard.jsx` (frontend) | In the expanded Evidence block, after `confirmationSentence`, render verbatim passage when present. Resolve with: string `primaryExcerpt`, else `primaryExcerptText`, else object `.passage`. Caption `primaryRefTitle` when present. Heading “Source excerpt”. |
 | `tests/assemble-primary-excerpt-type.test.mjs` | **new test file**: assembled card `primaryExcerpt` is string or null; matches `primaryExcerptText` |
 | `tests/action-list-display.test.mjs` or a sibling source-read test on the frontend | assert the Evidence block contains the “Source excerpt” heading (same style as existing frozen-label tests) |

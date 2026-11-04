@@ -491,8 +491,8 @@ function importerList(rel) {
 }
 
 const v3Files = [...fileInfo.values()].filter((f) => f.rel.startsWith("lib/qc/pipeline-v3/"));
-const v3Live = v3Files.filter((f) => f.rel.endsWith("stage7-assemble-card.mjs"));
-const v3Rest = v3Files.filter((f) => !f.rel.endsWith("stage7-assemble-card.mjs"));
+const v3Live = v3Files.filter((f) => f.rel.endsWith("assemble-card.mjs"));
+const v3Rest = v3Files.filter((f) => !f.rel.endsWith("assemble-card.mjs"));
 
 const diagJson = [...fileInfo.values()].filter(
   (f) => f.rel.startsWith("scripts/diagnostic/") && f.ext === ".json"
@@ -668,7 +668,7 @@ sections.push(
 sections.push(
   block("3a pipeline-v3", [
     `all pipeline-v3          files=${v3Files.length}  raw=${fmt(sumRaw(v3Files))}`,
-    `live (stage7 assemble)   files=${v3Live.length}  raw=${fmt(sumRaw(v3Live))}`,
+    `live (assemble-card inside this folder)   files=${v3Live.length}  raw=${fmt(sumRaw(v3Live))}`,
     `flag-off rest            files=${v3Rest.length}  raw=${fmt(sumRaw(v3Rest))}`,
     "",
     "per file:",
@@ -681,8 +681,8 @@ sections.push(
       ? importerList("lib/qc/pipeline-v3/qc-pipeline-v3.mjs")
       : ["(none)"]),
     "",
-    "importers of stage7-assemble-card.mjs:",
-    ...importerList("lib/qc/pipeline-v3/stage7-assemble-card.mjs"),
+    "importers of assemble-card.mjs:",
+    ...importerList("lib/qc/assemble-card.mjs"),
   ])
 );
 
@@ -723,7 +723,7 @@ sections.push(
       "v4 stage5  lib/qc/pipeline-v4/stage5-generate-commentary.mjs  (reads prompts/stage5_v2.md)",
       "v4 unused  lib/qc/pipeline-v4/prompts/stage5_v1.md",
       "v4 unused  lib/qc/pipeline-v4/prompts/stage2_v4_multipassage_shadow.md  (diagnostic only)",
-      "shared     lib/qc/pipeline-v3/stage7-assemble-card.mjs  (live from v4)",
+      "shared     lib/qc/assemble-card.mjs  (live from v4)",
       "legacy     lib/extract-statements.mjs  (deterministic fallback, live from v4 stage1)",
     ].map((line) => {
       const m = line.match(/(\S+\.(?:mjs|md|js))$/);

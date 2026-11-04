@@ -216,7 +216,7 @@ No assertion was given an exemption.
 - `lib/qc/reader-reason.mjs`. Passes the statement into the evidence line. Removes a stop that sits after a quote which already ended.
 - `lib/qc/source-account.mjs`. Exports the agreement patterns so the drift test can name them.
 - `lib/qc/summary-bullets.mjs`. Returns every non-zero check.
-- `lib/qc/pipeline-v3/stage7-assemble-card.mjs`. Passes the statement into the evidence line. The verbatim check stays on the full passage.
+- `lib/qc/assemble-card.mjs`. Passes the statement into the evidence line. The verbatim check stays on the full passage.
 - `src/modules/drafting/readerReason.js`. The same phrase check, the same sentence, and the same one stop.
 - `src/modules/drafting/reviewSummaryDisplay.js`. Returns every non-zero check.
 - `tests/b462-endorsement-parity.test.mjs`. The drift lock, the five probes, and the 261 reasons.

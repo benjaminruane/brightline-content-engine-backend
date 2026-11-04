@@ -108,7 +108,7 @@ Every hit. Check-ran readers were changed to `=== true`. The rest were left beca
 |------|-------------|----------------|
 | `lib/qc/review-summary.mjs` `asOptions` | `!== false` | `asReviewOptions` (`=== true`) |
 | `lib/qc/pipeline-v4/index.mjs` `resolveReviewToggles` | `!== false` | `=== true` |
-| `lib/qc/pipeline-v3/stage7-assemble-card.mjs` `reviewEnabled` | `!== false` when object present | `opts[key] === true` |
+| `lib/qc/assemble-card.mjs` `reviewEnabled` | `!== false` when object present | `opts[key] === true` |
 | `lib/qc/editorial-compliance-reviewer.mjs` | `documentContext.editorialEnabled !== false` (and compliance) | `=== true` |
 | `lib/qc/constructive-feedback.mjs` | `!== false` on the three flags | `asReviewOptions` |
 | `api/synthesize-review.js` | `!== false` | `asReviewOptions` |
@@ -265,7 +265,7 @@ TOTAL COST OF THIS SPEC IN USD: **0.23** list (0.13 discounted). Two 7-card evid
 
 ## Files
 
-Backend: `lib/qc/review-options.mjs`, `lib/qc/not-reviewed-reason.mjs`, `lib/qc/review-summary.mjs`, `lib/qc/editorial-compliance-reviewer.mjs`, `lib/qc/pipeline-v3/stage7-assemble-card.mjs`, `lib/qc/pipeline-v4/index.mjs`, `lib/qc/export-review-data.mjs`, `lib/qc/evidence-skipped-fast-path.mjs`, `lib/qc/constructive-feedback.mjs`, `lib/observability.js`, `api/analyse-statements.js`, `api/export.js`, `api/synthesize-review.js`, `api/constructive-feedback.js`, `tests/b299-absent-setting.test.mjs`, `tests/b300-not-reviewed-reasons.test.mjs`.
+Backend: `lib/qc/review-options.mjs`, `lib/qc/not-reviewed-reason.mjs`, `lib/qc/review-summary.mjs`, `lib/qc/editorial-compliance-reviewer.mjs`, `lib/qc/assemble-card.mjs`, `lib/qc/pipeline-v4/index.mjs`, `lib/qc/export-review-data.mjs`, `lib/qc/evidence-skipped-fast-path.mjs`, `lib/qc/constructive-feedback.mjs`, `lib/observability.js`, `api/analyse-statements.js`, `api/export.js`, `api/synthesize-review.js`, `api/constructive-feedback.js`, `tests/b299-absent-setting.test.mjs`, `tests/b300-not-reviewed-reasons.test.mjs`.
 
 Frontend: `src/modules/drafting/checkStateDisplay.js`, `src/modules/drafting/StatementReviewCard.jsx`, `src/utils/resultsScreenClaims.js`, `src/utils/summariseReview.js`, `src/utils/reviewerSynthesisPayload.js`, `src/modules/drafting/actionListDisplay.js`, `src/modules/drafting/StatementAnalysisPanel.jsx`, `tests/b298-turned-off-line.test.mjs`.
 

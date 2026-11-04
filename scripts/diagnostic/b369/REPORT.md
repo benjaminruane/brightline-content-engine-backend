@@ -31,7 +31,7 @@ Browser: skipped. No layout, control, or card-face chrome change. The comment te
 
 7. **Log.** `[stage7] quote-without-comment statementIndex=... route=... named=... fallback=...`. Routes: `empty_confirmation_cleared` (B366 absence drop left nothing), `commentary_not_reviewed` (Stage 5 miss), `never_written` (empty prose, not flagged as a miss), `stripped` (a later strip emptied a written comment).
 
-8. **P34 callers.** `fillQuoteWithoutComment`: `stage7-assemble-card.mjs` only. `namedClaimTermsInPassages`: `fillQuoteWithoutComment` only. `claimAnchors` callers after this spec: `excerpt-sentences.mjs` (locate and distinctive-anchor filter) and `namedClaimTermsInPassages`. `isFigureOrDateItem` Nx branch is local to `matchSentence`, which `appendSourceStatedClauses` and `fillQuoteWithoutComment` both use. Inventory from `extractVerifiableAnchors` still does not emit Nx, so B356 / B364 clause tests are unchanged.
+8. **P34 callers.** `fillQuoteWithoutComment`: `assemble-card.mjs` only. `namedClaimTermsInPassages`: `fillQuoteWithoutComment` only. `claimAnchors` callers after this spec: `excerpt-sentences.mjs` (locate and distinctive-anchor filter) and `namedClaimTermsInPassages`. `isFigureOrDateItem` Nx branch is local to `matchSentence`, which `appendSourceStatedClauses` and `fillQuoteWithoutComment` both use. Inventory from `extractVerifiableAnchors` still does not emit Nx, so B356 / B364 clause tests are unchanged.
 
 ---
 
@@ -123,7 +123,7 @@ No other fixture replay comment moved solely because of this guard.
 
 ## P34 callers
 
-`fillQuoteWithoutComment`: `lib/qc/pipeline-v3/stage7-assemble-card.mjs`.
+`fillQuoteWithoutComment`: `lib/qc/assemble-card.mjs`.
 
 `namedClaimTermsInPassages`: `fillQuoteWithoutComment`.
 

@@ -118,7 +118,7 @@ const MARKERS = [
   {
     layer: "Editorial source awareness",
     receives: "Selected passages already on the card: primary excerpt, conflict excerpt, support spans, and match passages. Not the whole document.",
-    file: "lib/qc/pipeline-v3/stage7-assemble-card.mjs",
+    file: "lib/qc/assemble-card.mjs",
     marker: "passages: matchedPassagesFromCard({",
   },
   {
@@ -322,7 +322,7 @@ lines.push("`resolveSupersession` is the stage whose job is a later source and a
 lines.push("");
 lines.push("To notice that kind of revision it would have to be given the text of both sources, or the passage from each that states the transaction, and which source is later.");
 lines.push("");
-lines.push("The field that stores the result is `supersededSourceNotes`. v4 assigns whatever `resolveSupersession` returned, at `lib/qc/pipeline-v4/index.mjs`. The fallback card `safeCard` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` starts that field as an empty array. The assembled card copies `entry.supersededSourceNotes` when the entry has an array. `buildSkippedEvidenceQcCard` does not set the field.");
+lines.push("The field that stores the result is `supersededSourceNotes`. v4 assigns whatever `resolveSupersession` returned, at `lib/qc/pipeline-v4/index.mjs`. The fallback card `safeCard` in `lib/qc/assemble-card.mjs` starts that field as an empty array. The assembled card copies `entry.supersededSourceNotes` when the entry has an array. `buildSkippedEvidenceQcCard` does not set the field.");
 lines.push("");
 lines.push(`Cards on this pass with a non-empty supersededSourceNotes array: ${notesWritten} of ${cards.length}. The writer exists. On this pass it recorded nothing.`);
 lines.push("");

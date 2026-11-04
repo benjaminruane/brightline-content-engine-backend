@@ -11,7 +11,7 @@ import { describe, test } from "vitest";
 
 import { locatePassageInSource, recoverExcerptFromSource } from "../lib/qc/excerpt-from-source.mjs";
 import { locateClaimSentencesInSource, QUOTE_GAP_MARK } from "../lib/qc/excerpt-sentences.mjs";
-import { assembleCard } from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

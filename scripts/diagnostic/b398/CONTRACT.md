@@ -1,6 +1,6 @@
 # B398. A card with no factual badge
 
-Not implemented. B397 showed the contract has no such state. `displayVerdict` is set in `lib/qc/pipeline-v3/stage7-assemble-card.mjs` by `mapSupportStateToDisplayVerdict` (the map is at line 444, the assignment at line 681). The map returns `supported_full`, `supported_partial`, `conflict`, `not reviewed`, or `not_supported`. `applyExcerptHonestyToDisplay` can replace a supported card that has no usable excerpt with `unverifiable`.
+Not implemented. B397 showed the contract has no such state. `displayVerdict` is set in `lib/qc/assemble-card.mjs` by `mapSupportStateToDisplayVerdict` (the map is at line 444, the assignment at line 681). The map returns `supported_full`, `supported_partial`, `conflict`, `not reviewed`, or `not_supported`. `applyExcerptHonestyToDisplay` can replace a supported card that has no usable excerpt with `unverifiable`.
 
 `lib/qc/evidence-display-verdict.mjs` maps a blank and the string "not reviewed" to the label "Not reviewed". Every other slug becomes a factual label, and an unknown slug becomes "Unverifiable". The frontend copy in `src/modules/drafting/displayVerdictLabels.js` does the same. `verdictToTone` in `src/modules/drafting/verdictColors.js` paints a blank and "not reviewed" amber.
 
@@ -18,7 +18,7 @@ The separate field is the one to build.
 
 Add `factualBadge` on the card. Boolean. Missing or true means the badge is the current `displayVerdict` label. False means the evidence row shows no factual badge: no "Confirmed", "Conflicting", "No support", "Unverifiable", or "Not reviewed". The row keeps the model's note and draws an outline mark. The tone is not green, not red, and not the amber used for "Not reviewed".
 
-The writer is `assembleCard` in `lib/qc/pipeline-v3/stage7-assemble-card.mjs`, beside the `displayVerdict` assignment.
+The writer is `assembleCard` in `lib/qc/assemble-card.mjs`, beside the `displayVerdict` assignment.
 
 Readers, and what they would show when the field is false:
 

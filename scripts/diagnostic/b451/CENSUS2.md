@@ -47,11 +47,11 @@ On the pass that shape is 0. One card carries the rule: fixture 05 index 7. The 
 
 ## 4. PARTLY CLOSED. A drop with no count on the card
 
-Covered. B438, backend `019d886`. The editorial combined path writes a silence when fidelity, a style backstop, the no-op drop, the no-change drop, the evidence-language drop, or narrative coherence removes a concern (`editorial-compliance-reviewer.mjs` 2055-2088). Assembly copies those onto the card, and it writes its own silences for narrative coherence, source awareness, the forward-looking drop, and a duplicate merge (`stage7-assemble-card.mjs` 918-920, 1501-1536, 405-410). The later LinkedIn credit-line drop uses the same `noteDrop` (`editorial-compliance-reviewer.mjs` 2082-2083). The count reaches the card. The screen does not read `silences`. A clean card with a silence still looks clean.
+Covered. B438, backend `019d886`. The editorial combined path writes a silence when fidelity, a style backstop, the no-op drop, the no-change drop, the evidence-language drop, or narrative coherence removes a concern (`editorial-compliance-reviewer.mjs` 2055-2088). Assembly copies those onto the card, and it writes its own silences for narrative coherence, source awareness, the forward-looking drop, and a duplicate merge (`assemble-card.mjs` 918-920, 1501-1536, 405-410). The later LinkedIn credit-line drop uses the same `noteDrop` (`editorial-compliance-reviewer.mjs` 2082-2083). The count reaches the card. The screen does not read `silences`. A clean card with a silence still looks clean.
 
 On the pass, the only one of those ids that fired is `source_awareness`, 14 cards. 12 of them have `editorialVerdict` clean. Fidelity, the style backstops, no-op, no-change, evidence language, narrative coherence, forward-looking, and duplicate merge are 0. Zero here means the drop did not happen. The silence would be on the card if it had.
 
-Not covered. The duplication judge still drops a concern and recomputes the verdict with a canary and no silence (`stage7-assemble-card.mjs` 969-999). The compliance fidelity gate in the v4 reviewer does the same with no silence (`editorial-compliance-reviewer.mjs` 2519-2526). Those two are not a count of zero. The card has no field that would show them, so this file cannot say whether they fired.
+Not covered. The duplication judge still drops a concern and recomputes the verdict with a canary and no silence (`assemble-card.mjs` 969-999). The compliance fidelity gate in the v4 reviewer does the same with no silence (`editorial-compliance-reviewer.mjs` 2519-2526). Those two are not a count of zero. The card has no field that would show them, so this file cannot say whether they fired.
 
 ## 5. PARTLY CLOSED. The attention header
 
@@ -73,7 +73,7 @@ On the pass, export verdict differs from `sentenceLabel` on 0 cards. Export evid
 
 ## 8. OPEN. "The company" lifts a partial
 
-`applyGenericCompanySuppress` still returns `supported_full` and strips a sentence that contains both "however" and "not" when "the company" resolves (`generic-company.mjs` 117-156). Assembly still applies it (`stage7-assemble-card.mjs` 1429-1451). A silence is written only when the summary text changes. A lift that does not change the summary stores nothing: no prior partial, no antecedent.
+`applyGenericCompanySuppress` still returns `supported_full` and strips a sentence that contains both "however" and "not" when "the company" resolves (`generic-company.mjs` 117-156). Assembly still applies it (`assemble-card.mjs` 1429-1451). A silence is written only when the summary text changes. A lift that does not change the summary stores nothing: no prior partial, no antecedent.
 
 On the pass, `gap_sentences_stripped` is 0. That is a strip count, not a lift count. 19 statements open with "the company", "the firm", or "the group". 4 of them are still partial. 12 are `supported_full`. The 12 are not evidence of a lift. The sources are not on the card, so the resolver cannot be re-run from this file.
 
@@ -85,7 +85,7 @@ Not covered. When the period gate replaces the explanation, `explanationFor` is 
 
 On the pass, 10 matches are class `no_support` and none of them carries `writtenFor`. 7 cards with `displayVerdict` `not_supported` have an empty passage. Those 7 cannot be split into "the model said no support" and "a backstop rewrote it". The marker that would split them is the one this path does not write.
 
-Omission still rewrites a conflict to `supported_full` and stores no prior and no silence (`card-honesty.mjs` 286-293, applied at `stage7-assemble-card.mjs` 1027-1040). The dateline lift still clears `unsupportedSpans` and stores no prior (`source-dateline.mjs` 245-254). `displayVerdictReason` `announcement_dateline` is the disagree path, not the lift. That reason is 0 on the pass. The lift would not have shown up in that 0.
+Omission still rewrites a conflict to `supported_full` and stores no prior and no silence (`card-honesty.mjs` 286-293, applied at `assemble-card.mjs` 1027-1040). The dateline lift still clears `unsupportedSpans` and stores no prior (`source-dateline.mjs` 245-254). `displayVerdictReason` `announcement_dateline` is the disagree path, not the lift. That reason is 0 on the pass. The lift would not have shown up in that 0.
 
 ## 10. CLOSED. A re-check that is not stale
 
@@ -133,7 +133,7 @@ Does not fire on this pass. The code is still there. The smallest change is firs
 
 Not a count of zero. The card does not record them, so a replay of this file cannot show them. Seeing the rate means a live review.
 
-- The duplication judge (`stage7-assemble-card.mjs` 969-999).
+- The duplication judge (`assemble-card.mjs` 969-999).
 - The compliance fidelity gate (`editorial-compliance-reviewer.mjs` 2519-2526).
 
 The change for both is the same silence the other filters already write. Writing it is deterministic. Proving it fired on these drafts is not, because the dropped concern is gone.

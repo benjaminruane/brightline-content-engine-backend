@@ -26,7 +26,7 @@ const {
   runEditorialStyleReview,
   recomputeV4EditorialVerdictFromConcerns,
 } = await import("../../lib/qc/editorial-compliance-reviewer.mjs");
-const { assembleCard } = await import("../../lib/qc/pipeline-v3/stage7-assemble-card.mjs");
+const { assembleCard } = await import("../../lib/qc/assemble-card.mjs");
 
 const MOCK_CASE4 = JSON.stringify({
   concerns: [

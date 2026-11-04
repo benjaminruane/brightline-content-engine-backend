@@ -42,7 +42,7 @@ const { matchAllSources, buildUnsupportedSpans } = await import(
 const { aggregateVerdict } = await import("../../../lib/qc/pipeline-v4/stage3-aggregate-verdict.mjs");
 const { selectExcerpts } = await import("../../../lib/qc/pipeline-v4/stage4-select-excerpts.mjs");
 const { resolveSupersession, buildAsOfBySourceIndex } = await import("../../../lib/qc/supersession.mjs");
-const { assembleCard } = await import("../../../lib/qc/pipeline-v3/stage7-assemble-card.mjs");
+const { assembleCard } = await import("../../../lib/qc/assemble-card.mjs");
 const {
   gatherConcerns,
   buildRevisionPrompt,

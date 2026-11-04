@@ -6,7 +6,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { assembleCard } from "../../../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+import { assembleCard } from "../../../lib/qc/assemble-card.mjs";
 import { selectExcerpts } from "../../../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");

@@ -23,7 +23,7 @@ import { isActorOfTheActionEnabled } from "../lib/qc/actor-of-the-action.mjs";
 import {
   isRecoveryMayNotGreenEnabled,
   isUnbadgedResidueEnabled,
-} from "../lib/qc/pipeline-v3/stage7-assemble-card.mjs";
+} from "../lib/qc/assemble-card.mjs";
 import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 import { buildIncompleteReviewResponse } from "../lib/qc/review-deadline.mjs";
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
