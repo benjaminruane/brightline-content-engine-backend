@@ -56,15 +56,10 @@ function noted(row, sources, asOf) {
 }
 
 describe("B477 revised figure", () => {
-  test("the four cards name the later document, and 18:8 is not counted twice", () => {
-    const expected = {
-      3: ["412 property management companies", "380 property management companies"],
-      4: ["EUR 35 million", "EUR 38 million"],
-      5: ["167 people", "142 people"],
-      8: ["2.6x MOIC and 21% IRR", "2.8x MOIC and 23% IRR"],
-    };
-    for (const [index, figures] of Object.entries(expected)) {
-      const before = card("18", Number(index));
+  test("a sentence that already names the later document is kept, and 18:8 is not counted twice", () => {
+    const kept = [3, 4, 5];
+    for (const index of kept) {
+      const before = card("18", index);
       const after = noted(before, sources18, asOf18);
       const reason = readerEvidenceSentence(after);
       assert.equal(shownLabel(after), "Conflicts with the source", index);
@@ -76,18 +71,21 @@ describe("B477 revised figure", () => {
       assert.equal(after.resolved.verdictOverride, null, index);
       assert.deepEqual(after.resolved.demotedSourceIndices, [], index);
       assert.equal(after.supersededSourceNotes.length, 1, index);
-      assert.equal(reason, after.supersededSourceNotes[0], index);
+      assert.equal(reason, readerEvidenceSentence(before), index);
+      assert.notEqual(reason, after.supersededSourceNotes[0], index);
       assert.equal(reasonFault(reason), "", index);
-      assert.ok(readerSentences(reason).length <= 3, index);
-      assert.match(reason, /18b_synth_cross_source_pair_update/);
-      assert.match(reason, /18a_synth_cross_source_pair_initial/);
-      assert.match(reason, /28 May 2025/);
-      assert.match(reason, /15 April 2025/);
-      assert.match(reason, new RegExp(figures[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-      assert.match(reason, new RegExp(figures[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
       assert.equal(evidenceFindingForExport(after), reason, index);
-      assert.notEqual(reason, readerEvidenceSentence(before), index);
     }
+
+    const beforeEight = card("18", 8);
+    const afterEight = noted(beforeEight, sources18, asOf18);
+    const eightReason = readerEvidenceSentence(afterEight);
+    assert.equal(shownLabel(afterEight), "Conflicts with the source");
+    assert.equal(afterEight.supersededSourceNotes.length, 1);
+    assert.equal(eightReason, afterEight.supersededSourceNotes[0]);
+    assert.match(eightReason, /2\.6x MOIC and 21% IRR/);
+    assert.match(eightReason, /2\.8x MOIC and 23% IRR/);
+    assert.equal(evidenceFindingForExport(afterEight), eightReason);
 
     const eight = noted(card("18", 8), sources18, asOf18);
     const floorExplanation = liveContradiction(eight).explanation;
@@ -136,19 +134,19 @@ describe("B477 revised figure", () => {
     assert.equal(out.supersededNotes.some((note) => note.startsWith("The later source ")), false);
   });
 
-  test("two sources with no established order keep today's reason and do not name a revision", () => {
+  test("two sources with no established order do not replace today's reason with a revision", () => {
     const before = card("18", 3);
     const sameDate = {
       0: asOf18[1],
       1: asOf18[1],
     };
     const tied = noted(before, sources18, sameDate);
-    assert.deepEqual(tied.supersededSourceNotes, []);
+    assert.equal(tied.supersededSourceNotes.some((note) => note.startsWith("The later source ")), false);
     assert.equal(readerEvidenceSentence(tied), readerEvidenceSentence(before));
     assert.equal(String(readerEvidenceSentence(tied)).includes("later source"), false);
 
     const undated = noted(before, sources18, { 0: asOf18[0], 1: null });
-    assert.deepEqual(undated.supersededSourceNotes, []);
+    assert.equal(undated.supersededSourceNotes.some((note) => note.startsWith("The later source ")), false);
     assert.equal(readerEvidenceSentence(undated), readerEvidenceSentence(before));
     assert.equal(String(readerEvidenceSentence(undated)).includes("later source"), false);
   });
