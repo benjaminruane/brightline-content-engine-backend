@@ -80,20 +80,17 @@ describe("B477 revised figure", () => {
     const beforeEight = card("18", 8);
     const afterEight = noted(beforeEight, sources18, asOf18);
     const eightReason = readerEvidenceSentence(afterEight);
+    const floorExplanation = liveContradiction(afterEight).explanation;
     assert.equal(shownLabel(afterEight), "Conflicts with the source");
+    assert.equal(floorState(afterEight), "conflicts");
     assert.equal(afterEight.supersededSourceNotes.length, 1);
-    assert.equal(eightReason, afterEight.supersededSourceNotes[0]);
+    assert.equal(eightReason, floorExplanation);
+    assert.equal(eightReason, readerEvidenceSentence(beforeEight));
+    assert.notEqual(eightReason, afterEight.supersededSourceNotes[0]);
     assert.match(eightReason, /2\.6x MOIC and 21% IRR/);
     assert.match(eightReason, /2\.8x MOIC and 23% IRR/);
     assert.equal(evidenceFindingForExport(afterEight), eightReason);
-
-    const eight = noted(card("18", 8), sources18, asOf18);
-    const floorExplanation = liveContradiction(eight).explanation;
-    assert.equal(floorState(eight), "conflicts");
-    assert.equal(readerEvidenceSentence(card("18", 8)), floorExplanation);
-    const reason = readerEvidenceSentence(eight);
-    assert.equal(readerSentences(reason).includes(floorExplanation), false);
-    assert.equal(reason.includes(floorExplanation), false);
+    assert.equal(readerSentences(eightReason).includes(afterEight.supersededSourceNotes[0]), false);
   });
 
   test("an older objection is still cleared when the newer source confirms the draft", () => {

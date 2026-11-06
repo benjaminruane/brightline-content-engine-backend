@@ -212,20 +212,23 @@ describe("B478 revision and recency", () => {
     assert.equal(shownLabel(raised), "Conflicts with the source");
   });
 
-  test("a stale-source note is dropped only when the reason names a revision", () => {
+  test("a stale-source note is dropped only when the reason carries both figures", () => {
     const concern = { note: "Check the source date." };
     const named = "The initial memo stated 142 employees, but the confirmatory diligence update corrects this to 167 people.";
-    assert.deepEqual(sourceRecencyForReader([concern], named), []);
+    const note = "The later source update dated 28 May 2025 gives 167 people. The earlier source memo dated 15 April 2025 gives 142 people.";
+    assert.deepEqual(sourceRecencyForReader([concern], named, note), []);
     assert.deepEqual(
-      sourceRecencyForReader([concern], "The later source beta memo dated 28 May 2025 gives team of 55."),
+      sourceRecencyForReader([concern], "The later source beta memo dated 28 May 2025 gives team of 55. The earlier source alpha memo dated 15 April 2025 gives team of 40."),
       []
     );
+    assert.deepEqual(sourceRecencyForReader([concern], "The later source beta memo dated 28 May 2025 gives team of 55.", note), [concern]);
     assert.deepEqual(
-      sourceRecencyForReader([concern], "alpha memo states \"The firm has a team of 40.\""),
+      sourceRecencyForReader([concern], "alpha memo states \"The firm has a team of 40.\"", note),
       [concern]
     );
-    assert.equal(sourceRecencyForReader(card("18", 5).sourceRecencyConcerns, readerEvidenceSentence(card("18", 5))).length, 0);
-    assert.equal(sourceRecencyForReader(card("18", 7).sourceRecencyConcerns, readerEvidenceSentence(card("18", 7))).length, 0);
+    assert.equal(sourceRecencyForReader(card("18", 5).sourceRecencyConcerns, readerEvidenceSentence(card("18", 5)), note).length, 0);
+    const arrNote = "The later source update dated 28 May 2025 gives EUR 35 million. The earlier source memo dated 15 April 2025 gives EUR 38 million.";
+    assert.equal(sourceRecencyForReader(card("18", 7).sourceRecencyConcerns, readerEvidenceSentence(card("18", 7)), arrNote).length, 0);
     assert.equal(sourceRecencyForReader(card("18", 2).sourceRecencyConcerns, readerEvidenceSentence(card("18", 2))).length, 1);
     assert.equal(sourceRecencyForReader(card("18", 6).sourceRecencyConcerns, readerEvidenceSentence(card("18", 6))).length, 1);
     const assembly = readFileSync(new URL("../lib/qc/assemble-card.mjs", import.meta.url), "utf8");
