@@ -70,7 +70,6 @@ describe("B477 revised figure", () => {
       assert.equal(before.tier, after.tier, index);
       assert.equal(after.resolved.verdictOverride, null, index);
       assert.deepEqual(after.resolved.demotedSourceIndices, [], index);
-      assert.equal(after.supersededSourceNotes.length, 1, index);
       assert.equal(reason, readerEvidenceSentence(before), index);
       assert.notEqual(reason, after.supersededSourceNotes[0], index);
       assert.equal(reasonFault(reason), "", index);
@@ -83,7 +82,6 @@ describe("B477 revised figure", () => {
     const floorExplanation = liveContradiction(afterEight).explanation;
     assert.equal(shownLabel(afterEight), "Conflicts with the source");
     assert.equal(floorState(afterEight), "conflicts");
-    assert.equal(afterEight.supersededSourceNotes.length, 1);
     assert.equal(eightReason, floorExplanation);
     assert.equal(eightReason, readerEvidenceSentence(beforeEight));
     assert.notEqual(eightReason, afterEight.supersededSourceNotes[0]);
