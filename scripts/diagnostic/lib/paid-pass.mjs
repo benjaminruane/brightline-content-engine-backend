@@ -1,5 +1,6 @@
 /**
- * One full-pipeline pass over fixtures 01 to 20.
+ * One full-pipeline pass. Defaults to fixtures 01 to 20.
+ * Pass ids, or --ids 22,23, to run a named set. The freeze guard is unchanged.
  * B446 imports this. B441 keeps its own copy. This is the resume path:
  * each finished fixture is written by rename, and a file that does not parse
  * is refused rather than started again.
@@ -10,7 +11,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { loadLocalEnvFiles } from "./env.mjs";
-import { filterFixtures, loadAllFixtures } from "./fixtures.mjs";
+import { filterFixtures, loadAllFixtures, parseIdsArg } from "./fixtures.mjs";
 import { loadPipelineSources } from "./sources.mjs";
 import {
   assertFreezeCountForSelectedIds,
@@ -221,12 +222,48 @@ function addViews(a, b) {
 }
 
 function parseArgs(argv) {
-  const out = { resume: false };
-  for (const arg of argv) {
+  const out = { resume: false, ids: [] };
+  const args = Array.isArray(argv) ? argv : [];
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i];
     if (arg === "--resume") out.resume = true;
+    else if (arg === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
     else if (arg.startsWith("-")) throw new Error(`paid pass: unknown argument ${arg}`);
   }
   return out;
+}
+
+/** Named ids when given, otherwise fixtures 01 to 20. */
+export function paidPassFixtureFilter(ids) {
+  const named = (Array.isArray(ids) ? ids : []).map((id) => String(id).trim()).filter(Boolean).map((id) => id.padStart(2, "0"));
+  if (named.length) return { ids: named };
+  return { range: { from: "01", to: "20" } };
+}
+
+/**
+ * Corpus 1 stays closed. Fixtures frozen after it are added only when that id
+ * is not already in the corpus file.
+ */
+export function mergeFreezeDocs(primary, extra) {
+  const base = primary && typeof primary === "object" ? primary : { fixtures: [] };
+  const fixtures = Array.isArray(base.fixtures) ? base.fixtures : [];
+  const have = new Set(fixtures.map((row) => padFixtureId(row?.fixtureId)));
+  const added = (Array.isArray(extra?.fixtures) ? extra.fixtures : []).filter((row) => !have.has(padFixtureId(row?.fixtureId)));
+  if (!added.length) return base;
+  return { ...base, fixtures: [...fixtures, ...added] };
+}
+
+/** Refuse when a selected fixture has no frozen statements. */
+export function refuseUnfrozenStatements(statementsDoc, selectedIds) {
+  return assertFreezeCountForSelectedIds(statementsDoc, selectedIds);
+}
+
+/** Refuse when the loaded cards do not match the freeze, or the stored count does not. */
+export function refuseFrozenCountMismatch({ fixtureId, frozenRows, cards, stage1Source, cardCount, frozenCount, pass = "1" }) {
+  if (fixtureId != null) assertMatchesFreeze({ fixtureId, frozenRows, cards, stage1Source });
+  if (cardCount != null && frozenCount != null && cardCount !== frozenCount) {
+    throw new Error(`PASS ${pass} stored ${cardCount} cards, freeze is ${frozenCount}`);
+  }
 }
 
 async function loadPass(filePath, resume) {
@@ -279,7 +316,7 @@ async function writeJson(filePath, value) {
 /**
  * @param {{ dir: string, label: string, ceilingUsd?: number, full?: boolean }} options
  */
-export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false } = {}) {
+export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, ids = null } = {}) {
   if (typeof dir !== "string" || !dir) throw new Error("paid pass: dir is missing");
   if (typeof label !== "string" || !label) throw new Error("paid pass: label is missing");
   loadLocalEnvFiles({ liveMeasurement: true });
@@ -315,11 +352,19 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false } 
 
   const pricing = getLlmPricingTable();
   const statementsPath = path.join(dir, "../accuracy/statements.json");
-  const statementsDoc = JSON.parse(await readFile(statementsPath, "utf8"));
+  const primaryDoc = JSON.parse(await readFile(statementsPath, "utf8"));
+  let extraDoc = null;
+  try {
+    extraDoc = JSON.parse(await readFile(path.join(path.dirname(statementsPath), "statements-after-20.json"), "utf8"));
+  } catch (err) {
+    if (!err || err.code !== "ENOENT") throw err;
+  }
+  const statementsDoc = mergeFreezeDocs(primaryDoc, extraDoc);
   const { byId: frozenByFixture } = frozenRowsByFixture(statementsDoc);
-  const fixtures = filterFixtures(await loadAllFixtures(), { range: { from: "01", to: "20" } });
+  const namedIds = args.ids.length ? args.ids : ids;
+  const fixtures = filterFixtures(await loadAllFixtures(), paidPassFixtureFilter(namedIds));
   const selectedIds = fixtures.map((fixture) => padFixtureId(fixture.data.id));
-  const frozenCount = assertFreezeCountForSelectedIds(statementsDoc, selectedIds);
+  const frozenCount = refuseUnfrozenStatements(statementsDoc, selectedIds);
   const repoRoot = path.join(dir, "../../..");
   const sha = execSync("git rev-parse --short HEAD", { cwd: repoRoot }).toString().trim();
   log(`FREEZE ${frozenCount} statements. Build ${sha}. Cache off. ${label}.`);
@@ -422,7 +467,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false } 
           }
         : compactCard(id, card, index, freeze[index]?.occurrence ?? 0, outputType)
     );
-    assertMatchesFreeze({
+    refuseFrozenCountMismatch({
       fixtureId: id,
       frozenRows: freeze,
       cards,
@@ -461,9 +506,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false } 
   const passSpend = doc.spend;
   carried = addViews(carried, passSpend);
   log(`PASS ${pass} done. cards=${doc.cardCount} list=${passSpend.listUsd.toFixed(4)} discounted=${passSpend.costUsd.toFixed(4)}`);
-  if (doc.cardCount !== frozenCount) {
-    throw new Error(`PASS ${pass} stored ${doc.cardCount} cards, freeze is ${frozenCount}`);
-  }
+  refuseFrozenCountMismatch({ cardCount: doc.cardCount, frozenCount, pass });
   if (doc.fixtures.length !== fixtures.length) {
     throw new Error(`PASS ${pass} stored ${doc.fixtures.length} fixtures, expected ${fixtures.length}`);
   }

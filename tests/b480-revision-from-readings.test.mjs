@@ -64,17 +64,25 @@ describe("B480 revision from readings", () => {
     assert.deepEqual(resolveSupersession(args(ordered, pair(19, "19 offices", 4, "4 offices"))).supersededNotes, []);
   });
 
-  test("one dated document gives nothing", () => {
+  test("one dated document names both values and claims no order", () => {
     const asOf = { 0: ordered[0], 1: null };
-    assert.equal(revisionSentence(args(asOf, pair(19, "19 offices", 12, "12 offices"))), "");
-    assert.deepEqual(resolveSupersession(args(asOf, pair(19, "19 offices", 12, "12 offices"))).supersededNotes, []);
+    const matches = pair(19, "19 offices", 12, "12 offices");
+    assert.equal(revisionSentence(args(asOf, matches)), "");
+    assert.equal(
+      resolveSupersession(args(asOf, matches)).supersededNotes[0],
+      "The documents differ. alpha memo gives 12 offices. beta memo gives 19 offices."
+    );
   });
 
-  test("two documents that share the latest date give nothing", () => {
+  test("two documents that share the latest date name both values and claim no order", () => {
     const day = dated("28 May 2025", "2025-05-28T00:00:00Z");
     const asOf = { 0: day, 1: { ...day, date: new Date("2025-05-28T00:00:00Z") } };
-    assert.equal(revisionSentence(args(asOf, pair(19, "19 offices", 12, "12 offices"))), "");
-    assert.deepEqual(resolveSupersession(args(asOf, pair(19, "19 offices", 12, "12 offices"))).supersededNotes, []);
+    const matches = pair(19, "19 offices", 12, "12 offices");
+    assert.equal(revisionSentence(args(asOf, matches)), "");
+    assert.equal(
+      resolveSupersession(args(asOf, matches)).supersededNotes[0],
+      "The documents differ. alpha memo gives 12 offices. beta memo gives 19 offices."
+    );
   });
 
   test("an undated pair names both readings and claims no order", () => {
