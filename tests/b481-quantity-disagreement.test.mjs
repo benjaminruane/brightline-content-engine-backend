@@ -106,7 +106,7 @@ describe("B481 quantity disagreement", () => {
     ).supersededNotes[0];
     assert.equal(
       note,
-      "The later source beta memo dated 28 May 2025 disagrees. The earlier source alpha memo dated 15 April 2025 does not."
+      "The later source beta memo dated 28 May 2025 disagrees with the statement. The earlier source alpha memo dated 15 April 2025 agrees with it."
     );
     const card = {
       statement: "The board approved the terms circulated.",
