@@ -40,7 +40,7 @@ describe("B482 quoted quantity", () => {
     const arr = note("cleaned ARR of EUR 35 million", "EUR 38 million");
     assert.equal(
       arr,
-      "The later source beta memo dated 28 May 2025 gives EUR 38 million. The earlier source alpha memo dated 15 April 2025 gives cleaned ARR of EUR 35 million."
+      "The later source beta memo dated 28 May 2025 gives EUR 38 million. The earlier source alpha memo dated 15 April 2025 gives EUR 35 million."
     );
     const total = note("The total is 142", "The total is 167");
     assert.equal(

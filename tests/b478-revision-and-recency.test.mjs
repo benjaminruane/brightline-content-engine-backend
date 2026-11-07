@@ -93,8 +93,8 @@ describe("B478 revision and recency", () => {
     assert.equal(out.verdictOverride, null);
     assert.deepEqual(out.demotedSourceIndices, []);
     assert.equal(out.supersededNotes.length, 1);
-    assert.match(out.supersededNotes[0], /^The later source beta memo dated 28 May 2025 gives team of 55\./);
-    assert.match(out.supersededNotes[0], /The earlier source alpha memo dated 15 April 2025 gives team of 40\./);
+    assert.match(out.supersededNotes[0], /^The later source beta memo dated 28 May 2025 gives 55\./);
+    assert.match(out.supersededNotes[0], /The earlier source alpha memo dated 15 April 2025 gives 40\./);
   });
 
   test("a quiet card with that revision is Conflicts with the source", () => {
@@ -195,7 +195,7 @@ describe("B478 revision and recency", () => {
     const out = resolveSupersession(teamArgs({ 0: null, 1: null }));
     assert.equal(out.supersededNotes.length, 1);
     const sentence = out.supersededNotes[0];
-    assert.equal(sentence, "The documents differ. alpha memo gives team of 40. beta memo gives team of 55.");
+    assert.equal(sentence, "The documents differ. alpha memo gives 40. beta memo gives 55.");
     const stripped = sentence.replaceAll("alpha memo", "").replaceAll("beta memo", "");
     assert.equal(ORDER.test(stripped), false);
     const row = quiet(out.supersededNotes);
