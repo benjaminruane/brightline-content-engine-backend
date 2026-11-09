@@ -1,0 +1,10 @@
+2026-11-09T12:40:53.838Z ESTIMATE B484 one pass USD 26.613613 pipeline 19.677108 note 6.936505 scheduler wall 3.1 min (TPM floor)
+2026-11-09T12:40:53.873Z FREEZE 37 statements. Build 9773a86d. Cache off. B484.
+2026-11-09T12:40:53.874Z PASS 1 start. Already stored: 0.
+2026-11-09T12:41:52.936Z PASS 1 F18 cards=10 wallMs=59062 spend=0.9022 list=1.0550 calls=93 note=shown
+2026-11-09T12:42:19.510Z PASS 1 F22 cards=5 wallMs=26572 spend=1.1626 list=1.4144 calls=130 note=shown
+2026-11-09T12:42:48.043Z PASS 1 F23 cards=5 wallMs=28533 spend=1.4508 list=1.7955 calls=171 note=shown
+2026-11-09T12:43:21.836Z PASS 1 F24 cards=7 wallMs=33793 spend=2.0119 list=2.3980 calls=228 note=shown
+2026-11-09T12:44:17.884Z PASS 1 F25 cards=10 wallMs=56047 spend=2.8135 list=3.4727 calls=323 note=shown
+2026-11-09T12:44:18.172Z PASS 1 done. cards=37 list=3.4727 discounted=2.8135
+2026-11-09T12:44:18.173Z COMBINED list=3.4727 discounted=2.8135 calls=323 unpriced=0
