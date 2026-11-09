@@ -120,7 +120,7 @@ test("recheck calls the note once for the changed statement and clears its decis
       { index: 0, text: "Alpha stayed.", facts: [], note: null, sentenceState: "nothing_to_raise" },
       { index: 1, text: "Beta was.", facts: [], note: null, sentenceState: "nothing_to_raise" },
     ],
-    sources: [{ text: "Alpha stayed. The source says nothing else." }],
+    sources: [{ label: "memo", text: "Alpha stayed. The source says nothing else." }],
     entries: [
       { id: "changed", statementId: "1" },
       { id: "kept", statementId: "0" },

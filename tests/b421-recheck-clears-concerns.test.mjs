@@ -22,7 +22,7 @@ test("a corrected typo comes back without the concern, the mark, or the proposal
         suggestedDirection: "Replace 'copleted' with 'completed'.",
       }],
     }],
-    sources: [{ text: after }],
+    sources: [{ label: "memo", text: after }],
     entries: [{
       id: "stale-typo",
       statementId: "0",
