@@ -330,7 +330,8 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
   };
   if (!args.resume) writeFileSync(progress, "");
 
-  const estimate = await buildEstimate();
+  const namedIds = args.ids.length ? args.ids : ids;
+  const estimate = await buildEstimate(Array.isArray(namedIds) && namedIds.length ? { ids: namedIds } : null);
   await mkdir(dir, { recursive: true });
   await writeJson(path.join(dir, "estimate.json"), estimate);
   const one = estimate.onePass;
@@ -338,8 +339,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
     `ESTIMATE ${label} one pass USD ${one.usd} pipeline ${one.pipelineUsd} note ${one.noteUsd} ` +
       `scheduler wall ${(one.tpmFloorMs / 60000).toFixed(1)} min (TPM floor)`
   );
-  const namedIds = args.ids.length ? args.ids : ids;
-  if (!(Array.isArray(namedIds) && namedIds.length) && one.usd > ceilingUsd) {
+  if (one.usd > ceilingUsd) {
     throw new Error(`Estimate USD ${one.usd} is above ${ceilingUsd}. Not spending.`);
   }
 

@@ -35,8 +35,13 @@ function usd(n) {
   return Math.round(n * 1e6) / 1e6;
 }
 
-export async function buildEstimate() {
-  const fixtures = filterFixtures(await loadAllFixtures(), { range: { from: "01", to: "20" } });
+export async function buildEstimate(filter) {
+  const applied = filter && Array.isArray(filter.ids) && filter.ids.length
+    ? { ids: filter.ids }
+    : filter && filter.range
+      ? filter
+      : { range: { from: "01", to: "20" } };
+  const fixtures = filterFixtures(await loadAllFixtures(), applied);
   const rows = [];
   for (const fixture of fixtures) {
     const draft = typeof fixture.data.draft === "string" ? fixture.data.draft : "";
