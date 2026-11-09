@@ -338,7 +338,8 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
     `ESTIMATE ${label} one pass USD ${one.usd} pipeline ${one.pipelineUsd} note ${one.noteUsd} ` +
       `scheduler wall ${(one.tpmFloorMs / 60000).toFixed(1)} min (TPM floor)`
   );
-  if (one.usd > ceilingUsd) {
+  const namedIds = args.ids.length ? args.ids : ids;
+  if (!(Array.isArray(namedIds) && namedIds.length) && one.usd > ceilingUsd) {
     throw new Error(`Estimate USD ${one.usd} is above ${ceilingUsd}. Not spending.`);
   }
 
@@ -361,7 +362,6 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
   }
   const statementsDoc = mergeFreezeDocs(primaryDoc, extraDoc);
   const { byId: frozenByFixture } = frozenRowsByFixture(statementsDoc);
-  const namedIds = args.ids.length ? args.ids : ids;
   const fixtures = filterFixtures(await loadAllFixtures(), paidPassFixtureFilter(namedIds));
   const selectedIds = fixtures.map((fixture) => padFixtureId(fixture.data.id));
   const frozenCount = refuseUnfrozenStatements(statementsDoc, selectedIds);

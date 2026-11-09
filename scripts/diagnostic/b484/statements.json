@@ -1,0 +1,105 @@
+{
+  "extractedAt": "2026-11-09T12:39:02.834Z",
+  "range": "25",
+  "stage1b": false,
+  "cache": "off",
+  "frozenFrom": "run1",
+  "stability": {
+    "threshold": 5,
+    "mismatchedSlots": 0,
+    "passed": true,
+    "diffs": [],
+    "run1CostUsd": 0.00646,
+    "run2CostUsd": 0.00646,
+    "totalCostUsd": 0.01292
+  },
+  "costUsd": 0.00646,
+  "perFixtureCounts": {
+    "25": 10
+  },
+  "fixtures": [
+    {
+      "fixtureId": "25",
+      "label": "synth_cross_source_committed",
+      "source": "llm",
+      "costUsd": 0.00646,
+      "usage": {
+        "inputTokens": 632,
+        "outputTokens": 488
+      },
+      "errors": [],
+      "statements": [
+        {
+          "index": 0,
+          "text": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+          "charStart": 24,
+          "charEnd": 229,
+          "occurrence": 0
+        },
+        {
+          "index": 1,
+          "text": "The Company provides software that automates property management workflows — including rent management, maintenance scheduling, tenant communications, and regulatory reporting — for residential property managers across the Nordic region.",
+          "charStart": 230,
+          "charEnd": 467,
+          "occurrence": 0
+        },
+        {
+          "index": 2,
+          "text": "We have invested EUR 158 million for a 60% controlling stake.",
+          "charStart": 468,
+          "charEnd": 529,
+          "occurrence": 0
+        },
+        {
+          "index": 3,
+          "text": "The Company currently serves 380 property management companies across Sweden, Norway, Denmark, and Finland, collectively managing more than 240'000 residential units.",
+          "charStart": 531,
+          "charEnd": 697,
+          "occurrence": 0
+        },
+        {
+          "index": 4,
+          "text": "It generates annual recurring revenue (ARR) of EUR 38 million as of March 2025, representing strong growth from EUR 28 million the prior year.",
+          "charStart": 698,
+          "charEnd": 840,
+          "occurrence": 0
+        },
+        {
+          "index": 5,
+          "text": "The Company employs 142 people across Stockholm, Oslo, and Helsinki.",
+          "charStart": 841,
+          "charEnd": 909,
+          "occurrence": 0
+        },
+        {
+          "index": 6,
+          "text": "The investment thesis is anchored on three pillars: a genuinely market-leading product (independent customer research rates the Company significantly higher than the principal Nordic competitor Yardi Nordic on usability and feature completeness), a structurally underpenetrated market (approximately 40% of Nordic property management companies still use legacy systems or spreadsheets), and an exceptional founder team led by CEO Mr. Erik Lindqvist and CTO Mr. Pekka Virtanen.",
+          "charStart": 911,
+          "charEnd": 1387,
+          "occurrence": 0
+        },
+        {
+          "index": 7,
+          "text": "Our base case envisages ARR growth from EUR 38 million to approximately EUR 95 million over a five-year hold, supported by continued organic growth, adjacent expansion into commercial property management, and selective M&A.",
+          "charStart": 1389,
+          "charEnd": 1612,
+          "occurrence": 0
+        },
+        {
+          "index": 8,
+          "text": "The base case generates 2.8x MOIC and 23% gross IRR.",
+          "charStart": 1613,
+          "charEnd": 1665,
+          "occurrence": 0
+        },
+        {
+          "index": 9,
+          "text": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+          "charStart": 1667,
+          "charEnd": 1788,
+          "occurrence": 0
+        }
+      ]
+    }
+  ]
+}
