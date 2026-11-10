@@ -11,6 +11,7 @@ import { cardEvidenceFindings } from "../lib/qc/evidence-findings.mjs";
 import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
 import { partialReason, reasonFault, sentenceCount } from "../lib/qc/partial-reason.mjs";
 import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
+import { bothReadingsSupport } from "../lib/qc/shown-verdict.mjs";
 import { assertsAgreement } from "../lib/qc/source-account.mjs";
 import { endorsementHit } from "../lib/qc/endorsement-phrases.mjs";
 import { maskVerbatimQuotes, sourceCorpus } from "../lib/qc/quoted-span.mjs";
@@ -67,6 +68,10 @@ test("on the stored pass only a missing reason changes, and every reason reads",
     const stored = clean(card.displayedEvidenceProse);
     const reason = clean(readerEvidenceSentence(card) || "");
     const key = `${String(card.fixtureId).padStart(2, "0")}:${card.index}`;
+    if (bothReadingsSupport(card)) {
+      assert.equal(reason, "", key);
+      continue;
+    }
     if (stored && stored !== PARTIAL_UNRECORDED && assertsAgreement(stored)) {
       assert.equal(assertsAgreement(reason), false, key);
       assert.notEqual(reason, "");
