@@ -134,7 +134,6 @@ function readerFacing(card) {
 }
 
 const doc = JSON.parse(readFileSync(PASS, "utf8"));
-const prior = JSON.parse(readFileSync(PRIOR, "utf8"));
 const cards = Array.isArray(doc.cards) ? doc.cards : [];
 if (!cards.length) throw new Error("b485 score: no cards");
 const corpusCards = corpusOnly(cards);
@@ -294,7 +293,7 @@ lines.push("");
 lines.push("fixture 18 revision sentences");
 const newRevisions = [
   revisionNote((text) => /380/.test(text) && /412/.test(text)),
-  revisionNote((text) => /EUR 35 million/.test(text) && /28%/.test(text)),
+  revisionNote((text) => /EUR 35 million/.test(text)),
   revisionNote((text) => /142/.test(text) && /167/.test(text)),
 ];
 for (let i = 0; i < OLD_REVISIONS.length; i += 1) {

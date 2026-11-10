@@ -1,0 +1,259 @@
+{
+  "ceilingUsd": 30,
+  "estimate": {
+    "fixtures": 24,
+    "schedulerConstants": {
+      "editorialSystemTokens": 9088,
+      "complianceSystemTokens": 3000,
+      "stage2SystemTokens": 4000,
+      "stage5SystemTokens": 1600
+    },
+    "rates": {
+      "gpt4oInput": 2.5,
+      "gpt4oOutput": 10,
+      "opusInput": 5,
+      "opusOutput": 25
+    },
+    "outputAssumption": {
+      "pipelineOutputTokensPerCall": 400,
+      "noteOutputTokensPerCall": 300,
+      "note": "The scheduler counts request tokens only. Output tokens are an allowance, not a scheduler field."
+    },
+    "onePass": {
+      "statementsEstimated": 296,
+      "pipelineInputTokens": 6715932,
+      "pipelineOutputTokens": 488000,
+      "noteInputTokens": 1169273,
+      "noteOutputTokens": 96000,
+      "parts": {
+        "stage1": 93808,
+        "stage1b": 60000,
+        "stage2": 2123953,
+        "stage5": 532800,
+        "editorial": 2898971,
+        "compliance": 1006400
+      },
+      "pipelineUsd": 21.66983,
+      "noteUsd": 8.246365,
+      "usd": 29.916195,
+      "tpmFloorMs": 201489,
+      "idleWallMs": 180735
+    },
+    "twoPasses": {
+      "usd": 59.83239,
+      "pipelineUsd": 43.33966,
+      "noteUsd": 16.49273,
+      "tpmFloorMs": 402978,
+      "idleWallMs": 361470,
+      "noteTpmFloorMs": 70157,
+      "wallClockMinutes": 6.7,
+      "idleWallMinutes": 6
+    },
+    "perFixture": [
+      {
+        "id": "01",
+        "statements": 11,
+        "sources": 1,
+        "pipelineTokens": 274756,
+        "noteInput": 77259
+      },
+      {
+        "id": "02",
+        "statements": 10,
+        "sources": 1,
+        "pipelineTokens": 208165,
+        "noteInput": 28328
+      },
+      {
+        "id": "03",
+        "statements": 11,
+        "sources": 1,
+        "pipelineTokens": 230383,
+        "noteInput": 32743
+      },
+      {
+        "id": "04",
+        "statements": 18,
+        "sources": 1,
+        "pipelineTokens": 380444,
+        "noteInput": 55895
+      },
+      {
+        "id": "05",
+        "statements": 8,
+        "sources": 1,
+        "pipelineTokens": 163833,
+        "noteInput": 19258
+      },
+      {
+        "id": "06",
+        "statements": 14,
+        "sources": 1,
+        "pipelineTokens": 291227,
+        "noteInput": 40192
+      },
+      {
+        "id": "07",
+        "statements": 10,
+        "sources": 1,
+        "pipelineTokens": 209044,
+        "noteInput": 29217
+      },
+      {
+        "id": "08",
+        "statements": 19,
+        "sources": 1,
+        "pipelineTokens": 423754,
+        "noteInput": 80762
+      },
+      {
+        "id": "09",
+        "statements": 14,
+        "sources": 1,
+        "pipelineTokens": 297272,
+        "noteInput": 45691
+      },
+      {
+        "id": "10",
+        "statements": 7,
+        "sources": 1,
+        "pipelineTokens": 143355,
+        "noteInput": 16402
+      },
+      {
+        "id": "11",
+        "statements": 15,
+        "sources": 1,
+        "pipelineTokens": 317810,
+        "noteInput": 48398
+      },
+      {
+        "id": "12",
+        "statements": 9,
+        "sources": 1,
+        "pipelineTokens": 178770,
+        "noteInput": 16581
+      },
+      {
+        "id": "13",
+        "statements": 12,
+        "sources": 1,
+        "pipelineTokens": 256945,
+        "noteInput": 41134
+      },
+      {
+        "id": "14",
+        "statements": 11,
+        "sources": 1,
+        "pipelineTokens": 230440,
+        "noteInput": 32536
+      },
+      {
+        "id": "15",
+        "statements": 31,
+        "sources": 1,
+        "pipelineTokens": 864847,
+        "noteInput": 296380
+      },
+      {
+        "id": "16",
+        "statements": 15,
+        "sources": 1,
+        "pipelineTokens": 318747,
+        "noteInput": 48555
+      },
+      {
+        "id": "17",
+        "statements": 15,
+        "sources": 1,
+        "pipelineTokens": 323517,
+        "noteInput": 53760
+      },
+      {
+        "id": "18",
+        "statements": 13,
+        "sources": 2,
+        "pipelineTokens": 352220,
+        "noteInput": 42522
+      },
+      {
+        "id": "19",
+        "statements": 20,
+        "sources": 1,
+        "pipelineTokens": 436392,
+        "noteInput": 75265
+      },
+      {
+        "id": "20",
+        "statements": 10,
+        "sources": 1,
+        "pipelineTokens": 200922,
+        "noteInput": 21215
+      },
+      {
+        "id": "22",
+        "statements": 3,
+        "sources": 2,
+        "pipelineTokens": 76542,
+        "noteInput": 6327
+      },
+      {
+        "id": "23",
+        "statements": 3,
+        "sources": 2,
+        "pipelineTokens": 76462,
+        "noteInput": 6292
+      },
+      {
+        "id": "24",
+        "statements": 4,
+        "sources": 2,
+        "pipelineTokens": 106721,
+        "noteInput": 11454
+      },
+      {
+        "id": "25",
+        "statements": 13,
+        "sources": 2,
+        "pipelineTokens": 353364,
+        "noteInput": 43107
+      }
+    ]
+  },
+  "combined": {
+    "calls": 1990,
+    "inputTokens": 8930648,
+    "cachedInputTokens": 3479168,
+    "outputTokens": 177461,
+    "costUsd": 24.933361249999976,
+    "listUsd": 29.282321250000003,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-4o-2024-08-06": {
+        "calls": 1591,
+        "inputTokens": 7097660,
+        "cachedInputTokens": 3479168,
+        "outputTokens": 119181,
+        "costUsd": 14.587000000000014,
+        "unpricedCalls": 0
+      },
+      "openai/gpt-4o-mini-2024-07-18": {
+        "calls": 66,
+        "inputTokens": 36103,
+        "cachedInputTokens": 0,
+        "outputTokens": 4118,
+        "costUsd": 0.007886250000000001,
+        "unpricedCalls": 0
+      },
+      "anthropic/claude-opus-4-7": {
+        "calls": 333,
+        "inputTokens": 1796885,
+        "cachedInputTokens": 0,
+        "outputTokens": 54162,
+        "costUsd": 10.338475000000004,
+        "unpricedCalls": 0
+      }
+    }
+  }
+}
