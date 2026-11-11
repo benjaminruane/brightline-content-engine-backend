@@ -11,7 +11,7 @@ import { cardEvidenceFindings } from "../lib/qc/evidence-findings.mjs";
 import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
 import { partialReason, reasonFault, sentenceCount } from "../lib/qc/partial-reason.mjs";
 import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
-import { bothReadingsSupport } from "../lib/qc/shown-verdict.mjs";
+import { bothReadingsSupport, shownState } from "../lib/qc/shown-verdict.mjs";
 import { assertsAgreement } from "../lib/qc/source-account.mjs";
 import { endorsementHit } from "../lib/qc/endorsement-phrases.mjs";
 import { maskVerbatimQuotes, sourceCorpus } from "../lib/qc/quoted-span.mjs";
@@ -48,10 +48,11 @@ test("a card that already had a reason keeps that reason", () => {
   assert.equal(readerEvidenceSentence(card), stored);
 });
 
-test("14:3 and 18:9 keep the unrecorded line once", () => {
+test("14:3 and 18:9 are a wording paraphrase, so the unrecorded line is not the reason", () => {
   for (const key of ["14:3", "18:9"]) {
     const card = cardOf(key);
-    assert.equal(readerEvidenceSentence(card), PARTIAL_UNRECORDED);
+    assert.equal(shownState(card), "nothing_raised");
+    assert.notEqual(readerEvidenceSentence(card) || "", PARTIAL_UNRECORDED);
     const notes = cardEvidenceFindings(card, []).filter((row) => row.rule === "partial").map((row) => row.note);
     assert.equal(notes.includes(PARTIAL_UNRECORDED), false);
     assert.equal(notes.length > 0, true);
@@ -107,7 +108,7 @@ test("on the stored pass only a missing reason changes, and every reason reads",
   });
   // 11:9 and 15:12 had no stored reason. The check did not run, so the shown sentence is the one that says so.
   // 04:1 had no stored reason. Committed against an open approval is a disagreement, so the shown sentence names both states.
-  assert.deepEqual(changed, ["04:1", "04:12", "04:13", "08:10", "08:12", "11:9", "14:4", "15:9", "15:12", "15:30", "18:6"]);
+  assert.deepEqual(changed, ["04:1", "04:12", "04:13", "08:10", "08:12", "11:9", "14:3", "14:4", "15:9", "15:12", "15:30", "18:6", "18:9"]);
   withheld.sort();
   assert.deepEqual(withheld, ["08:3", "14:2"]);
   disagreement.sort();

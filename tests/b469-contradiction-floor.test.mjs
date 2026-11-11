@@ -103,9 +103,10 @@ describe("B469 contradiction floor", () => {
     // B470 adds 11:9 and 15:12, which leave Nothing raised because the check did not run.
     // B473 adds 04:1, which leaves Nothing raised because committed is later than seeking approval.
     // B486 leaves 15:11 quiet. The note and the matcher both say the statement is supported, and the span vote is what raised the stored label.
+    // B488 leaves a wording note whose reason was not recorded under Nothing raised.
     assert.equal(heavier, 6);
-    assert.equal(lighter, 1);
+    assert.equal(lighter, 9);
     const quieted = pass.cards.filter((row) => (WEIGHT[row.sentenceLabel] || 0) > (WEIGHT[shownLabel(row)] || 0));
-    assert.deepEqual(quieted.map(keyOf), ["15:11"]);
+    assert.deepEqual(quieted.map(keyOf), ["04:12", "04:13", "08:10", "08:12", "14:3", "14:4", "15:11", "15:30", "18:9"]);
   });
 });

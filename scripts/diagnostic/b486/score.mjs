@@ -270,10 +270,10 @@ for (const card of cards) {
   }
 }
 
-function revisionNote(test) {
-  const hit = cards.find((card) => pad(card.fixtureId) === "18" && test(card.readingNote?.text || ""));
+function revisionAt(index) {
+  const hit = cards.find((card) => pad(card.fixtureId) === "18" && card.index === index);
   if (!hit) return "missing";
-  return plainReaderText(hit.readingNote.text || "");
+  return reasonOf(hit) || "missing";
 }
 
 const lines = [
@@ -292,9 +292,9 @@ if (parityNote) lines.push("parity import: " + parityNote);
 lines.push("");
 lines.push("fixture 18 revision sentences");
 const newRevisions = [
-  revisionNote((text) => /380/.test(text) && /412/.test(text)),
-  revisionNote((text) => /EUR 35 million/.test(text)),
-  revisionNote((text) => /142/.test(text) && /167/.test(text)),
+  revisionAt(3),
+  revisionAt(4),
+  revisionAt(5),
 ];
 for (let i = 0; i < OLD_REVISIONS.length; i += 1) {
   lines.push("old: " + OLD_REVISIONS[i]);
