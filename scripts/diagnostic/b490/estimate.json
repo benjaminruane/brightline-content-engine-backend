@@ -1,0 +1,220 @@
+{
+  "fixtures": 24,
+  "schedulerConstants": {
+    "editorialSystemTokens": 9088,
+    "complianceSystemTokens": 3000,
+    "stage2SystemTokens": 4000,
+    "stage5SystemTokens": 1600
+  },
+  "rates": {
+    "gpt4oInput": 2.5,
+    "gpt4oOutput": 10,
+    "opusInput": 5,
+    "opusOutput": 25
+  },
+  "outputAssumption": {
+    "pipelineOutputTokensPerCall": 400,
+    "noteOutputTokensPerCall": 300,
+    "note": "The scheduler counts request tokens only. Output tokens are an allowance, not a scheduler field."
+  },
+  "onePass": {
+    "statementsEstimated": 296,
+    "pipelineInputTokens": 6715932,
+    "pipelineOutputTokens": 488000,
+    "noteInputTokens": 1213969,
+    "noteOutputTokens": 96000,
+    "parts": {
+      "stage1": 93808,
+      "stage1b": 60000,
+      "stage2": 2123953,
+      "stage5": 532800,
+      "editorial": 2898971,
+      "compliance": 1006400
+    },
+    "pipelineUsd": 21.66983,
+    "noteUsd": 8.469845,
+    "usd": 30.139675,
+    "tpmFloorMs": 201489,
+    "idleWallMs": 180735
+  },
+  "twoPasses": {
+    "usd": 60.27935,
+    "pipelineUsd": 43.33966,
+    "noteUsd": 16.93969,
+    "tpmFloorMs": 402978,
+    "idleWallMs": 361470,
+    "noteTpmFloorMs": 72839,
+    "wallClockMinutes": 6.7,
+    "idleWallMinutes": 6
+  },
+  "perFixture": [
+    {
+      "id": "01",
+      "statements": 11,
+      "sources": 1,
+      "pipelineTokens": 274756,
+      "noteInput": 78920
+    },
+    {
+      "id": "02",
+      "statements": 10,
+      "sources": 1,
+      "pipelineTokens": 208165,
+      "noteInput": 29838
+    },
+    {
+      "id": "03",
+      "statements": 11,
+      "sources": 1,
+      "pipelineTokens": 230383,
+      "noteInput": 34404
+    },
+    {
+      "id": "04",
+      "statements": 18,
+      "sources": 1,
+      "pipelineTokens": 380444,
+      "noteInput": 58613
+    },
+    {
+      "id": "05",
+      "statements": 8,
+      "sources": 1,
+      "pipelineTokens": 163833,
+      "noteInput": 20466
+    },
+    {
+      "id": "06",
+      "statements": 14,
+      "sources": 1,
+      "pipelineTokens": 291227,
+      "noteInput": 42306
+    },
+    {
+      "id": "07",
+      "statements": 10,
+      "sources": 1,
+      "pipelineTokens": 209044,
+      "noteInput": 30727
+    },
+    {
+      "id": "08",
+      "statements": 19,
+      "sources": 1,
+      "pipelineTokens": 423754,
+      "noteInput": 83631
+    },
+    {
+      "id": "09",
+      "statements": 14,
+      "sources": 1,
+      "pipelineTokens": 297272,
+      "noteInput": 47805
+    },
+    {
+      "id": "10",
+      "statements": 7,
+      "sources": 1,
+      "pipelineTokens": 143355,
+      "noteInput": 17459
+    },
+    {
+      "id": "11",
+      "statements": 15,
+      "sources": 1,
+      "pipelineTokens": 317810,
+      "noteInput": 50663
+    },
+    {
+      "id": "12",
+      "statements": 9,
+      "sources": 1,
+      "pipelineTokens": 178770,
+      "noteInput": 17940
+    },
+    {
+      "id": "13",
+      "statements": 12,
+      "sources": 1,
+      "pipelineTokens": 256945,
+      "noteInput": 42946
+    },
+    {
+      "id": "14",
+      "statements": 11,
+      "sources": 1,
+      "pipelineTokens": 230440,
+      "noteInput": 34197
+    },
+    {
+      "id": "15",
+      "statements": 31,
+      "sources": 1,
+      "pipelineTokens": 864847,
+      "noteInput": 301061
+    },
+    {
+      "id": "16",
+      "statements": 15,
+      "sources": 1,
+      "pipelineTokens": 318747,
+      "noteInput": 50820
+    },
+    {
+      "id": "17",
+      "statements": 15,
+      "sources": 1,
+      "pipelineTokens": 323517,
+      "noteInput": 56025
+    },
+    {
+      "id": "18",
+      "statements": 13,
+      "sources": 2,
+      "pipelineTokens": 352220,
+      "noteInput": 44485
+    },
+    {
+      "id": "19",
+      "statements": 20,
+      "sources": 1,
+      "pipelineTokens": 436392,
+      "noteInput": 78285
+    },
+    {
+      "id": "20",
+      "statements": 10,
+      "sources": 1,
+      "pipelineTokens": 200922,
+      "noteInput": 22725
+    },
+    {
+      "id": "22",
+      "statements": 3,
+      "sources": 2,
+      "pipelineTokens": 76542,
+      "noteInput": 6780
+    },
+    {
+      "id": "23",
+      "statements": 3,
+      "sources": 2,
+      "pipelineTokens": 76462,
+      "noteInput": 6745
+    },
+    {
+      "id": "24",
+      "statements": 4,
+      "sources": 2,
+      "pipelineTokens": 106721,
+      "noteInput": 12058
+    },
+    {
+      "id": "25",
+      "statements": 13,
+      "sources": 2,
+      "pipelineTokens": 353364,
+      "noteInput": 45070
+    }
+  ]
+}
