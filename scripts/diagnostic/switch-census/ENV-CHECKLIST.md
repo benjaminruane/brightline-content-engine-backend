@@ -14,7 +14,9 @@ Live `/api/health` on 27 September 2026, 11:56 UTC: `pipelineRoute: v4`, `author
 | `OPENAI_API_KEY` | Set | Review does not run. |
 | `LANGFUSE_PUBLIC_KEY` | Set if you want traces | Reviews still run. You cannot see cost or traces. |
 | `LANGFUSE_SECRET_KEY` | Set if you want traces | Same as the public key. Both are required together. |
-| `LANGFUSE_HOST` | Your Langfuse host, or empty for the default cloud host | Traces go to the wrong project, or nowhere. |
+| `LANGFUSE_BASE_URL` | The project base URL, for example `https://cloud.langfuse.com` | Empty, with the host row also empty, leaves tracing off. Keys without a URL do not fall through to cloud.langfuse.com. A warning is logged. |
+| `LANGFUSE_HOST` | Empty when `LANGFUSE_BASE_URL` is set. Otherwise the same base URL. | Used only when `LANGFUSE_BASE_URL` is empty. It is not a silent cloud default. |
+| `LANGFUSE_TRACING_ENVIRONMENT` | `production` on Production, `preview` on Preview, empty locally if you accept the SDK default | Empty logs a warning. Traces then use the SDK default environment. |
 | `QC_CLAIM_SPANS` | Empty (on by default) | `0` / `false` / `off` skips sentence split. Inner claims are never matched. Health does not show this flag. |
 | `QC_STAGE2_SPAN` | `1` if extra source passages should be collected | Empty means off. Conflicting cards may quote one passage when the source had two. Health does not show this flag. |
 | `QC_LLM_CACHE` | Empty (on by default) | `0` / `false` / `off` re-bills Stages 1, 1b, and 2 on every run. Stage 5 and 6 are never cached either way. |

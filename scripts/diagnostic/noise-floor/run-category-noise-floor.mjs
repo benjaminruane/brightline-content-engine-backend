@@ -13,6 +13,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
+import { listObservationsV2, sumObservationCost } from "../lib/langfuse-public.mjs";
 import { loadAllFixtures, parseIdsArg } from "../lib/fixtures.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
 import { extractLogCountsFromFile, emptyLogCounts } from "./extract-server-log-counts.mjs";
@@ -165,29 +166,22 @@ function walkCostUsd(node, acc = { costUsd: 0, hits: 0 }) {
 }
 
 async function fetchLangfuseCost(traceId) {
-  const host = String(process.env.LANGFUSE_HOST || "").trim();
-  const pub = String(process.env.LANGFUSE_PUBLIC_KEY || "").trim();
-  const sec = String(process.env.LANGFUSE_SECRET_KEY || "").trim();
-  if (!host || !pub || !sec || !traceId) return null;
-  const auth = Buffer.from(`${pub}:${sec}`).toString("base64");
-  const url = `${host.replace(/\/$/, "")}/api/public/traces/${encodeURIComponent(traceId)}`;
+  const fromStartTime = "2026-01-01T00:00:00.000Z";
+  const toStartTime = new Date().toISOString();
+  if (!traceId) return null;
+  console.log(`[langfuse] observations v2 ${fromStartTime} to ${toStartTime} traceId=${traceId}`);
   try {
-    const res = await fetch(url, { headers: { Authorization: `Basic ${auth}` } });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const candidates = [
-      data?.totalCost,
-      data?.calculatedTotalCost,
-      data?.latency?.totalCost,
-    ];
-    for (const value of candidates) {
-      const n = Number(value);
-      if (Number.isFinite(n) && n > 0) return n;
-    }
+    const listed = await listObservationsV2({
+      fromStartTime,
+      toStartTime,
+      traceId,
+      fields: "core,basic,usage",
+    });
+    if (!listed.ok) return null;
+    return sumObservationCost(listed.rows);
   } catch {
     return null;
   }
-  return null;
 }
 
 function d6Gaps(run) {

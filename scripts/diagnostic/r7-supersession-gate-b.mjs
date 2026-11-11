@@ -14,6 +14,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadLocalEnvFiles } from "./lib/env.mjs";
+import { listObservationsV2 } from "./lib/langfuse-public.mjs";
 import { loadAllFixtures } from "./lib/fixtures.mjs";
 import { loadPipelineSources } from "./lib/sources.mjs";
 import { DIAG_ROOT, RUNS_DIR } from "./lib/paths.mjs";
@@ -140,29 +141,38 @@ async function loadRun(ts) {
   return byId;
 }
 
-async function langfuseGet(pathname) {
-  const host = String(process.env.LANGFUSE_HOST || "").replace(/\/$/, "");
-  const pub = String(process.env.LANGFUSE_PUBLIC_KEY || "").trim();
-  const sec = String(process.env.LANGFUSE_SECRET_KEY || "").trim();
-  if (!host || !pub || !sec) return null;
-  const auth = Buffer.from(`${pub}:${sec}`).toString("base64");
-  const res = await fetch(`${host}${pathname}`, {
-    headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+const LANGFUSE_READ_FROM = "2026-01-01T00:00:00.000Z";
+
+function langfuseWindow() {
+  return { fromStartTime: LANGFUSE_READ_FROM, toStartTime: new Date().toISOString() };
+}
+
+async function observationsForTrace(traceId) {
+  const window = langfuseWindow();
+  console.log(`[langfuse] observations v2 ${window.fromStartTime} to ${window.toStartTime} traceId=${traceId}`);
+  const listed = await listObservationsV2({
+    ...window,
+    traceId,
+    fields: "core,basic,io,metadata",
   });
-  if (!res.ok) return null;
-  return res.json();
+  return listed.ok ? listed.rows : [];
+}
+
+async function traceIdByPrefix(partialId) {
+  const window = langfuseWindow();
+  console.log(`[langfuse] observations v2 ${window.fromStartTime} to ${window.toStartTime} prefix=${partialId}`);
+  const listed = await listObservationsV2({ ...window, fields: "core,basic" });
+  if (!listed.ok) return null;
+  const hit = listed.rows.find((row) => String(row?.traceId || "").startsWith(partialId));
+  return hit?.traceId || null;
 }
 
 async function reconstructNordholtFromLangfuse(sources) {
   const asOfBySourceIndex = buildAsOfBySourceIndex(sources);
   for (const partial of NORDHOLT_DIRTY_TRACES) {
-    const list = await langfuseGet(`/api/public/traces?limit=50`);
-    const traces = Array.isArray(list?.data) ? list.data : [];
-    const hit = traces.find((t) => String(t?.id || "").startsWith(partial));
-    const traceId = hit?.id || (partial.length > 20 ? partial : null);
+    const traceId = (await traceIdByPrefix(partial)) || (partial.length > 20 ? partial : null);
     if (!traceId) continue;
-    const obs = await langfuseGet(`/api/public/observations?traceId=${encodeURIComponent(traceId)}&limit=100`);
-    const rows = Array.isArray(obs?.data) ? obs.data : [];
+    const rows = await observationsForTrace(traceId);
     const stage1 = rows.find((o) => o.name === "stage1-extract-statements");
     const stage1Statements = Array.isArray(stage1?.output?.statements) ? stage1.output.statements : [];
     const stage2 = rows.filter((o) => o.name === "stage2-match-sources");

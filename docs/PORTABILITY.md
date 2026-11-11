@@ -233,27 +233,21 @@ API routes: `api/generate.js` L785; `api/rewrite.js` L831; `api/adapt.js` L224; 
 
 **CONFIRMED.** Langfuse is optional instrumentation around `callLLM`, not a control-plane.
 
-Enablement: `lib/observability.js` L9-18. All three of `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST` must be non-empty. Otherwise `langfuseClient` is null.
+Enablement: `lib/langfuse-tracing.mjs`. `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, and a base URL are all required. The base URL is `LANGFUSE_BASE_URL`, or `LANGFUSE_HOST` if the base URL is empty. If either key is set and both URL variables are empty, tracing stays off and a warning is logged. It does not fall through to `cloud.langfuse.com`.
 
-When absent, every Langfuse call returns immediately:
+The SDK is `@langfuse/tracing`, `@langfuse/otel`, and `@langfuse/client` at 6.1.1. Spans export to `POST /api/public/otel/v1/traces` (v4 ingestion). Scores go to `POST /api/public/scores`. This SDK needs Langfuse Cloud, or self-hosted Langfuse 4.59.0 or later. The public functions stay on `lib/observability.js`: `startTrace` L326, `updateTraceMetadata` L336, `callLLM` L704, `logCanaryScore` L850, `flushObservability` L854. Each returns immediately when tracing is off. Instrumentation errors are logged and do not fail the review.
 
-- `startTrace` L314-315 `if (!langfuseClient) return;`
-- `updateTraceMetadata` L328-329
-- `callLLM` generation block L481 `if (langfuseClient)`
-- `logCanaryScore` L644-645
-- `flushObservability` L657-658
+`createTraceId` returns 32 lowercase hex. A caller that still passes a UUID is matched by stripping hyphens. Any other string is hashed, and the derived id is logged once.
 
-Errors inside a Langfuse call are swallowed (`safeLangfuseCall` L68-74; flush L660-662). Review still runs.
+Canaries (`logCanaryScore`) are how schema-failure tracking was meant to land in Langfuse (BACKLOG B12). They no-op without keys. They are trace-level scores, not observation evaluators.
 
-Canaries (`logCanaryScore`) are how schema-failure tracking was meant to land in Langfuse (BACKLOG B12). They no-op without keys.
+Diagnostics that read Langfuse use `GET /api/public/v2/observations` (`scripts/diagnostic/lib/langfuse-public.mjs`). A query without a time range is refused. `scripts/diagnostic/lib/langfuse-url.mjs` builds a URL if env is set.
 
-Diagnostics that *read* Langfuse (cost, reconstructing traces) fail soft: `scripts/diagnostic/noise-floor/REPORT.md` records `costUsd: null` when the trace is unreadable; `scripts/diagnostic/lib/langfuse-url.mjs` builds a URL if env is set.
+`api/analyse-statements.js` L302 warns `[langfuse] outputType missing or invalid for qc-run trace` (metadata quality, not a hard dependency).
 
-`api/analyse-statements.js` L255 warns `[langfuse] outputType missing or invalid for qc-run trace` (metadata quality, not a hard dependency).
+**What breaks if replaced / absent.** Nothing on the Review path. Cost lines that currently come from Langfuse traces in diagnostics go blank. Operators lose the trace UI. New traces report cached input as its own usage bucket, so Langfuse's calculated cost on those traces can be lower than the full-input-rate list figure in `docs/SPEND_LEDGER.md`. `metadata.cachedInputTokens` and `metadata.estimatedCostUsd` are still written. No cost override is sent.
 
-**What breaks if replaced / absent.** Nothing on the Review path. Cost lines that currently come from Langfuse traces in diagnostics go blank. Operators lose the trace UI.
-
-**Smallest seam already exists.** Leave Langfuse optional. A client deploy simply omits the three env vars. Replacing it with another OTel exporter would wrap the same `startTrace` / generation / `logCanaryScore` functions.
+**Smallest seam already exists.** Leave Langfuse optional. A client deploy omits the keys and the base URL. Replacing it with another exporter would wrap the same `startTrace` / generation / `logCanaryScore` functions.
 
 ---
 

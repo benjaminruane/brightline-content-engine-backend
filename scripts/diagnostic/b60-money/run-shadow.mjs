@@ -15,6 +15,7 @@ import path from "node:path";
 
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { loadAllFixtures } from "../lib/fixtures.mjs";
+import { listObservationsV2, sumObservationCost } from "../lib/langfuse-public.mjs";
 import { loadPipelineSources } from "../lib/sources.mjs";
 import { DIAG_ROOT } from "../lib/paths.mjs";
 
@@ -207,17 +208,10 @@ async function loadCorpus() {
   return out;
 }
 
-async function langfuseGet(pathname) {
-  const host = String(process.env.LANGFUSE_HOST || "").replace(/\/$/, "");
-  const pub = String(process.env.LANGFUSE_PUBLIC_KEY || "").trim();
-  const sec = String(process.env.LANGFUSE_SECRET_KEY || "").trim();
-  if (!host || !pub || !sec) return { ok: false, error: "missing langfuse env" };
-  const auth = Buffer.from(`${pub}:${sec}`).toString("base64");
-  const res = await fetch(`${host}${pathname}`, {
-    headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
-  });
-  const body = await res.json().catch(() => null);
-  return { ok: res.ok, status: res.status, body };
+const LANGFUSE_READ_FROM = "2026-01-01T00:00:00.000Z";
+
+function langfuseWindow() {
+  return { fromStartTime: LANGFUSE_READ_FROM, toStartTime: new Date().toISOString() };
 }
 
 function statementFromInput(input) {
@@ -230,21 +224,20 @@ function statementFromInput(input) {
 
 async function loadLlmClassMap(traceId) {
   const map = new Map();
-  let page = 1;
-  let totalPages = 1;
-  let fetched = 0;
-  while (page <= totalPages && page <= 20) {
-    const res = await langfuseGet(
-      `/api/public/observations?traceId=${encodeURIComponent(traceId)}&limit=100&page=${page}`
-    );
-    if (!res.ok) {
-      console.log(`langfuse observations page ${page} status=${res.status}`);
-      break;
-    }
-    const rows = Array.isArray(res.body?.data) ? res.body.data : [];
-    totalPages = Number(res.body?.meta?.totalPages) || page;
-    fetched += rows.length;
-    for (const o of rows) {
+  const window = langfuseWindow();
+  console.log(`[langfuse] observations v2 ${window.fromStartTime} to ${window.toStartTime} traceId=${traceId}`);
+  const res = await listObservationsV2({
+    ...window,
+    traceId,
+    fields: "core,basic,io,metadata",
+  });
+  if (!res.ok) {
+    console.log(`langfuse observations status=${res.status || res.error}`);
+    return { map, fetched: 0 };
+  }
+  const rows = res.rows;
+  const fetched = rows.length;
+  for (const o of rows) {
       if (o?.name !== "stage2-match-sources") continue;
       const meta = o.metadata && typeof o.metadata === "object" ? o.metadata : {};
       if (String(meta.attempt || "") === "claim-span") continue;
@@ -261,8 +254,6 @@ async function loadLlmClassMap(traceId) {
       const classification = typeof parsed?.classification === "string" ? parsed.classification.trim() : "";
       if (!statement || !sourceLabel || !classification) continue;
       map.set(`${statement}\n||\n${sourceLabel}`, classification);
-    }
-    page += 1;
   }
   return { map, fetched };
 }
@@ -655,11 +646,16 @@ async function main() {
   let langfuseCost = null;
   for (const waitMs of [4000, 8000]) {
     await new Promise((r) => setTimeout(r, waitMs === 4000 ? 4000 : 4000));
-    const trace = await langfuseGet(`/api/public/traces/${encodeURIComponent(traceId)}`);
+    const window = langfuseWindow();
+    const listed = await listObservationsV2({
+      ...window,
+      traceId,
+      fields: "core,basic,usage",
+    });
     langfuseCost = {
       waitMs,
-      totalCost: trace.body?.totalCost ?? trace.body?.calculatedTotalCost ?? null,
-      status: trace.status,
+      totalCost: sumObservationCost(listed.rows),
+      status: listed.status || (listed.ok ? 200 : listed.error),
     };
     console.log(`langfuse shadow cost poll ${JSON.stringify(langfuseCost)}`);
     if ((Number(langfuseCost.totalCost) || 0) > 0 || waitMs === 8000) break;

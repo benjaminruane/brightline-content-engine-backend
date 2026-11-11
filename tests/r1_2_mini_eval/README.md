@@ -29,7 +29,7 @@ This folder is **not** wired into `npm test`. It compares **gpt-4o-mini** to loc
 ```bash
 export OPENAI_API_KEY=…   # required
 # Optional Langfuse (same as backend)
-# export LANGFUSE_PUBLIC_KEY=… LANGFUSE_SECRET_KEY=… LANGFUSE_HOST=…
+# export LANGFUSE_PUBLIC_KEY=… LANGFUSE_SECRET_KEY=… LANGFUSE_BASE_URL=…
 
 npm run r1_2:mini-eval
 ```

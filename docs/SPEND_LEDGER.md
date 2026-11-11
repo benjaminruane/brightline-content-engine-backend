@@ -2,9 +2,9 @@
 
 One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
-**List USD** is Langfuse `calculatedTotalCost` (or the same arithmetic locally): every input token at the published input rate. For `gpt-4o-2024-08-06` that is USD 2.50 per million. CONFIRMED `lib/observability.js` L45-49.
+**List USD** is Langfuse `calculatedTotalCost` on traces written before B489 (or the same arithmetic locally): every input token at the published input rate. For `gpt-4o-2024-08-06` that is USD 2.50 per million. CONFIRMED `lib/observability.js` L64-70. From B489, new traces send cached input as its own usage bucket and do not send a cost override. Langfuse `calculatedTotalCost` on those traces can be lower than this list figure. The rows below are unchanged. `metadata.cachedInputTokens` and `metadata.estimatedCostUsd` are still on the generation.
 
-**Discounted USD** applies the cached-input rate already earned (USD 1.25 per million on that model, 50% of input). CONFIRMED L49, L194-208. For a gpt-4o-only row this is `list - cachedInputTokens * 1.25 / 1e6`. Mixed-model rows use the per-model table. The list figure is not "about 40% high" on every row: it tracks the cache hit rate. The comparable Shopify production run (83% cached) is 65% high on the list basis.
+**Discounted USD** applies the cached-input rate already earned (USD 1.25 per million on that model, 50% of input). CONFIRMED L70, L206-220. For a gpt-4o-only row this is `list - cachedInputTokens * 1.25 / 1e6`. Mixed-model rows use the per-model table. The list figure is not "about 40% high" on every row: it tracks the cache hit rate. The comparable Shopify production run (83% cached) is 65% high on the list basis.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
