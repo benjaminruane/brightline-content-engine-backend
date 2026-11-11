@@ -109,7 +109,11 @@ function compactCard(fixtureId, card, index, occurrence, outputType) {
     sentenceLabel: card?.sentenceLabel ?? null,
     tier: card?.tier ?? null,
     readingNote: note
-      ? { bucket: typeof note.bucket === "string" ? note.bucket : null, text: clip(note.text || note.note || "") }
+      ? {
+          bucket: typeof note.bucket === "string" ? note.bucket : null,
+          text: clip(note.text || note.note || ""),
+          ...(typeof note.completion === "string" && note.completion ? { completion: note.completion } : {}),
+        }
       : null,
     evidenceNotReviewedReason: card?.evidenceNotReviewedReason ?? null,
     notReviewedRecord: card?.notReviewedRecord ?? null,
@@ -222,12 +226,13 @@ function addViews(a, b) {
 }
 
 function parseArgs(argv) {
-  const out = { resume: false, ids: [] };
+  const out = { resume: false, ids: [], pass: "" };
   const args = Array.isArray(argv) ? argv : [];
   for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
     if (arg === "--resume") out.resume = true;
     else if (arg === "--ids" && args[i + 1]) out.ids = parseIdsArg(args[++i]);
+    else if (arg === "--pass" && args[i + 1]) out.pass = String(args[++i]).trim();
     else if (arg.startsWith("-")) throw new Error(`paid pass: unknown argument ${arg}`);
   }
   return out;
@@ -316,7 +321,7 @@ async function writeJson(filePath, value) {
 /**
  * @param {{ dir: string, label: string, ceilingUsd?: number, full?: boolean }} options
  */
-export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, ids = null } = {}) {
+export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, ids = null, pass = null } = {}) {
   if (typeof dir !== "string" || !dir) throw new Error("paid pass: dir is missing");
   if (typeof label !== "string" || !label) throw new Error("paid pass: label is missing");
   loadLocalEnvFiles({ liveMeasurement: true });
@@ -370,9 +375,10 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
   log(`FREEZE ${frozenCount} statements. Build ${sha}. Cache off. ${label}.`);
 
   let carried = spendView(getLlmSpend(), pricing);
-  const pass = "1";
+  const passName = String(pass || args.pass || "1");
+  if (!/^[0-9]+$/.test(passName)) throw new Error(`paid pass: pass ${passName} is not a number`);
   resetLlmSpend();
-  const outPath = path.join(dir, `pass-${pass}.json`);
+  const outPath = path.join(dir, `pass-${passName}.json`);
   const prior = await loadPass(outPath, args.resume);
   if (prior && !args.resume) {
     throw new Error(`paid pass: ${outPath} already exists. Re-run with --resume, or remove it first.`);
@@ -394,7 +400,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
     requireNote(id, fields);
   }
   const doc = {
-    pass,
+    pass: passName,
     label,
     gitSha: prior?.gitSha || sha,
     cache: "off",
@@ -409,12 +415,12 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
     fixtures: doneRows,
     cards: priorCards.filter((card) => done.has(padFixtureId(card.fixtureId))),
   };
-  log(`PASS ${pass} start. Already stored: ${done.size}.`);
+  log(`PASS ${passName} start. Already stored: ${done.size}.`);
 
   for (const fixture of fixtures) {
     const id = padFixtureId(fixture.data.id);
     if (done.has(id)) {
-      log(`PASS ${pass} F${id} skipped (resume)`);
+      log(`PASS ${passName} F${id} skipped (resume)`);
       continue;
     }
     const before = addViews(addViews(carried, resumeBase), spendView(getLlmSpend(), pricing));
@@ -451,7 +457,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      log(`PASS ${pass} F${id} failed before it was stored. ${message} Re-run with --resume.`);
+      log(`PASS ${passName} F${id} failed before it was stored. ${message} Re-run with --resume.`);
       throw err;
     }
     const rawCards = Array.isArray(result?.qcCards) ? result.qcCards : [];
@@ -492,7 +498,7 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
     doc.spend = after;
     await writeJson(outPath, doc);
     log(
-      `PASS ${pass} F${id} cards=${cards.length} wallMs=${Date.now() - t0} ` +
+      `PASS ${passName} F${id} cards=${cards.length} wallMs=${Date.now() - t0} ` +
         `spend=${after.costUsd.toFixed(4)} list=${after.listUsd.toFixed(4)} calls=${after.calls} ` +
         `note=${noteFields.writerFeedbackStatus}`
     );
@@ -505,13 +511,29 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
   await flushObservability();
   const passSpend = doc.spend;
   carried = addViews(carried, passSpend);
-  log(`PASS ${pass} done. cards=${doc.cardCount} list=${passSpend.listUsd.toFixed(4)} discounted=${passSpend.costUsd.toFixed(4)}`);
-  refuseFrozenCountMismatch({ cardCount: doc.cardCount, frozenCount, pass });
+  log(`PASS ${passName} done. cards=${doc.cardCount} list=${passSpend.listUsd.toFixed(4)} discounted=${passSpend.costUsd.toFixed(4)}`);
+  refuseFrozenCountMismatch({ cardCount: doc.cardCount, frozenCount, pass: passName });
   if (doc.fixtures.length !== fixtures.length) {
-    throw new Error(`PASS ${pass} stored ${doc.fixtures.length} fixtures, expected ${fixtures.length}`);
+    throw new Error(`PASS ${passName} stored ${doc.fixtures.length} fixtures, expected ${fixtures.length}`);
   }
 
-  await writeJson(path.join(dir, "spend.json"), { ceilingUsd, estimate, combined: carried });
+  const spendPath = path.join(dir, "spend.json");
+  let spendDoc = { ceilingUsd, estimate, combined: carried };
+  if (passName !== "1") {
+    try {
+      const previous = JSON.parse(await readFile(spendPath, "utf8"));
+      spendDoc = {
+        ceilingUsd,
+        estimate,
+        pass1: previous.pass1 || previous.combined || null,
+        [`pass${passName}`]: carried,
+        combined: addViews(previous.combined, carried),
+      };
+    } catch (err) {
+      if (!err || err.code !== "ENOENT") throw err;
+    }
+  }
+  await writeJson(spendPath, spendDoc);
   log(`COMBINED list=${carried.listUsd.toFixed(4)} discounted=${carried.costUsd.toFixed(4)} calls=${carried.calls} unpriced=${carried.unpricedCalls}`);
   return { spend: carried, cardCount: doc.cardCount, gitSha: doc.gitSha };
 }
