@@ -247,7 +247,7 @@ async function main() {
   lines.push("");
   lines.push("Saved B490 passes, read through the current code. No model call. USD 0.");
   lines.push("");
-  lines.push("A held-back card is a quiet shown tier that carries wordingNoteWithheld. The count is the line the screen would show.");
+  lines.push("A held-back card is a quiet shown tier that carries wordingNoteWithheld. The count is the line the screen would show. The text is passed through plainReaderText, the same dash rule a shown reason uses.");
   lines.push("A dash is an em dash or an en dash. An internal word is rung, rungs, or modality.");
   lines.push("Section b is a labelled-correct statement whose evidence layer is quiet and whose editorial or compliance layer is raised.");
   lines.push("The concern text is the sentence the card shows. The saved pass stores that sentence on concern.text, and this read passes it through the card's own display function.");

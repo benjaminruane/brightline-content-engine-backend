@@ -2,7 +2,7 @@
 
 Saved B490 passes, read through the current code. No model call. USD 0.
 
-A held-back card is a quiet shown tier that carries wordingNoteWithheld. The count is the line the screen would show.
+A held-back card is a quiet shown tier that carries wordingNoteWithheld. The count is the line the screen would show. The text is passed through plainReaderText, the same dash rule a shown reason uses.
 A dash is an em dash or an en dash. An internal word is rung, rungs, or modality.
 Section b is a labelled-correct statement whose evidence layer is quiet and whose editorial or compliance layer is raised.
 The concern text is the sentence the card shows. The saved pass stores that sentence on concern.text, and this read passes it through the card's own display function.
@@ -63,10 +63,10 @@ Held-back texts: 120
   - The Northstar Partners 2025 Annual Report excerpt states that twelve portfolio companies have committed to SBTi validation, with eight having received SBTi approval. The statement says the same thing in slightly condensed form.
 - 07: 6
   - The source says vertical AI agents are software systems that complete the workflow themselves rather than presenting it to a human, with the human stepping in only for exception handling, oversight, and high-stakes decisions. The statement restates this in slightly different words.
-  - The source lists the same three characteristics[em dash]high-volume and labour-intensive, largely deterministic at the level of individual decisions, and outputs verifiable ex post. The statement restates these in slightly different words.
-  - The post says "This is not a prediction about general intelligence [em dash] it is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates that same disclaimer in other words.
+  - The source lists the same three characteristics - high-volume and labour-intensive, largely deterministic at the level of individual decisions, and outputs verifiable ex post. The statement restates these in slightly different words.
+  - The post says "This is not a prediction about general intelligence - it is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates that same disclaimer in other words.
   - The source says "it is a prediction about the specific economic deployment of current and near-future AI capability." The statement calls it a thesis rather than a prediction, which restates the same assertion.
-  - The statement combines three predictions from the Quanta Ventures thesis post[em dash]disruption to incumbent vertical SaaS, deep changes to commercial models, and winner-takes-most dynamics within verticals[em dash]using essentially the same language the source uses.
+  - The statement combines three predictions from the Quanta Ventures thesis post - disruption to incumbent vertical SaaS, deep changes to commercial models, and winner-takes-most dynamics within verticals - using essentially the same language the source uses.
   - The thesis post says Quanta Ventures has made fifteen investments in the agent category over the past two years and is actively investing behind the thesis. The statement restates this in other words.
 - 08: 7
   - The memo calls HPC's competitive position "enviable" and describes it as one of only three qualified global suppliers in its core medical implants vertical. "Exceptional" restates the same judgement.
@@ -208,10 +208,10 @@ Held-back texts: 120
   - The Northstar Partners 2025 Annual Report excerpt states twelve portfolio companies have committed to SBTi validation with eight having received SBTi approval. The statement says the same thing in slightly condensed form.
 - 07: 6
   - The source states vertical AI agents complete workflows themselves with humans stepping in only for exception handling, oversight, and high-stakes decisions, and frames them as the next decade's pattern. The statement restates this in slightly different words.
-  - The source lists the same three characteristics[em dash]high-volume and labour-intensive, largely deterministic at the level of individual decisions, and outputs verifiable ex post. The statement restates them in other words.
-  - The source says "This is not a prediction about general intelligence [em dash] it is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates that same disclaimer in different words.
+  - The source lists the same three characteristics - high-volume and labour-intensive, largely deterministic at the level of individual decisions, and outputs verifiable ex post. The statement restates them in other words.
+  - The source says "This is not a prediction about general intelligence - it is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates that same disclaimer in different words.
   - The source says the prediction "is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates this using "thesis" instead of "prediction," which conveys the same claim.
-  - The statement combines three predictions from the Quanta Ventures thesis post [em dash] disruption to incumbent vertical SaaS, deep changes to commercial models, and winner-takes-most dynamics within verticals [em dash] in the same sense the source states them.
+  - The statement combines three predictions from the Quanta Ventures thesis post - disruption to incumbent vertical SaaS, deep changes to commercial models, and winner-takes-most dynamics within verticals - in the same sense the source states them.
   - The thesis post says Quanta Ventures has made fifteen investments in the agent category over the past two years and is actively investing behind the thesis. The statement restates the same figures and ongoing activity.
 - 08: 7
   - The source says HPC is one of three qualified suppliers globally for hip and knee replacement components meeting both FDA Class II and EU MDR requirements at scale. The statement says the same, spelling out MDR as Medical Device Regulation.
@@ -304,17 +304,9 @@ Held-back texts: 120
   - The initial memo describes NSH's platform as covering rent collection, maintenance management, tenant communication, and regulatory reporting for residential property managers across Sweden, Norway, Denmark, and Finland. The statement restates the same functions and scope in slightly different words.
   - The initial memo lists the same three thesis pillars: market-leading product (rated higher than Yardi Nordic on usability, feature completeness, and customer support), underpenetrated market (~40% on legacy systems or spreadsheets), and exceptional founder team with Erik Lindqvist as CEO and Pekka Virtanen as CTO. The statement omits "customer support" from the product comparison but does not change the claim.
 
-Dash or internal word: 6
-Dash: 6
+Dash or internal word: 0
+Dash: 0
 Internal word: 0
-
-Offending texts:
-- The source lists the same three characteristics[em dash]high-volume and labour-intensive, largely deterministic at the level of individual decisions, and outputs verifiable ex post. The statement restates these in slightly different words.
-- The post says "This is not a prediction about general intelligence [em dash] it is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates that same disclaimer in other words.
-- The statement combines three predictions from the Quanta Ventures thesis post[em dash]disruption to incumbent vertical SaaS, deep changes to commercial models, and winner-takes-most dynamics within verticals[em dash]using essentially the same language the source uses.
-- The source lists the same three characteristics[em dash]high-volume and labour-intensive, largely deterministic at the level of individual decisions, and outputs verifiable ex post. The statement restates them in other words.
-- The source says "This is not a prediction about general intelligence [em dash] it is a prediction about the specific economic deployment of current and near-future AI capability." The statement restates that same disclaimer in different words.
-- The statement combines three predictions from the Quanta Ventures thesis post [em dash] disruption to incumbent vertical SaaS, deep changes to commercial models, and winner-takes-most dynamics within verticals [em dash] in the same sense the source states them.
 
 ## b. Editorial and compliance on correct text
 
