@@ -8,6 +8,7 @@
  * definition, and ignores a scanned house-style concern. A factual challenge
  * still counts. House-style mentions are counted on their own, by rule.
  */
+import { isHouseStyleConcern } from "../../../lib/qc/house-style.mjs";
 import { mapDisplayVerdict } from "../accuracy/lib.mjs";
 import { scanMechanics } from "../../../lib/qc/mechanics-scan.mjs";
 import { shownLabel, shownState, shownTier } from "../../../lib/qc/shown-verdict.mjs";
@@ -102,7 +103,7 @@ export function quietWithLabel(card) {
 
 function editorialRaisedWithoutHouseStyle(card) {
   const concerns = Array.isArray(card?.editorialConcerns) ? card.editorialConcerns : [];
-  return concerns.some((row) => !isScannedHouseStyle(row));
+  return concerns.some((row) => !isScannedHouseStyle(row) && !isHouseStyleConcern(row));
 }
 
 function evidenceQuietFrom(card, layers) {
