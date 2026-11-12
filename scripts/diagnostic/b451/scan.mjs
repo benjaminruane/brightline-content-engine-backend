@@ -16,7 +16,6 @@ import { evidenceFindingForExport, EVIDENCE_FINDING_NOT_RECORDED } from "../../.
 import { PARTIAL_LABEL, PARTIAL_UNRECORDED, partialSentence } from "../../../lib/qc/partial-sentence.mjs";
 import { shownLabel, shownState } from "../../../lib/qc/shown-verdict.mjs";
 import { summariseReview } from "../../../lib/qc/review-summary.mjs";
-import { isGenericCompanySubject } from "../../../lib/qc/generic-company.mjs";
 import { attentionHeader } from "../../../../brightline-content-engine-frontend/src/modules/reading/attentionHeader.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -276,12 +275,6 @@ for (const card of cards) {
     notSupportedEmptyExcerpt += 1;
   }
   if (card.displayVerdictReason === "announcement_dateline") datelineReason += 1;
-
-  if (isGenericCompanySubject(card.statement)) {
-    genericSubject += 1;
-    if (card.displayVerdict === "supported_partial" || card.sentenceState === "partial") genericPartial += 1;
-    if (card.displayVerdict === "supported_full") genericFull += 1;
-  }
 }
 
 let partialFindingsMissing = 0;

@@ -1,6 +1,5 @@
 /**
- * B372. Relation not spelling; "the company" may only suppress; look
- * for a same-subject date then compare.
+ * B372. Relation not spelling; look for a same-subject date then compare.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -17,12 +16,6 @@ import {
   applyEditorialSourceAwareness,
   matchedPassagesFromCard,
 } from "../lib/qc/editorial-source-awareness.mjs";
-import {
-  applyGenericCompanySuppress,
-  partiesNamedIn,
-  resolveGenericCompanyAntecedent,
-} from "../lib/qc/generic-company.mjs";
-import { sourceNameVocabulary } from "../lib/qc/actor-of-the-action.mjs";
 import {
   appendDateSubjectSpans,
   dateSubjectFamily,
@@ -176,26 +169,6 @@ async function replayCard(payload, index, extra = {}) {
   );
 }
 
-function findingKey(card) {
-  const codes = (card.editorialConcerns || [])
-    .map((c) => c.concernCode || c.code || "")
-    .filter(Boolean)
-    .sort();
-  return {
-    displayVerdict: card.displayVerdict,
-    displayVerdictReason: card.displayVerdictReason || "",
-    codes,
-  };
-}
-
-function gainedFinding(before, after) {
-  if (before.displayVerdict !== "conflict" && after.displayVerdict === "conflict") return "verdict_conflict";
-  if (!before.displayVerdictReason && after.displayVerdictReason) return after.displayVerdictReason;
-  const extra = after.codes.filter((c) => !before.codes.includes(c));
-  if (extra.length) return extra.join(",");
-  return null;
-}
-
 describe("B372 part 1 causal stem", () => {
   test("suffix rule maps driven and driving to the same relation", () => {
     assert.equal(stemConnectiveToken("driven"), stemConnectiveToken("driving"));
@@ -268,88 +241,6 @@ describe("B372 part 1 causal stem", () => {
     });
     assert.equal(after.concerns.length, 1);
     assert.equal(after.dropped.length, 0);
-  });
-});
-
-describe("B372 part 2 generic company", () => {
-  test("clean HICL S6 comes back confirmed", async () => {
-    const stored = HICL_CLEAN.statements[6].qcCard;
-    assert.equal(stored.displayVerdict, "supported_partial");
-    const vocab = sourceNameVocabulary(HICL_CLEAN.sources);
-    assert.deepEqual(partiesNamedIn(HICL_CLEAN.statements[5].qcCard.statement, vocab), ["Fortysouth"]);
-    const resolved = resolveGenericCompanyAntecedent({
-      statement: stored.statement,
-      precedingText: HICL_CLEAN.statements[5].qcCard.statement,
-      vocabulary: vocab,
-      confirmingPassages: [stored.primaryExcerpt],
-    });
-    assert.equal(resolved, "Fortysouth");
-    const card = await replayCard(HICL_CLEAN, 6);
-    assert.equal(card.displayVerdict, "supported_full");
-    assert.equal(card.concernLevel, "none");
-    assert.match(card.evidenceSummary, /Fortysouth/i);
-  });
-
-  test("no antecedent is unchanged", () => {
-    const hit = applyGenericCompanySuppress({
-      statement: "The company also recently completed an oversubscribed refinancing.",
-      precedingText: "",
-      sources: HICL_CLEAN.sources,
-      confirmingPassages: [HICL_CLEAN.statements[6].qcCard.primaryExcerpt],
-      displayVerdict: "supported_partial",
-      displayVerdictReason: null,
-      evidenceSummary: HICL_CLEAN.statements[6].qcCard.evidenceSummary,
-    });
-    assert.equal(hit, null);
-  });
-
-  test("two companies between the reference and its antecedent is unchanged", () => {
-    const vocab = sourceNameVocabulary(HICL_CLEAN.sources);
-    const withTower = new Set([...vocab, "TowerCo"]);
-    const hit = resolveGenericCompanyAntecedent({
-      statement: "The company also recently completed an oversubscribed refinancing.",
-      precedingText: "TowerCo delivered 20 new towers during the past year.",
-      vocabulary: withTower,
-      confirmingPassages: [HICL_CLEAN.statements[6].qcCard.primaryExcerpt],
-    });
-    assert.equal(hit, null);
-  });
-
-  test("conflict is not lifted", () => {
-    const stored = HICL_DOC.statements[6].qcCard;
-    const hit = applyGenericCompanySuppress({
-      statement: stored.statement,
-      precedingText: HICL_DOC.statements[5].qcCard.statement,
-      sources: HICL_DOC.sources,
-      confirmingPassages: [stored.primaryExcerpt],
-      displayVerdict: stored.displayVerdict,
-      displayVerdictReason: stored.displayVerdictReason,
-      evidenceSummary: stored.evidenceSummary,
-    });
-    assert.equal(hit, null);
-  });
-
-  test("no card in the four payloads gains a finding it does not have today", async () => {
-    const payloads = [
-      ["hicl-clean", HICL_CLEAN],
-      ["hicl-doc", HICL_DOC],
-      ["sept-clean", SEPT_CLEAN],
-      ["sept-doc", SEPT_DOC],
-    ];
-    for (const [label, payload] of payloads) {
-      for (let i = 0; i < payload.statements.length; i += 1) {
-        const off = await replayCard(payload, i, { draftStatements: [] });
-        const on = await replayCard(payload, i);
-        const gained = gainedFinding(findingKey(off), findingKey(on));
-        assert.equal(gained, null, `${label} S${i} gained ${gained}`);
-        if (label === "hicl-clean" && i === 6) {
-          assert.equal(off.displayVerdict, "supported_partial");
-          assert.equal(on.displayVerdict, "supported_full");
-          continue;
-        }
-        assert.equal(on.displayVerdict, off.displayVerdict, `${label} S${i} verdict moved`);
-      }
-    }
   });
 });
 
