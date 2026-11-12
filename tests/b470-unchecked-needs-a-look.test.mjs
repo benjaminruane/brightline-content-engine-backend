@@ -28,7 +28,7 @@ test("B470: a sentence nobody checked is not called nothing raised", () => {
   const quiet = pass.cards.filter((row) => shownLabel(row) === "Nothing raised" && row.evidenceNotReviewedReason);
   assert.equal(quiet.length, 0);
   assert.equal(shownLabel(card("19", 4)), "Nothing raised");
-  assert.equal(readerEvidenceSentence(card("02", 4)), null);
+  assert.equal(readerEvidenceSentence(card("02", 4)), "This check did not run, because the result came back empty.");
 });
 
 test("B470: the screen names the same check", () => {

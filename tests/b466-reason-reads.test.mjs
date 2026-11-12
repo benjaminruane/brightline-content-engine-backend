@@ -107,8 +107,9 @@ test("on the stored pass only a missing reason changes, and every reason reads",
     return af - bf || ai - bi;
   });
   // 11:9 and 15:12 had no stored reason. The check did not run, so the shown sentence is the one that says so.
+  // 02:4 and 17:7 had no stored reason. An empty reason uses the empty-completion sentence.
   // 04:1 had no stored reason. Committed against an open approval is a disagreement, so the shown sentence names both states.
-  assert.deepEqual(changed, ["04:1", "04:12", "04:13", "08:10", "08:12", "11:9", "14:3", "14:4", "15:9", "15:12", "15:30", "18:6", "18:9"]);
+  assert.deepEqual(changed, ["02:4", "04:1", "04:12", "04:13", "08:10", "08:12", "11:9", "14:3", "14:4", "15:9", "15:12", "15:30", "17:7", "18:6", "18:9"]);
   withheld.sort();
   assert.deepEqual(withheld, ["08:3", "14:2"]);
   disagreement.sort();
