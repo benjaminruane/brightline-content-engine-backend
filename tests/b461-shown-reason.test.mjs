@@ -98,7 +98,7 @@ test("every non-zero check is its own summary line", () => {
     { sentenceState: "nothing_raised", displayVerdict: "supported_full", editorialVerdict: "concern" },
   ], { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true });
   const bullets = summaryBulletsFromReview(summary);
-  assert.equal(bullets.length, 6);
+  assert.equal(bullets.length, 5);
   assert.equal(bullets.some((line) => /not shown/.test(line)), false);
   assert.equal(bullets.some((line) => /editorial notes/.test(line)), true);
   assert.equal(bullets.some((line) => /could not be fully checked/.test(line)), true);

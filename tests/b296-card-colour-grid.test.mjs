@@ -9,7 +9,7 @@ const EVIDENCE = [
   { id: "off", enabled: false, displayVerdict: "Not reviewed", cls: null },
   { id: "miss", enabled: true, displayVerdict: "Not reviewed", cls: "notChecked" },
   { id: "clean", enabled: true, displayVerdict: "supported_full", cls: "confirmed" },
-  { id: "concern", enabled: true, displayVerdict: "supported_partial", cls: "partial" },
+  { id: "concern", enabled: true, displayVerdict: "supported_partial", cls: "beyond" },
   { id: "hard", enabled: true, displayVerdict: "not_supported", cls: "notSupported" },
   { id: "conflict", enabled: true, displayVerdict: "conflict", cls: "conflicting" },
 ];
@@ -26,7 +26,7 @@ function expectedTone(evidenceCls, editorialCls, complianceCls) {
   const requested = [evidenceCls, editorialCls, complianceCls].filter((s) => s != null);
   if (requested.length === 0) return "neutral";
   const red = new Set(["notSupported", "conflicting", "hardConcern"]);
-  const amber = new Set(["partial", "concern", "notChecked"]);
+  const amber = new Set(["partial", "beyond", "concern", "notChecked"]);
   const green = new Set(["confirmed", "clean"]);
   if (requested.some((s) => red.has(s))) return "red";
   if (requested.some((s) => amber.has(s))) return "amber";

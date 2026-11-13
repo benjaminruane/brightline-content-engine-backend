@@ -27,24 +27,24 @@
       "expectedSummaryClass": [
         {
           "counted": true,
-          "evidence": "partial",
+          "evidence": "beyond",
           "editorial": "clean",
           "compliance": "clean",
-          "needsAttention": false
+          "needsAttention": true
         },
         {
           "counted": true,
-          "evidence": "partial",
+          "evidence": "beyond",
           "editorial": "clean",
           "compliance": "clean",
-          "needsAttention": false
+          "needsAttention": true
         },
         {
           "counted": true,
-          "evidence": "partial",
+          "evidence": "beyond",
           "editorial": "clean",
           "compliance": "clean",
-          "needsAttention": false
+          "needsAttention": true
         }
       ],
       "expectedReviewSummary": {
@@ -52,7 +52,8 @@
         "statements": 3,
         "evidence": {
           "confirmed": 0,
-          "partial": 3,
+          "partial": 0,
+          "beyond": 3,
           "conflicting": 0,
           "notSupported": 0,
           "unbadged": 0
@@ -69,7 +70,7 @@
         },
         "signalConcerns": 0,
         "notChecked": 0,
-        "needsAttention": 0,
+        "needsAttention": 3,
         "readiness": "Minor points to address"
       }
     },
@@ -205,10 +206,10 @@
       "expectedSummaryClass": [
         {
           "counted": true,
-          "evidence": "partial",
+          "evidence": "beyond",
           "editorial": "clean",
           "compliance": "clean",
-          "needsAttention": false
+          "needsAttention": true
         },
         {
           "counted": true,
@@ -223,7 +224,8 @@
         "statements": 2,
         "evidence": {
           "confirmed": 1,
-          "partial": 1,
+          "partial": 0,
+          "beyond": 1,
           "conflicting": 0,
           "notSupported": 0,
           "unbadged": 0
@@ -240,7 +242,7 @@
         },
         "signalConcerns": 0,
         "notChecked": 1,
-        "needsAttention": 0,
+        "needsAttention": 1,
         "readiness": "Minor points to address"
       }
     },

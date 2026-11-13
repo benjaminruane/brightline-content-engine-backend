@@ -117,7 +117,7 @@ describe("B478 revision and recency", () => {
       supersededSourceNotes: out.supersededNotes,
     };
     assert.equal(shownState(row), "partial");
-    assert.equal(shownLabel(row), "Partly in the source");
+    assert.equal(shownLabel(row), "Goes beyond the source");
     assert.equal(shownTier(shownState(row)), "light");
   });
 

@@ -35,7 +35,7 @@ test("a wording note on the unrecorded line is Nothing raised", () => {
 test("15:9 keeps the clause that names the missing part", () => {
   const row = card("15", 9);
   const reason = readerEvidenceSentence(row) || "";
-  assert.equal(shownLabel(row), "Partly in the source");
+  assert.equal(shownLabel(row), "Goes beyond the source");
   assert.equal(shownTier(shownState(row)), "light");
   assert.equal(reason.includes(PARTIAL_UNRECORDED), false);
   assert.match(reason, /continued runway to 70%/);

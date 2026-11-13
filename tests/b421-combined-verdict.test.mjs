@@ -108,7 +108,7 @@ test("the card carries both verdicts and the ledger class is unchanged", () => {
     complianceEnabled: true,
   });
   assert.equal(counted.counted, true);
-  assert.equal(counted.cardTone, "green");
+  assert.equal(counted.cardTone, "amber");
 });
 
 test("the clean ledger still counts statementVerdict", () => {

@@ -18,7 +18,7 @@ test("B470: a sentence nobody checked is not called nothing raised", () => {
     const row = card(id[0], id[1]);
     assert.equal(row.sentenceLabel, "Nothing raised");
     assert.equal(shownLabel(row), "Needs a look");
-    assert.equal(shownTier(shownState(row)), "demands");
+    assert.equal(shownTier(shownState(row)), "light");
     assert.equal(readerEvidenceSentence(row), "This check did not run, because the match came back empty.");
     assert.equal(evidenceFindingForExport(row, false), readerEvidenceSentence(row));
     const exported = buildReviewData({ statements: [{ qcCard: row }] }).statements[0];
@@ -28,7 +28,7 @@ test("B470: a sentence nobody checked is not called nothing raised", () => {
   const quiet = pass.cards.filter((row) => shownLabel(row) === "Nothing raised" && row.evidenceNotReviewedReason);
   assert.equal(quiet.length, 0);
   assert.equal(shownLabel(card("19", 4)), "Nothing raised");
-  assert.equal(readerEvidenceSentence(card("02", 4)), "This check did not run, because the result came back empty.");
+  assert.equal(readerEvidenceSentence(card("02", 4)), "The figures in this sentence match the source. The check that reads the whole claim did not finish, so read this sentence against the source yourself.");
 });
 
 test("B470: the screen names the same check", () => {

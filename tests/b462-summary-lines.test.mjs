@@ -13,7 +13,7 @@ import { summaryBullets } from "../../brightline-content-engine-frontend/src/mod
 const OPTIONS = { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true };
 // Draft 18 on this pass counted a beyond line for 18:8. That card's check is a disagreement, so the line is a conflict and the beyond line is gone.
 // Drafts 11 and 15 each gain a needs-a-look line, because 11:9 and 15:12 were not checked.
-const EXPECTED = [1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 6];
+const EXPECTED = [1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5];
 const pass = path.join(path.dirname(fileURLToPath(import.meta.url)), "../scripts/diagnostic/b456/pass-1.json");
 
 function slots(summary) {

@@ -14,7 +14,7 @@ test("a quiet partial is not labelled Nothing raised", () => {
     sentenceState: "nothing_raised",
   };
   assert.equal(shownState(card), "partial");
-  assert.equal(shownLabel(card), "Partly in the source");
+  assert.equal(shownLabel(card), "Goes beyond the source");
   assert.equal(shownTier("partial"), "light");
 });
 
@@ -92,5 +92,5 @@ test("the summary uses the card name", () => {
     editorial: { concerns: 0 },
     compliance: { concerns: 0 },
   });
-  assert.equal(bullets[0], "2 statements are partly in the source.");
+  assert.equal(bullets[0], "2 statements go beyond the source.");
 });

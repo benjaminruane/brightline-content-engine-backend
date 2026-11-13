@@ -24,7 +24,8 @@ test("statement verdict counts, and a card with none keeps the old class", () =>
   });
 
   const legacy = summariseReview([{ displayVerdict: "supported_partial" }], OPTIONS);
-  assert.equal(legacy.evidence.partial, 1);
+  assert.equal(legacy.evidence.beyond, 1);
+  assert.equal(legacy.evidence.partial, 0);
   assert.equal(legacy.evidence.confirmed, 0);
 });
 

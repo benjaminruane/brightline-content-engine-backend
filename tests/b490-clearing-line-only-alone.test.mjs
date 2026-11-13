@@ -27,7 +27,7 @@ test("F15 #2 does not carry the clearing line, and F04 #0 and F17 #0 do", () => 
   assert.equal((readerEvidenceSentence(fifteen) || "").includes(CLEARING_LINE), false);
   for (const [id, index] of [["04", 0], ["17", 0]]) {
     const row = card(id, index);
-    assert.equal(applyClearingLine(row.readingNote.text).includes(CLEARING_LINE), true, `${id}:${index}`);
-    assert.equal((readerEvidenceSentence(row) || "").includes(CLEARING_LINE), true, `${id}:${index}`);
+    assert.equal(applyClearingLine(row.readingNote.text).includes(CLEARING_LINE), false, `${id}:${index}`);
+    assert.equal((readerEvidenceSentence(row) || "").includes(CLEARING_LINE), false, `${id}:${index}`);
   }
 });

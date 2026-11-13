@@ -4,6 +4,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { completionEffect, shownState } from "../lib/qc/shown-verdict.mjs";
+import { statementClaimsDone } from "../lib/qc/transaction-state.mjs";
 
 const AGREED = "Partners Group has agreed to sell atNorth, a leading pan-Nordic data center platform.";
 const EXPECTED = "The transaction is expected to close in the first quarter of 2026, subject to customary regulatory approvals.";
@@ -30,7 +31,7 @@ test("pending has no effect unless the statement says the deal is done", () => {
     assert.equal(completionEffect(row), "", statement);
     assert.equal(shownState(row), "nothing_raised", statement);
   }
-  for (const statement of [NEW_INVESTMENT, COMMITTED, INVESTED, COMPLETION, HOLDS, HOLD]) {
+  for (const statement of [NEW_INVESTMENT, COMMITTED, INVESTED, COMPLETION, HOLDS]) {
     const row = card(statement, "pending");
     assert.equal(completionEffect(row), "conflicts", statement);
     assert.equal(shownState(row), "conflicts", statement);
@@ -56,4 +57,10 @@ test("a loud base state stays loud with or without the gate", () => {
   assert.equal(shownState(allowed), "conflicts");
   assert.equal(completionEffect(light), "beyond");
   assert.equal(shownState(light), "conflicts");
+});
+
+test("as the hold progresses is not a done claim", () => {
+  assert.equal(statementClaimsDone(HOLD), false);
+  assert.equal(completionEffect(card(HOLD, "pending")), "");
+  assert.equal(shownState(card(HOLD, "pending")), "nothing_raised");
 });

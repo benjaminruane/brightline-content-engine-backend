@@ -1,6 +1,6 @@
 Needs work
 2 claims have no source behind them. Remove them or find supporting evidence before this draft is final.
-3 statements are partly in the source.
+3 statements go beyond the source.
 1 claim has editorial notes. Work through the cards below before this draft is ready.
 The draft is 9 words over the 150 word limit.
 Draft output
@@ -9,14 +9,14 @@ Sources used
 Meridian test source.txt
 Statement review
 "In June 2026, Partners Group committed to Meridian Capital Partners V, a EUR 1.2 billion flagship fund from Meridian Capital targeting lower-mid-market buyouts in European industrial technology and business services companies."
-Verdict: Partly in the source (moderate evidence concern)
-Evidence finding: Part of this statement is in the source. Which part was not recorded.
+Verdict: Goes beyond the source (moderate evidence concern)
+Evidence finding: However, it does not mention Partners Group's commitment or specify the timing as June 2026. Additionally, the source indicates the first close is expected in Q3 2026, which does not align with the June 2026 timing in the statement. Please verify the timing and Partners Group's involvement or adjust the statement accordingly.
 Excerpt: "First close: expected Q3 2026; final close targeted within 12 months of first close"
 Editorial note: No editorial or style concerns identified under the listed rules.
 Compliance note: No compliance concerns identified under the listed rules.
 "The fund intends to build a portfolio of 10-14 control-oriented investments, with equity checks of EUR 80-100 million apiece."
-Verdict: Partly in the source (moderate evidence concern)
-Evidence finding: Part of this statement is in the source. Which part was not recorded.
+Verdict: Goes beyond the source (moderate evidence concern)
+Evidence finding: However, it does not mention the equity check size of EUR 80-100 million each.
 Excerpt: "The Fund expects to make 10–14 platform investments, with reserved capital for bolt-on acquisitions."
 Editorial note: No editorial or style concerns identified under the listed rules.
 Compliance note: No compliance concerns identified under the listed rules.
@@ -27,8 +27,8 @@ Excerpt: "The Fund targets companies with EUR 20–100 million enterprise value,
 Editorial note: No editorial or style concerns identified under the listed rules.
 Compliance note: No compliance concerns identified under the listed rules.
 "Partners Group was attracted to this investment given Meridian Capital's strong track record on its prior vintage funds, coupled with its well-established and highly regarded investment team and operational approach to value creation."
-Verdict: Partly in the source (moderate evidence concern)
-Evidence finding: Part of this statement is in the source. Which part was not recorded.
+Verdict: Goes beyond the source (moderate evidence concern)
+Evidence finding: However, it does not explicitly state that these factors attracted Partners Group to the investment. The statement's attribution of motivation to Partners Group is not covered by the source.
 Excerpt: "Merits: Strong track record Stable and experienced investment team. Disciplines approach to operational value creation."
 Editorial note: No editorial or style concerns identified under the listed rules.
 Compliance note: No compliance concerns identified under the listed rules.
@@ -39,13 +39,13 @@ Excerpt: "PG has invested with Meridian Capital on three co-investments and two 
 Editorial note: No editorial or style concerns identified under the listed rules.
 Compliance note: No compliance concerns identified under the listed rules.
 "This relationship enabled deep insight during the diligence phase."
-Verdict: No support (high evidence concern)
-Evidence finding: No source addresses the claim that the relationship enabled deep insight during the diligence phase. The reviewer should add a source that supports this claim or remove it.
+Verdict: Not in the source (high evidence concern)
+Evidence finding: No source addresses the claim that the relationship enabled deep insight during the diligence phase.
 Editorial note: No editorial or style concerns identified under the listed rules.
 Compliance note: No compliance concerns identified under the listed rules.
 "We recommend approval of the commitment."
-Verdict: No support (high evidence concern)
-Evidence finding: No source addresses the recommendation for approval of the commitment. The source is a fund summary document that details the fund's strategy, terms, track record, and risks, but it does not include any recommendation for approval. The reviewer should add a source that supports this recommendation or remove the claim.
+Verdict: Not in the source (high evidence concern)
+Evidence finding: No source addresses the recommendation for approval of the commitment. The source is a fund summary document that details the fund's strategy, terms, track record, and risks, but it does not include any recommendation for approval.
 Editorial note: The statement 'We recommend approval of the commitment' uses first-person plural, which is not appropriate for reporting commentary. The authoring organisation is not identified in this draft, so the first-person usage cannot be replaced with a specific organisation.
 Compliance note: No compliance concerns identified under the listed rules.
 Compliance flags are based on commonly-observed principles and are not jurisdiction-specific or a substitute for legal counsel. Editorial and Evidence flags are guidance for the reviewer's judgment. All flags require human confirmation before publication.

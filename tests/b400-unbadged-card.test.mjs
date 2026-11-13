@@ -24,7 +24,7 @@ const ON = { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: t
 
 const TODAY = [
   ["supported_full", "Nothing raised", "confirmed"],
-  ["supported_partial", "Partly in the source", "partial"],
+  ["supported_partial", "Goes beyond the source", "partial"],
   ["conflict", "Conflicting", "conflicting"],
   ["not_supported", "No support", "notSupported"],
   ["unverifiable", "Unverifiable", "unverifiable"],
@@ -80,7 +80,7 @@ describe("B400 unbadged card", () => {
       const card = { displayVerdict: slug, editorialVerdict: "clean", complianceVerdict: "clean" };
       const summary = summariseReview([card], ON);
       if (cls === "confirmed") assert.equal(summary.evidence.confirmed, 1);
-      if (cls === "partial") assert.equal(summary.evidence.partial, 1);
+      if (cls === "partial") assert.equal(summary.evidence.beyond, 1);
       if (cls === "conflicting") assert.equal(summary.evidence.conflicting, 1);
       if (cls === "notSupported") assert.equal(summary.evidence.notSupported, 1);
       if (cls === "unverifiable" || cls === "notChecked") assert.equal(summary.notChecked, 1);

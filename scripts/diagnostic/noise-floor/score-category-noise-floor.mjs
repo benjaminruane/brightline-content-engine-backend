@@ -71,7 +71,7 @@ export function countsFromCards(cards, reviewOptions) {
     if (!cls.counted) continue;
     counts.all += 1;
     if (cls.evidence === "confirmed") counts.confirmed += 1;
-    if (cls.evidence === "partial") counts.partial += 1;
+    if (cls.evidence === "partial" || cls.evidence === "beyond") counts.partial += 1;
     if (cls.evidence === "conflicting") counts.conflicting += 1;
     if (cls.evidence === "notSupported") counts.notSupported += 1;
     if (cls.editorial === "concern" || cls.editorial === "hardConcern") counts.editorial += 1;

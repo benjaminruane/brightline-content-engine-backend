@@ -1,6 +1,6 @@
 /**
- * B453. A refused note is Needs a look, tier demands.
- * A louder fact still wins. A wording note stays quiet.
+ * B453. A refused note is Needs a look. The ledger tier stays demands.
+ * The shown tier is light. A louder fact still wins. A wording note stays quiet.
  */
 import assert from "node:assert/strict";
 import { test } from "vitest";
@@ -22,7 +22,7 @@ test("a refused note assigns note_withheld", () => {
   assert.equal(verdict.tier, "demands");
   assert.equal(STATE_LABELS[verdict.state], "Needs a look");
   assert.equal(sentenceTier("note_withheld"), "demands");
-  assert.equal(shownTier("note_withheld"), "demands");
+  assert.equal(shownTier("note_withheld"), "light");
   assert.equal(shownLabel({ statementVerdict: verdict, displayVerdict: "supported_full" }), "Needs a look");
   assert.equal(sentenceState([fact("matched")], { refused: true, reason: "endorsing_language" }), "note_withheld");
 });
