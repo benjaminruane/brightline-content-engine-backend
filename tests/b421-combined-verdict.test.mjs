@@ -43,8 +43,8 @@ test("states follow the strongest reviewer and leave the statement verdict alone
     complianceConcerns: [],
   });
   assert.equal(wording.state, "wording");
-  assert.equal(wording.tone, "slate");
-  assert.equal(wording.label, "Wording to fix");
+  assert.equal(wording.tone, "grey");
+  assert.equal(wording.label, "Craft or compliance notes");
 
   const soft = combinedVerdict({
     verdict: quiet,
@@ -101,7 +101,8 @@ test("the card carries both verdicts and the ledger class is unchanged", () => {
   assert.equal(stamped.sentenceState, "nothing_raised");
   assert.equal(stamped.tier, "quiet");
   assert.equal(stamped.combinedVerdict.state, "wording");
-  assert.equal(stamped.combinedVerdict.tone, "slate");
+  assert.equal(stamped.combinedVerdict.tone, "grey");
+  assert.equal(stamped.combinedVerdict.label, "Craft or compliance notes");
   const counted = classifyCard(stamped, {
     evidenceEnabled: true,
     editorialEnabled: true,

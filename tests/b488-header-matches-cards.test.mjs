@@ -49,7 +49,7 @@ test("draft 19 leads with the conflict, then the absence, then the glance", () =
   const line = attentionHeader([conflict, absent, beyond]);
   assert.equal(
     line,
-    "1 statement conflicts with the source. 1 statement is not in the source. 1 worth a glance",
+    "1 statement conflicts with the source. 1 statement is not in the source. 1 goes beyond the source",
   );
   assert.equal(line.startsWith("1 worth"), false);
 });
