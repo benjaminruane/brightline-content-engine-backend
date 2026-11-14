@@ -31,11 +31,11 @@ test("a concern that stores the date in its note still produces a line when the 
   assert.deepEqual(summary[0].statementIndices, [3, 7]);
   assert.equal(
     sourceDateLine(summary[0]),
-    "2 sentences rest on 08_synth_industrial_buyout_memo.txt, dated 14 March 2025 (1.7 years). Check they are still accurate."
+    "2 sentences rest on 08_synth_industrial_buyout_memo.txt, dated 14 March 2025 (1.7 years old). Check they are still accurate."
   );
   assert.equal(
     sourceDateLine({ name: "IC memo", date: "14 March 2025", age: "1.7 years", statementIndices: [1] }),
-    "1 sentence rests on IC memo, dated 14 March 2025 (1.7 years). Check they are still accurate."
+    "1 sentence rests on IC memo, dated 14 March 2025 (1.7 years old). Check it is still accurate."
   );
 });
 
