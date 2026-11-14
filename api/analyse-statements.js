@@ -394,6 +394,7 @@ export default async function handler(req, res) {
       // R7.B46: aligned reviewed sources + separately listed excluded (empty-text) sources
       sources,
       ...(pipelineResult?.reading ? { reading: pipelineResult.reading } : {}),
+      recencySummary: Array.isArray(pipelineResult?.recencySummary) ? pipelineResult.recencySummary : [],
       ...(Array.isArray(pipelineResult?.draftMarks) ? { draftMarks: pipelineResult.draftMarks } : {}),
       excludedSources,
       meta: {
