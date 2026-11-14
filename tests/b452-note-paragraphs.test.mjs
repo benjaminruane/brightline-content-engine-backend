@@ -22,7 +22,10 @@ describe("B452 note paragraphs", () => {
     assert.equal(schema.properties.note.type, "array");
     assert.equal(schema.properties.note.minItems, 2);
     assert.equal(schema.properties.note.items.type, "string");
-    assert.equal(writerJsonSchemaForSpan("b404-note"), undefined);
+    assert.deepEqual(
+      writerJsonSchemaForSpan("b404-note").properties.completion.enum,
+      ["pending", "predates", "none"],
+    );
     assert.match(WRITER_FEEDBACK_PROMPT, /Do not label the parts of the note and do not go sentence by sentence\./);
     assert.match(WRITER_FEEDBACK_PROMPT, /Return JSON only: \{"note":"\.\.\."\}/);
     assert.equal(WRITER_FEEDBACK_PROMPT.includes(writerNoteStyleBlock()), true);

@@ -1,6 +1,6 @@
 /**
- * B447. The craft note is the only JSON call that requires a note.
- * Every other call keeps the permissive schema.
+ * B447. The craft note requires a list of paragraphs.
+ * The reading note has its own fixed form. Every other call stays permissive.
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
@@ -19,14 +19,16 @@ describe("B447 writer note schema", () => {
     });
   });
 
-  test("the writer spans require a note, and the sentence note does not", () => {
+  test("the writer spans require a note, and the sentence note has its own form", () => {
     const schema = writerJsonSchemaForSpan("b404-writer");
     assert.deepEqual(schema, writerJsonSchemaForSpan("b404-writer-retry"));
     assert.equal(schema.properties.note.type, "array");
     assert.equal(schema.properties.note.minItems, 2);
     assert.equal(schema.properties.note.items.type, "string");
     assert.deepEqual(schema.required, ["note"]);
-    assert.equal(writerJsonSchemaForSpan("b404-note"), undefined);
+    const note = writerJsonSchemaForSpan("b404-note");
+    assert.deepEqual(note, writerJsonSchemaForSpan("b404-note-retry"));
+    assert.deepEqual(note.properties.bucket.enum, ["conflicts", "beyond", "wording", "none"]);
     assert.equal(anthropicJsonInputSchema(schema), schema);
   });
 
