@@ -18,9 +18,9 @@ describe("composed writing prompt", () => {
     assert.ok(outputIdx >= 0);
     assert.ok(guidanceIdx > outputIdx);
     assert.match(basePromptText, /Cover, in this order:/);
-    assert.match(basePromptText, /Length: 120 to 200 words/);
+    assert.match(basePromptText, /Length: 100 to 150 words. Stay within this range/);
     assert.doesNotMatch(basePromptText, /Binding constraints/);
-    assert.doesNotMatch(basePromptText, /---METHODOLOGY---/);
+    assert.match(basePromptText, /---METHODOLOGY---/);
   });
 
   test("buildBasePrompt uses guidance for a new primary commitment", () => {

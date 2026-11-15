@@ -48,14 +48,14 @@ describe("B457 form equivalence", () => {
     assert.equal(found(statement, "Growth was 149% Y/Y.", "150%"), false);
   });
 
-  test("a wording note does not leave the headline saying the figure is absent", () => {
+  test("a wording note does not hide a missing figure", () => {
     const facts = [{ status: "not_found", surface: "150%", kind: "figure" }];
     const wording = statementVerdict({
       facts,
       note: { bucket: "wording", text: "The source states +151% Y/Y. The statement says more than 150%, which is the same claim phrased differently." },
       entries: [],
     });
-    assert.equal(wording.state, "nothing_raised");
+    assert.equal(wording.state, "not_in_source");
     const quiet = statementVerdict({
       facts,
       note: { bucket: "none", text: "" },

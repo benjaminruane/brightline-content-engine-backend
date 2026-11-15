@@ -95,7 +95,7 @@ describe("B209a house identity in prompts", () => {
       });
       assert.equal(basePromptText.includes(REAL_FIRM), false);
       assert.equal(basePromptText.includes(CONFIGURED_HOUSE), false);
-      assert.doesNotMatch(basePromptText, /---METHODOLOGY---/);
+      assert.match(basePromptText, /---METHODOLOGY---/);
     });
   });
 });

@@ -28,6 +28,8 @@ import {
   getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
+import { outputTypeWordCeiling, wordLimitLine } from "../lib/prompt-library/outputTypeGuidance.js";
+import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
@@ -676,6 +678,7 @@ export default async function handler(req, res) {
         ? Math.min(2000, Math.max(1, Math.floor(body.maxWords)))
         : null;
 
+    const promptMaxWords = effectiveMaxWords ?? outputTypeWordCeiling(outputType);
     const hasInstructions = typeof rewriteInstructions === "string" && rewriteInstructions.length > 0;
     const hasTarget = Number.isFinite(effectiveMaxWords);
     const isLengthOnly = !hasInstructions && hasTarget;
@@ -732,7 +735,7 @@ export default async function handler(req, res) {
       "User rewrite instructions are authoritative and override base guidance if they conflict (advisory conflicts may be reported, but do not block).";
 
     const promptBody = isLengthOnly
-      ? `LENGTH-ONLY REWRITE: Adjust the draft to ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can. Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first.
+      ? `LENGTH-ONLY REWRITE: Adjust the draft to ${effectiveMaxWords} words maximum. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can. Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first.
 
 ${rewriteWinsLine}
 
@@ -812,8 +815,8 @@ Rules:
 - Use only information from the uploaded sources provided above.
 - You may paraphrase and synthesize uploaded content freely.
 `}
-${effectiveMaxWords != null ? `\nOutput constraints:
-- Word limit: ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it.
+${promptMaxWords != null ? `\nOutput constraints:
+- ${wordLimitLine(promptMaxWords)}
 - Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.
 ` : ""}
 
@@ -868,7 +871,9 @@ Return ONLY valid JSON with no markdown or extra text:
     const parsed = safeJsonParse(raw) || {};
     let finalDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
     const sourcesUsedRows = extractSourcesUsedRows(finalDraftText, sources);
-    finalDraftText = stripSourcesUsedBlock(finalDraftText);
+    const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(finalDraftText));
+    finalDraftText = splitDraft.commentary;
+    const methodologyNote = splitDraft.methodologyNote;
     await populateSourceUsageSummaries(req, sourcesUsedRows, finalDraftText);
 
     if (!finalDraftText || typeof finalDraftText !== "string") {
@@ -1015,6 +1020,7 @@ Return ONLY valid JSON with no markdown or extra text:
     return res.status(200).json({
       ok: true,
       draftText: finalDraftText,
+      methodologyNote,
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,

@@ -30,7 +30,7 @@ function displayCard({ statement, role, classification, displayVerdict, noteText
 }
 
 describe("B513 context rule on the evidence check", () => {
-  test("a context-only display conflict becomes needs a look and names the source", () => {
+  test("a context-only display conflict with a supporting note raises nothing", () => {
     const card = displayCard({
       statement: "The loss was not service-related, and other contracts renewed as planned.",
       role: "context",
@@ -41,14 +41,11 @@ describe("B513 context rule on the evidence check", () => {
       sourceName: "35_kestrel_q2_2026_report.txt",
     });
     const traced = shownTrace(card);
-    assert.equal(traced.state, "note_withheld");
-    assert.equal(traced.setBy.branch, "evidenceDisplay");
-    assert.equal(traced.setBy.source, "display");
-    assert.equal(traced.setBy.role, "context");
-    assert.equal(traced.setBy.sourceName, "35_kestrel_q2_2026_report.txt");
+    assert.equal(traced.state, "nothing_raised");
+    assert.equal(traced.setBy.cleared, "readingNote");
   });
 
-  test("a facts display conflict stays conflicts", () => {
+  test("a facts display conflict with a supporting note needs a look", () => {
     const card = displayCard({
       statement: "Strong expansion continued.",
       role: "facts",
@@ -59,7 +56,9 @@ describe("B513 context rule on the evidence check", () => {
       sourceName: "34_kestrel_q3_2026_report.txt",
     });
     const traced = shownTrace(card);
-    assert.equal(traced.state, "conflicts");
+    assert.equal(traced.state, "note_withheld");
+    assert.equal(traced.setBy.branch, "checksDisagree");
+    assert.equal(traced.setBy.from, "evidenceDisplay");
     assert.equal(traced.setBy.role, "facts");
     assert.equal(traced.setBy.sourceName, "34_kestrel_q3_2026_report.txt");
   });
@@ -85,8 +84,8 @@ describe("B513 context rule on the evidence check", () => {
 });
 
 describe("B513 the reason follows the colour", () => {
-  test("a conflicts card does not show a reason that says the statement matches", () => {
-    const card = displayCard({
+  test("a supporting note shows both views, and a conflicts note does not say the statement matches", () => {
+    const supported = displayCard({
       statement: "The firm has agreed to acquire a portfolio of five limited partnership interests.",
       role: "facts",
       classification: "not_found",
@@ -95,22 +94,36 @@ describe("B513 the reason follows the colour", () => {
       quote: "The team recommends approval of the acquisition.",
       sourceName: "28_secondary_lp_portfolio_ic.txt",
     });
+    const supportedReason = readerEvidenceSentence(supported);
+    assert.equal(shownTrace(supported).state, "note_withheld");
+    assert.match(supportedReason, /The reading of the whole claim found it supported/);
+    const card = displayCard({
+      statement: "The firm has agreed to acquire a portfolio of five limited partnership interests.",
+      role: "facts",
+      classification: "not_found",
+      displayVerdict: "conflict",
+      noteText: "The source is still recommending approval.",
+      quote: "The team recommends approval of the acquisition.",
+      sourceName: "28_secondary_lp_portfolio_ic.txt",
+    });
+    card.readingNote = { text: card.readingNote.text, bucket: "conflicts", refused: false };
+    card.statementVerdict = { state: "conflicts", setBy: { source: "note", bucket: "conflicts" } };
     const reason = readerEvidenceSentence(card);
     assert.equal(shownTrace(card).state, "conflicts");
-    assert.match(reason, /recommends approval/);
+    assert.match(reason, /recommend/);
     assert.doesNotMatch(reason, /restates|in other words|matches/i);
   });
 
-  test("a context look names the context document", () => {
+  test("a context look with no supporting note names the context document", () => {
     const card = displayCard({
       statement: "The loss was not service-related.",
       role: "context",
       classification: "not_found",
       displayVerdict: "conflict",
-      noteText: "The report restates this.",
       quote: "The loss was not service-related.",
       sourceName: "35_kestrel_q2_2026_report.txt",
     });
+    card.readingNote = null;
     const reason = readerEvidenceSentence(card);
     assert.match(reason, /Needs a look/);
     assert.match(reason, /35_kestrel_q2_2026_report\.txt/);

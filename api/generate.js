@@ -29,7 +29,8 @@ import {
   getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
-import { outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
+import { outputTypeWordCeiling, wordLimitLine } from "../lib/prompt-library/outputTypeGuidance.js";
+import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { countWords } from "../lib/qc/token-estimate.mjs";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
@@ -771,7 +772,7 @@ Rules:
 Output constraints:
 ${
   effectiveMaxWords
-    ? `- Word limit: ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it.
+    ? `- ${wordLimitLine(effectiveMaxWords)}
 - Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.`
     : "- No explicit word limit provided."
 }
@@ -818,7 +819,9 @@ Return ONLY JSON:
     const parsed = safeJsonParse(raw) || {};
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
-    let currentDraftText = stripSourcesUsedBlock(rawDraftText);
+    const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(rawDraftText));
+    let currentDraftText = splitDraft.commentary;
+    const methodologyNote = splitDraft.methodologyNote;
 
     const wordCount = countWords(currentDraftText);
     if (effectiveMaxWords != null && wordCount > effectiveMaxWords) {
@@ -880,6 +883,7 @@ Return ONLY JSON:
     return res.status(200).json({
       ok: true,
       draftText: currentDraftText,
+      methodologyNote,
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,

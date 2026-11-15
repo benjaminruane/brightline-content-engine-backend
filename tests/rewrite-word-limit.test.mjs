@@ -118,7 +118,7 @@ describe("rewrite word limit", () => {
     assert.equal(/try to/i.test(limit), false);
     assert.match(
       userPrompt,
-      /Word limit: 80 words maximum for the commentary, excluding any Methodology Note\. Write to fit within it\./
+      /Word limit: 80 words maximum\. Write to fit within it\./
     );
     assert.match(
       userPrompt,

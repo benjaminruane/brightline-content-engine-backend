@@ -113,10 +113,15 @@ describe("B402 reading contract", () => {
     assert.equal(wording[0].status, "matched_disputed");
   });
 
-  test("a note cannot produce nothing_to_raise when an element is not_found", () => {
-    const state = sentenceState([fact("not_found", "HCIL")], { bucket: "none", disputedElements: [] });
-    assert.equal(state, "not_in_source");
-    assert.notEqual(state, "nothing_to_raise");
+  test("a supporting note does not mark a missing name as not in the source, and a missing figure stays", () => {
+    const name = sentenceState([fact("not_found", "HCIL")], { bucket: "none", disputedElements: [] });
+    assert.equal(name, "nothing_raised");
+    const figure = sentenceState(
+      [{ kind: "figure", surface: "14", status: "not_found" }],
+      { bucket: "none", disputedElements: [] }
+    );
+    assert.equal(figure, "not_in_source");
+    assert.notEqual(figure, "nothing_to_raise");
   });
 
   test("no bucket may carry endorsing language", () => {
@@ -228,8 +233,8 @@ describe("B402 reading contract", () => {
     assert.equal(applied.displayVerdict, "conflict");
     assert.equal(applied.factualBadge, false);
     assert.equal(applied.statement, "HICL grew.");
-    assert.equal(applied.sentenceState, "conflicts");
-    assert.equal(applied.sentenceLabel, "Conflicts with the source");
+    assert.equal(applied.sentenceState, "note_withheld");
+    assert.equal(applied.sentenceLabel, "Needs a look");
     assert.equal(other.readingFacts, undefined);
     assert.equal(other.sentenceState, undefined);
   });

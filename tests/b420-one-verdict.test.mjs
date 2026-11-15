@@ -16,7 +16,7 @@ function fact(status, surface = "budgets") {
 
 test("a missing fact is not_in_source and beats a quieter note", () => {
   const verdict = statementVerdict({
-    facts: [fact("matched", "EBITDA"), fact("not_found", "budgets")],
+    facts: [fact("matched", "EBITDA"), { ...fact("not_found", "budgets"), kind: "figure" }],
     note: { bucket: "none", text: "" },
     entries: [],
   });
@@ -102,7 +102,7 @@ test("the card edge follows the statement verdict, not the evidence class", () =
       editorialConcerns: [],
     },
     {
-      facts: [fact("not_found", "budgets")],
+      facts: [{ ...fact("not_found", "budgets"), kind: "figure" }],
       note: { bucket: "none", text: "" },
     },
   );
