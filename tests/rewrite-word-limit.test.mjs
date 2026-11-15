@@ -103,6 +103,7 @@ describe("rewrite word limit", () => {
         maxWords: 80,
         outputType: "reporting_commentary",
         visibility: "complete",
+        eventType: "NEW_DIRECT_INVESTMENT",
       }),
       res
     );
