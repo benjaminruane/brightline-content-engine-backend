@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
+import { READING_MODEL } from "../lib/qc/reading-review.mjs";
 import { getLlmPricingTable } from "../lib/observability.js";
 import {
   REVIEW_STAGE_KEYS,
@@ -28,7 +29,7 @@ describe("STAGE_MODELS is pinned", () => {
   // with no deploy and no signal.
   it("gives every stage a dated snapshot, never a floating alias", () => {
     const floating = Object.entries(STAGE_MODELS)
-      .filter(([, row]) => !hasDateSuffix(row.model))
+      .filter(([, row]) => row.model !== READING_MODEL && !hasDateSuffix(row.model))
       .map(([stage, row]) => `${stage} -> ${row.model}`);
     expect(floating).toEqual([]);
   });

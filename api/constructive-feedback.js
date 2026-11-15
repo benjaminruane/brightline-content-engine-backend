@@ -1,19 +1,12 @@
 import { randomUUID } from "node:crypto";
-import { callLLM, flushObservability, hasProviderApiKey, logCanaryScore } from "../lib/observability.js";
+import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
-  buildConstructiveFeedbackPieceUserPayload,
-  CLEAN_DRAFT_FEEDBACK_TEXT,
-  collectMarginNotes,
-  CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT,
-  coverageRetryInstruction,
+  CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT,
+  buildConstructiveFeedbackV2,
   normalizeConstructiveFeedbackPlainText,
   prependReadiness,
-  stripUnquotedCraft,
-  unnamedFindings,
-} from "../lib/qc/constructive-feedback.mjs";
-import { READINESS_LABELS, summariseReview } from "../lib/qc/review-summary.mjs";
-import { asReviewOptions } from "../lib/qc/review-options.mjs";
+} from "../lib/qc/constructive-feedback-v2.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
 function setCorsHeaders(req, res) {
@@ -22,31 +15,6 @@ function setCorsHeaders(req, res) {
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
-
-function extractRows(body) {
-  if (Array.isArray(body.qcCards) && body.qcCards.length > 0) {
-    return body.qcCards.map((card) => ({ qcCard: card }));
-  }
-  if (Array.isArray(body.statements) && body.statements.length > 0) {
-    return body.statements;
-  }
-  return [];
-}
-
-function finishPiece(bodyText, { readiness, draftText, notes }, silences) {
-  const labelled = prependReadiness(readiness, bodyText);
-  const removed = [];
-  const stripped = stripUnquotedCraft(labelled, { draftText, notes, droppedParagraphs: removed });
-  if (Array.isArray(silences) && removed.length) {
-    silences.push({
-      id: "unquoted_craft",
-      reason: "a paragraph was removed",
-      count: removed.length,
-      content: removed,
-    });
-  }
-  return stripped;
 }
 
 export default async function handler(req, res) {
@@ -65,105 +33,43 @@ export default async function handler(req, res) {
   }
 
   const body = req.body && typeof req.body === "object" ? req.body : {};
-  const draftText = typeof body.draftText === "string" ? body.draftText.trim() : "";
-  const reviewOptions = body.reviewOptions && typeof body.reviewOptions === "object" ? body.reviewOptions : {};
-  const activeReviewOptions = asReviewOptions(reviewOptions);
-  const rows = extractRows(body);
-  const cards = rows.map((row) => (row?.qcCard && typeof row.qcCard === "object" ? row.qcCard : row));
-  const reviewSummary = summariseReview(cards, activeReviewOptions);
-  const signoffVerdict = reviewSummary.readiness;
-  if (!READINESS_LABELS.includes(signoffVerdict)) {
+  let built;
+  try {
+    built = buildConstructiveFeedbackV2(body);
+  } catch (err) {
+    console.warn("[constructive-feedback]", err?.message || err);
     return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
   }
-  const isReady = signoffVerdict === "Ready";
-  const notes = collectMarginNotes(rows, activeReviewOptions, draftText);
-  const craftSilences = [];
-  const cleanPiece = finishPiece(CLEAN_DRAFT_FEEDBACK_TEXT, {
-    readiness: signoffVerdict,
-    draftText,
-    notes,
-  }, craftSilences);
 
-  if (notes.length === 0) {
-    return res.status(200).json({
-      ok: true,
-      feedbackText: cleanPiece,
-      isReady,
-      ...(craftSilences.length ? { silences: craftSilences } : {}),
-    });
-  }
-
-  const payload = buildConstructiveFeedbackPieceUserPayload({
-    draftText,
-    readiness: signoffVerdict,
-    outputType: body.outputType,
-    statements: rows,
-    reviewOptions: activeReviewOptions,
-  });
   const traceId = randomUUID();
-
-  async function generatePiece(extraInstruction, spanName) {
-    const messages = [
-      { role: "system", content: CONSTRUCTIVE_FEEDBACK_SYSTEM_PROMPT },
-      { role: "user", content: JSON.stringify(payload, null, 2) },
-    ];
-    if (extraInstruction) {
-      messages.push({ role: "user", content: extraInstruction });
-    }
+  try {
     const completion = await callLLM({
       provider: modelConfig.provider,
       model: modelConfig.model,
-      temperature: 0,
-      messages,
+      temperature: null,
+      messages: [
+        { role: "system", content: CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(built.payload, null, 2) },
+      ],
       traceId,
       traceName: "constructive-feedback",
-      spanName,
-      metadata: { route: "constructive-feedback", noteCount: notes.length },
+      spanName: "constructive-feedback",
+      metadata: { route: "constructive-feedback", findingCount: built.payload.findings.length },
     });
     const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
-    return finishPiece(normalizeConstructiveFeedbackPlainText(raw), {
-      readiness: signoffVerdict,
-      draftText,
-      notes,
-    }, craftSilences);
-  }
-
-  try {
-    let feedbackText = await generatePiece(null, "constructive-feedback");
-    let missed = unnamedFindings(feedbackText, notes);
-    if (missed.length > 0) {
-      feedbackText = await generatePiece(coverageRetryInstruction(missed), "constructive-feedback-coverage-retry");
-      missed = unnamedFindings(feedbackText, notes);
-      if (missed.length > 0) {
-        const comment = missed
-          .map((note) => `${note.kind}:${quoteFrag(note.statementText)}`)
-          .join("; ");
-        console.warn(`[constructive-feedback] coverage miss remaining=${missed.length} ${comment}`);
-        logCanaryScore({
-          traceId,
-          name: "constructive-feedback-coverage-miss",
-          value: missed.length,
-          comment,
-        });
-      }
+    const feedbackText = prependReadiness(built.readiness, normalizeConstructiveFeedbackPlainText(raw));
+    if (!feedbackText) {
+      return res.status(200).json({ ok: false, feedbackText: "", isReady: built.readiness === "Ready" });
     }
     return res.status(200).json({
       ok: true,
-      feedbackText: feedbackText || cleanPiece,
-      isReady,
-      ...(craftSilences.length ? { silences: craftSilences } : {}),
+      feedbackText,
+      isReady: built.readiness === "Ready",
     });
-  } catch {
-    return res.status(200).json({ ok: false, feedbackText: "", isReady });
+  } catch (err) {
+    console.warn("[constructive-feedback]", err?.message || err);
+    return res.status(200).json({ ok: false, feedbackText: "", isReady: built.readiness === "Ready" });
   } finally {
     await flushObservability();
   }
-}
-
-function quoteFrag(statementText) {
-  return String(statementText || "")
-    .trim()
-    .split(/\s+/)
-    .slice(0, 8)
-    .join(" ");
 }
