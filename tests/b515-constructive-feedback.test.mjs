@@ -109,7 +109,8 @@ describe("B515 constructive feedback payload", () => {
       "5 words, within your 80 word limit"
     );
     const built = buildConstructiveFeedbackV2(body({ wordLimit: 80 }));
-    assert.equal(built.payload.wordCountLine.endsWith("within your 80 word limit"), true);
+    assert.equal(Object.hasOwn(built.payload, "wordCountLine"), false);
+    assert.equal(Object.hasOwn(built.payload, "lengthNote"), false);
   });
 
   test("the post-filter strips markdown and leaves the words", () => {
