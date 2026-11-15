@@ -28,6 +28,7 @@ import {
   getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt, detectRewriteClash, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 
@@ -660,9 +661,7 @@ export default async function handler(req, res) {
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : modelConfig.model;
     const bannedWords = normalizeBannedWords(body.bannedWords);
-    const bannedWordsInstruction = bannedWords.length
-      ? `Do not use any of the following words in your output: ${bannedWords.join(", ")}.`
-      : "";
+    const bannedWordsInstruction = bannedWordsLine(bannedWords);
     const publicSearch = Boolean(body.publicSearch);
     const sources = Array.isArray(body.sources) ? body.sources : [];
     // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
@@ -731,7 +730,7 @@ export default async function handler(req, res) {
     const rewriteWinsLine =
       "User rewrite instructions are authoritative and override base guidance if they conflict (advisory conflicts may be reported, but do not block).";
 
-    const prompt = isLengthOnly
+    const promptBody = isLengthOnly
       ? `LENGTH-ONLY REWRITE: Adjust the draft to ${effectiveMaxWords} words maximum for the commentary, excluding any Methodology Note. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can. Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first.
 
 ${rewriteWinsLine}
@@ -834,6 +833,8 @@ Return ONLY valid JSON with no markdown or extra text:
   }
 }
 `.trim();
+
+    const prompt = appendContextSourceLine(promptBody, sources);
 
     const completion = await callLLM({
       provider: modelConfig.provider,
