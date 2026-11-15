@@ -1,8 +1,6 @@
 // api/health.js
 
-import { VISIBILITY } from "../lib/output-intent.js";
-import { getPgCommentaryWordLimit } from "../lib/prompt-library/index.js";
-import { PG_WRITING_EVENT } from "../lib/prompt-library/pg-writing-prompts.mjs";
+import { OUTPUT_TYPE_LENGTH } from "../lib/prompt-library/outputTypeGuidance.js";
 import { readDatabaseStatus } from "../lib/db/client.mjs";
 import { readBuildIdentity, readEnvironmentSummary, withDatabaseStatus } from "./_lib/env-flags.js";
 
@@ -16,14 +14,8 @@ function setCorsHeaders(req, res) {
 
 function buildHouseWordLimits() {
   const houseWordLimits = {};
-  for (const eventKey of Object.values(PG_WRITING_EVENT)) {
-    const publicLimit = getPgCommentaryWordLimit(eventKey, VISIBILITY.PUBLIC);
-    const completeLimit = getPgCommentaryWordLimit(eventKey, VISIBILITY.COMPLETE);
-    if (publicLimit == null && completeLimit == null) continue;
-    const byVis = {};
-    if (publicLimit != null) byVis.public = publicLimit;
-    if (completeLimit != null) byVis.complete = completeLimit;
-    houseWordLimits[eventKey] = byVis;
+  for (const [outputType, range] of Object.entries(OUTPUT_TYPE_LENGTH)) {
+    houseWordLimits[outputType] = { min: range.min, max: range.max };
   }
   return houseWordLimits;
 }

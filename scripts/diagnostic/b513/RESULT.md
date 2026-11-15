@@ -1,0 +1,542 @@
+# B513
+
+## Deleted files
+
+- lib/prompt-library/pg-writing-prompts.mjs
+- lib/prompt-library/pg-commentary-cleanup.mjs
+- lib/prompt-library/pg-word-limit.mjs
+- lib/prompt-library/pg-binding.mjs
+- tests/pg-word-limit.test.mjs
+- tests/pg-commentary-cleanup.test.mjs
+
+## Replay
+
+# B513 replay
+
+Stored cards re-read: 24. Cards whose state or reason changes: 14.
+
+Q2 context cards clear or amber: yes (note_withheld, note_withheld).
+Secondary acquisition card stays conflicts with a status reason: yes.
+
+## DIRECT_INVESTMENT_EXIT
+
+Completion of the transaction is subject to customary closing conditions and regulatory approvals.
+
+Before: conflicts
+The transaction is subject to customary closing conditions and regulatory approvals.
+
+After: conflicts. setBy: {"branch":"statementVerdict"}
+02_pg_atnorth_exit states "The transaction is subject to customary closing conditions and regulatory approvals."
+
+## DIRECT_INVESTMENT_EXIT
+
+The holding period from initial acquisition in 2022 to the agreed sale in 2026 is approximately 4 years.
+
+Before: note_withheld
+Partners Group to sell atNorth for an EV of USD 4 billion
+
+Baar-Zug, Switzerland; 27 February 2026
+
+- CPP Investments and Equinix have jointly agreed to acquire atNorth
+- atNorth has eight operational data centers alongside several sites under development across Denmark, Finland, Iceland, Norway, and Sweden
+- Partners Group transformed atNorth during its ownership, increasing contracted EBITDA 14-fold since 2022
+
+Partners Group, one of the largest firms in the global private markets industry, acting on behalf of its clients, has agreed to sell atNorth (or "the Company"), a leading pan-Nordic data center platform, to Canada Pension Plan Investment Board ("CPP Investments") and Equinix, the world's digital infrastructure company.
+
+After: note_withheld. setBy: {"branch":"statementVerdict"}
+This check did not run, because the result came back empty.
+
+## DIRECT_INVESTMENT_EXIT
+
+Partners Group views atNorth as aligned with its thematic focus on data centers and digital infrastructure.
+
+Before: partial
+The source quotes Esther Peiner saying Partners Group remains "thematically focused on data center assets across the globe," which restates the statement's point about thematic alignment with data centers and digital infrastructure.
+
+After: partial. setBy: {"branch":"evidenceDisplay","sourceName":"02_pg_atnorth_exit.txt","role":"facts","source":"display"}
+02_pg_atnorth_exit states "To-date, Partners Group has invested around USD 5 billion in data centers and manages a portfolio of assets that includes EdgeCore, one of the leading hyperscale data center platforms in the US; GreenSquareDC, a data center provider in Australia; and Digital Halo, a Singapore-headquartered pan-Asian data center operator."
+
+## DIRECT_INVESTMENT_REVALUATION
+
+The uplift was driven by higher earnings, a re-rating of listed peers, and currency.
+
+Before: partial
+The uplift this quarter is driven predominantly by market factors, with peer multiples and currency together accounting for around two thirds of the increase, while underlying trading in medical and aerospace remains in line with the investment case.
+
+After: partial. setBy: {"branch":"evidenceDisplay","sourceName":"27_helvetia_q3_2026_valuation.txt","role":"facts","source":"display"}
+27_helvetia_q3_2026_valuation states "The uplift this quarter is driven predominantly by market factors, with peer multiples and currency together accounting for around two thirds of the increase, while underlying trading in medical and aerospace remains in line with the investment case."
+
+## DIRECT_INVESTMENT_REVALUATION
+
+LTM EBITDA growth contributed roughly one third of the increase, peer multiple expansion from 11.2x to 11.9x added a further 6.1%, and Swiss franc strength against the euro contributed 3.3%.
+
+Before: note_withheld
+VALUATION BRIDGE (30 JUNE 2026 TO 30 SEPTEMBER 2026)
+
+Driver                                   Change in fair value
+LTM EBITDA growth                        +4.6%
+Peer multiple movement                   +6.1%
+Net debt                                 +0.0%
+Foreign exchange (CHF strength)          +3.3%
+Total                                    +14.0%
+
+LTM EBITDA rose 3.8% over the quarter, contributing approximately one third of the uplift. The applied multiple increased from 11.2x to 11.9x, reflecting a re-rating of the listed peer group following strong results across the medical technology supply chain.
+
+After: note_withheld. setBy: {"branch":"statementVerdict"}
+This check did not run, because the result came back empty.
+
+## FUND_DISTRIBUTION
+
+Under the fund's ownership, Harbourline secured national listings with 5 of the 6 largest UK grocers and the 3 largest Irish retailers, more than doubled revenue, doubled capacity at its Cork site, and invested in automated production lines that lifted on-time, in-full delivery rates to over 98%.
+
+Before: note_withheld
+On 30 September we completed the sale of a 60% stake in Harbourline to Northshore Consumer Partners, following the agreement announced on 17 June.
+
+After: nothing_raised. setBy: {"branch":"statementVerdict"}
+(no reason)
+
+## FUND_REVALUATION
+
+The loss was not service-related, and other contracts renewed as planned.
+
+Before: conflicts
+The Q3 2026 report says the loss of Brightwater's largest customer was not related to service quality and that other contracts renewed as planned. The statement restates this in shorter words.
+
+After: note_withheld. setBy: {"branch":"evidenceDisplay","sourceName":"35_kestrel_q2_2026_report.txt","role":"context","source":"display"}
+Needs a look. The only source that speaks to this is 35_kestrel_q2_2026_report.txt, and that source is context.
+
+## FUND_REVALUATION
+
+Aurelia Health was the largest positive contributor.
+
+Before: note_withheld
+The Q3 2026 report says Aurelia's 18% uplift offset part of the Brightwater write-down, but it does not identify Aurelia as the largest positive contributor to the quarter.
+
+After: note_withheld. setBy: {"branch":"floorState","sourceName":"35_kestrel_q2_2026_report.txt","role":"context"}
+Needs a look. The only source that speaks to this is 35_kestrel_q2_2026_report.txt, and that source is context.
+
+## FUND_REVALUATION
+
+Strong expansion with existing hospital group customers drove 9% quarterly ARR growth, and the agreed acquisition of Danish provider Medivakt ApS supported an 18% valuation uplift.
+
+Before: conflicts
+Aurelia, our clinical staff rostering software business, had a strong quarter. Two existing hospital group customers extended the platform to additional sites, and annual recurring revenue grew 9% in the quarter.
+
+After: conflicts. setBy: {"branch":"evidenceDisplay","sourceName":"34_kestrel_q3_2026_report.txt","role":"facts","source":"display"}
+34_kestrel_q3_2026_report states "Two existing hospital group customers extended the platform to additional sites, and annual recurring revenue grew 9% in the quarter."
+
+## FUND_REVALUATION
+
+The partial realization of Harbourline Foods completed at the agreed transaction value, while Corvane Data, Plinth Systems and Tallowmere were broadly unchanged.
+
+Before: conflicts
+On 17 June we agreed the sale of a 60% stake to Northshore Consumer Partners, valuing Harbourline at an enterprise value of GBP 420 million; completion is expected in the third quarter, subject to regulatory approvals.
+
+After: note_withheld. setBy: {"branch":"evidenceDisplay","sourceName":"35_kestrel_q2_2026_report.txt","role":"context","source":"display"}
+Needs a look. The only source that speaks to this is 35_kestrel_q2_2026_report.txt, and that source is context.
+
+## NEW_DIRECT_INVESTMENT
+
+It operates 4 manufacturing facilities: Winterthur and Olten in Switzerland, Indianapolis in the United States, and Brno in the Czech Republic.
+
+Before: not_in_source
+The Company operates four manufacturing facilities: a headquarters site in Winterthur (Switzerland), a larger production facility in Olten (Switzerland), a US operation in Indianapolis acquired in 2018, and a smaller Czech facility in Brno established in 2021 to serve European aerospace customers at lower cost.
+
+After: not_in_source. setBy: {"branch":"statementVerdict"}
+08_synth_industrial_buyout_memo states "The Company operates four manufacturing facilities: a headquarters site in Winterthur (Switzerland), a larger production facility in Olten (Switzerland), a US operation in Indianapolis acquired in 2018, and a smaller Czech facility in Brno established in 2021 to serve European aerospace customers at lower cost."
+
+## NEW_SECONDARY_INVESTMENT
+
+The firm has agreed to acquire a portfolio of five limited partnership interests from Vestmark Pension Scheme at a price of 88% of the net asset value reported as of 30 June 2026.
+
+Before: conflicts
+The IC paper recommends approval of the acquisition of five LP interests from Vestmark at 88% of NAV as reported at 30 June 2026. The statement says the firm has agreed to acquire on these terms, which restates the recommended transaction in other words.
+
+After: conflicts. setBy: {"branch":"evidenceDisplay","sourceName":"28_secondary_lp_portfolio_ic.txt","role":"facts","source":"display"}
+28_secondary_lp_portfolio_ic states "The team recommends that the Committee approve the acquisition of limited partnership interests in five buyout funds from Vestmark Pension Scheme ("Vestmark"), at a price of 88% of net asset value as reported by the general partners at 30 June 2026."
+
+## NEW_SECONDARY_INVESTMENT
+
+In the firm's view, reported valuations are supported by earnings performance and by multiples that are in line with listed and transaction comparables.
+
+Before: note_withheld
+Based on our bottom-up review of the 25 largest companies, representing 81% of NAV, we consider the reported values to be well supported, with valuation multiples in line with listed and transaction comparables.
+
+After: note_withheld. setBy: {"branch":"statementVerdict"}
+This check did not run, because the result came back empty.
+
+## SPECIAL_TOPIC
+
+The firm has adjusted its outlook accordingly.
+
+Before: partial
+The letter states that full-year forecasts have been adjusted in response to the semiconductor slowdown, with the 2026 budget revised from EUR 122 million to EUR 105 million. The statement restates this as having adjusted the outlook accordingly.
+
+After: partial. setBy: {"branch":"evidenceDisplay","sourceName":"09_synth_portfolio_update_letter.txt","role":"facts","source":"display"}
+09_synth_portfolio_update_letter states "we are guiding to flat semiconductor revenue for the next 12 months and have adjusted our full-year forecast accordingly."
+
+## Paid run
+
+Estimate before the calls: USD 15.951944.
+Ceiling USD 10. Cache off. The authoring organisation for this run was Halden Group.
+Stopped: Ceiling USD 10 reached after FUND_CAPITAL_CALL.
+Total spend: USD 10.093835. Calls 841. Unpriced calls 0.
+
+## Roles
+
+- ADD_ON_DIRECT_INVESTMENT / 26_addon_morava_memo.txt: suggested facts, fixture facts, agrees. This run has one source, so the role is facts.
+- DIRECT_INVESTMENT_EXIT / 02_pg_atnorth_exit.txt: suggested facts, fixture facts, agrees. This document provides a press release detailing the specifics of the exit transaction, including the enterprise value and the parties involved.
+- DIRECT_INVESTMENT_EXIT / 11_synth_investor_letter_exit.pdf: suggested context, fixture facts, does not agree. This letter offers insights into a different exit transaction, providing background and implications for investors, which helps contextualize the market environment.
+- DIRECT_INVESTMENT_REVALUATION / 27_helvetia_q3_2026_valuation.txt: suggested facts, fixture facts, agrees. This run has one source, so the role is facts.
+- FUND_CAPITAL_CALL / 30_kestrel_call_notice.txt: suggested facts, fixture facts, agrees. This document serves as the official record of the capital call transaction for Kestrel Partners Fund IV.
+- FUND_CAPITAL_CALL / 31_kestrel_fjordline_press_release.txt: suggested context, fixture context, agrees. This press release provides context about Kestrel Partners' strategic acquisition, which may relate to the use of funds from the capital call.
+- FUND_CAPITAL_CALL / 34_kestrel_q3_2026_report.txt: suggested context, fixture context, agrees. This quarterly report offers insights into the fund's performance and developments, providing background on the implications of the capital call.
+- FUND_DISTRIBUTION / 32_kestrel_distribution_notice.txt: suggested facts, fixture facts, agrees. This document provides specific financial details and payment schedules related to the distribution from the fund.
+- FUND_DISTRIBUTION / 33_kestrel_harbourline_press_release.txt: suggested context, fixture context, agrees. This press release offers background information on the sale of shares that influenced the distribution but is aimed at a broader audience.
+- FUND_DISTRIBUTION / 34_kestrel_q3_2026_report.txt: suggested context, fixture context, agrees. This quarterly report provides a comprehensive overview of the fund's performance and context for the distribution but is intended for a different reporting period.
+- FUND_REVALUATION / 34_kestrel_q3_2026_report.txt: suggested facts, fixture facts, agrees. This document provides the specific financial figures and performance details of the Kestrel Partners Fund IV for Q3 2026, making it a record of the transaction.
+- FUND_REVALUATION / 35_kestrel_q2_2026_report.txt: suggested context, fixture context, agrees. This document offers insights into the previous quarter's performance, providing context for the developments and changes observed in Q3 2026.
+- NEW_DIRECT_INVESTMENT / 08_synth_industrial_buyout_memo.txt: suggested facts, fixture facts, agrees. This run has one source, so the role is facts.
+- NEW_PRIMARY_COMMITMENT / 29_aldermoor_fund_vi_ic.txt: suggested facts, fixture facts, agrees. This run has one source, so the role is facts.
+- NEW_SECONDARY_INVESTMENT / 28_secondary_lp_portfolio_ic.txt: suggested facts, fixture facts, agrees. This run has one source, so the role is facts.
+- SPECIAL_TOPIC / 09_synth_portfolio_update_letter.txt: suggested facts, fixture facts, agrees. This run has one source, so the role is facts.
+
+Suggested roles agreed with the fixture: 15 of 16.
+
+## NEW_PRIMARY_COMMITMENT / As the source states
+
+Words: 417. Range: 250 to 450.
+
+Dear valued investors,
+
+Halden Group has approved a new primary commitment to Aldermoor Capital Fund VI, a European mid-market buyout fund targeting EUR 1.1 billion with a hard cap of EUR 1.3 billion. The firm expects to participate in the first close, scheduled for January 2027.
+
+Aldermoor Capital is a Munich-based private equity firm founded in 2009 by four partners from a large-cap buyout firm. It has 38 investment professionals across Munich, Amsterdam and Stockholm. The firm focuses on control investments in mid-market companies in the DACH region, the Benelux and the Nordics, with a sector focus on healthcare, business services and industrial technology. Its value creation model is operational, supported by an in-house portfolio team of 9 specialists in pricing, procurement, digital and finance function upgrades.
+
+Fund VI will continue the strategy of prior funds. The manager intends to build a portfolio of 12 to 15 portfolio companies, targeting enterprise values of EUR 150 million to EUR 500 million at entry and equity tickets of EUR 50 million to EUR 120 million. The fund will typically seek majority positions alongside founders and management teams, with a meaningful share of deal flow sourced outside broad auctions. Target sectors remain healthcare (with an emphasis on outsourced services and specialist products with recurring demand), business services and industrial technology, in the DACH, Benelux and Nordic markets.
+
+The investment team views Aldermoor as a consistent, focused manager with deep networks in its chosen niches. The firm has applied the same sector and geographic focus across five funds, and founder-owned and family-owned businesses account for around 60% of its historical deal flow. The operational portfolio team, built out from Fund III, has supported average EBITDA margin expansion of 4.1 percentage points across realized investments in Funds III and IV. The team also sees the European lower mid-market as an attractive segment, with a broad opportunity set, less competition than the large-cap space and multiple exit routes to strategic buyers and larger sponsors.
+
+Halden Group has invested with Aldermoor since 2015, committing to Funds III, IV and V and co-investing in 2 portfolio companies, both performing in line with plan. Funds III and IV rank in the first quartile of the manager’s European mid-market buyout benchmark, while Funds I and II are second quartile. In the investment team’s view, Fund VI offers continuity with a stable senior team, a 3% general partner commitment and a strategy aligned with the primary program’s focus on European mid-market managers with distinctive sourcing and operational capabilities.
+
+1. Conflicts with the source (conflicts). setBy: floorState, 29_aldermoor_fund_vi_ic.txt, facts.
+
+Halden Group has approved a new primary commitment to Aldermoor Capital Fund VI, a European mid-market buyout fund targeting EUR 1.1 billion with a hard cap of EUR 1.3 billion.
+
+The IC paper recommends that the Committee approve a commitment to Fund VI; it does not state that the Committee has approved it. The statement says Halden Group has approved the commitment, which goes beyond the recommendation stage described in the source.
+
+2. Needs a look (note_withheld). setBy: uncheckedLook, 29_aldermoor_fund_vi_ic.txt.
+
+Funds III and IV rank in the first quartile of the manager’s European mid-market buyout benchmark, while Funds I and II are second quartile.
+
+This check did not run, because the match came back empty.
+
+## NEW_PRIMARY_COMMITMENT / Approved
+
+Words: 400. Range: 250 to 450.
+
+Dear valued investors,
+
+The firm has approved a new primary commitment to Aldermoor Capital Fund VI, a European mid-market buyout fund targeting EUR 1.1 billion with a hard cap of EUR 1.3 billion. Fund VI is expected to hold a first close in January 2027, and the firm intends to participate in that close.
+
+Aldermoor Capital is a Munich-based private equity manager founded in 2009 by four partners from a large-cap buyout firm. It has 38 investment professionals across Munich, Amsterdam and Stockholm. The manager focuses on control investments in mid-market companies in the DACH region, the Benelux and the Nordics, with a sector focus on healthcare, business services and industrial technology. Its value creation model is operational, supported by an in-house portfolio team of 9 specialists in pricing, procurement, digital and finance function upgrades.
+
+Fund VI will continue the strategy of prior funds. Aldermoor expects to build a portfolio of 12 to 15 portfolio companies, targeting enterprise values of EUR 150 million to EUR 500 million at entry and equity tickets of EUR 50 million to EUR 120 million. The fund will typically pursue majority positions alongside founders and management teams, with a meaningful share of deal flow sourced outside broad auctions. Within healthcare, the focus is on outsourced services and specialist products with recurring demand.
+
+The investment team views this commitment as aligned with the primary program’s emphasis on European mid-market managers with distinctive sourcing and operational capabilities. Aldermoor has applied a consistent sector and geographic focus across 5 funds, building deep networks in its niches and a strong position in founder-owned and family-owned businesses, which account for around 60% of its historical deal flow. The portfolio team, built out from Fund III, has supported average EBITDA margin expansion of 4.1 percentage points across realized Fund III and Fund IV investments.
+
+Halden Group has invested with Aldermoor since 2015, committing to Funds III, IV and V and co-investing in 2 transactions alongside Funds IV and V. Both co-investments are performing in line with plan, and the firm sits on the limited partner advisory committees of Funds IV and V. Aldermoor’s track record places Funds III and IV in the first quartile and Funds I and II in the second quartile against the manager’s European mid-market buyout benchmark, with a step change in performance from Fund III coinciding with the build-out of the portfolio team and tighter sector focus.
+
+1. Conflicts with the source (conflicts). setBy: evidenceDisplay, 29_aldermoor_fund_vi_ic.txt, facts.
+
+The firm has approved a new primary commitment to Aldermoor Capital Fund VI, a European mid-market buyout fund targeting EUR 1.1 billion with a hard cap of EUR 1.3 billion.
+
+29_aldermoor_fund_vi_ic states "The team recommends that the Committee approve a commitment of EUR 65 million to Aldermoor Capital Fund VI ("Fund VI"), a European mid-market buyout fund with a target size of EUR 1.1 billion and a hard cap of EUR 1.3 billion."
+
+2. Needs a look (note_withheld). setBy: uncheckedLook, 29_aldermoor_fund_vi_ic.txt.
+
+Aldermoor’s track record places Funds III and IV in the first quartile and Funds I and II in the second quartile against the manager’s European mid-market buyout benchmark, with a step change in performance from Fund III coinciding with the build-out of the portfolio team and tighter sector focus.
+
+This check did not run, because the match came back empty.
+
+## NEW_DIRECT_INVESTMENT / As the source states
+
+Words: 522. Range: 250 to 450.
+
+Dear valued investors,
+
+The firm is proceeding with the acquisition of a controlling stake in Helvetia Precision Components AG (HPC), a Zurich-headquartered manufacturer of high-precision machined components for medical devices, aerospace, and semiconductor equipment. The investment thesis rests on HPC’s strong competitive position in regulated niches, exposure to structurally growing end markets, a defined margin expansion plan, and a clear opportunity to build a larger platform through consolidation.
+
+HPC fits directly within the firm’s European industrials strategy, which targets specialized manufacturing businesses with high entry barriers, mission-critical products, and resilient cash generation. The company’s role as a qualified supplier in orthopedics, its long-standing aerospace relationships, and its participation in EUV-related semiconductor equipment align with the firm’s focus on advanced industrial technologies and health care adjacencies.
+
+HPC was founded in 1962 by the Schiller family, which has built the business over several decades and will remain a minority shareholder. The firm’s diligence has included extensive engagement with the outgoing CEO, Andreas Schiller, and the incoming CEO, Petra Köhler, who has led operations since 2018 and is credited with integrating the US acquisition in Indianapolis.
+
+In the firm’s view, HPC combines durable customer relationships with attractive financial performance. The company is one of three global suppliers qualified at scale for hip and knee replacement components under both FDA Class II and EU MDR regimes. Switching costs for OEMs are high, reflected in an average 14-year tenure across the top 10 customers and 102% revenue retention from these accounts over the past five years. From 2020 to 2024, revenue grew from EUR 312 million to EUR 587 million (17.1% CAGR), while EBITDA increased from EUR 48 million to EUR 103 million and margins improved from 15.4% to 17.5%, with free cash flow conversion averaging 71%.
+
+HPC operates 4 facilities: two in Switzerland (Winterthur headquarters and Olten), one in Indianapolis, and one in Brno, Czech Republic, with 1’420 employees, of whom about 240 are outside Switzerland.
+
+The firm has agreed to acquire a 78% controlling stake in HPC at an enterprise value of EUR 1.15 billion. The stake is being purchased from the founding Schiller family, which will retain 15%, with management holding the remaining 7%. The transaction will be funded with equity from the firm and co-investors alongside senior and second-lien debt. Goldman Sachs and Credit Suisse have provided fully underwritten commitments. Signing of definitive documentation is expected by 28 March, with closing targeted for mid-June, subject to merger control clearances in the EU, US, and Switzerland.
+
+The value creation plan focuses on three main levers. First, operational improvement: consolidating the Swiss footprint (including closing the Winterthur site and shifting volumes to Olten), centralizing procurement, and investing in automation in Brno. Second, disciplined organic growth: targeting approximately mid-single-digit growth in line with end markets, plus share gains in medical implants. Third, bolt-on M&A: pursuing 2-3 add-on acquisitions in a fragmented European precision machining market, where the firm has already identified several actionable targets.
+
+The firm expects these initiatives to support continued revenue growth and EBITDA margin expansion over the planned holding period, while maintaining a prudent capital structure and governance framework with majority board representation.
+
+1. Conflicts with the source (conflicts). setBy: floorState, 08_synth_industrial_buyout_memo.txt, facts.
+
+The firm is proceeding with the acquisition of a controlling stake in Helvetia Precision Components AG (HPC), a Zurich-headquartered manufacturer of high-precision machined components for medical devices, aerospace, and semiconductor equipment.
+
+The memo is a recommendation to the Global Investment Committee seeking approval for the acquisition, with exclusivity through 31 March 2025 and signing expected by 28 March. The statement says the firm is "proceeding with" the acquisition, which goes beyond a proposal still awaiting committee approval.
+
+2. Goes beyond the source (beyond). setBy: statementVerdict, 08_synth_industrial_buyout_memo.txt.
+
+HPC fits directly within the firm’s European industrials strategy, which targets specialized manufacturing businesses with high entry barriers, mission-critical products, and resilient cash generation.
+
+The memo describes the European Industrials Team's recommendation and HPC's attributes (precision components, mission-critical applications, durable customer relationships, cash generation), but it does not state that the firm has a European industrials strategy that targets specialized manufacturing businesses with high entry barriers, mission-critical products, and resilient cash generation. The statement characterizes a firm-level strategy mandate the source does not articulate.
+
+3. Goes beyond the source (beyond). setBy: statementVerdict, 08_synth_industrial_buyout_memo.txt.
+
+The company’s role as a qualified supplier in orthopedics, its long-standing aerospace relationships, and its participation in EUV-related semiconductor equipment align with the firm’s focus on advanced industrial technologies and health care adjacencies.
+
+The memo describes HPC as a qualified supplier in medical implants, with aerospace customer relationships and EUV-related semiconductor exposure, but says nothing about alignment with the firm's focus on advanced industrial technologies and health care adjacencies. That strategic-fit framing is not in the source.
+
+4. Goes beyond the source (partial). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+HPC was founded in 1962 by the Schiller family, which has built the business over several decades and will remain a minority shareholder.
+
+The source states that HPC was founded in 1962 by Werner Schiller in Winterthur. It also mentions that the Schiller family will retain a 15% economic interest, indicating they will remain minority shareholders.
+
+5. Not in the source (not_in_source). setBy: statementVerdict, 08_synth_industrial_buyout_memo.txt.
+
+HPC operates 4 facilities: two in Switzerland (Winterthur headquarters and Olten), one in Indianapolis, and one in Brno, Czech Republic, with 1’420 employees, of whom about 240 are outside Switzerland.
+
+The source does not describe the company as Czech Republic.
+
+6. Conflicts with the source (conflicts). setBy: floorState, 08_synth_industrial_buyout_memo.txt, facts.
+
+The firm has agreed to acquire a 78% controlling stake in HPC at an enterprise value of EUR 1.15 billion.
+
+The memo dated 14 March 2025 seeks Investment Committee approval for the acquisition and states exclusivity runs through 31 March with signing expected 28 March; it describes a proposed acquisition, not one that has been agreed. The statement says the firm "has agreed to acquire," which goes beyond what the memo supports.
+
+7. Conflicts with the source (conflicts). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+The stake is being purchased from the founding Schiller family, which will retain 15%, with management holding the remaining 7%.
+
+08_synth_industrial_buyout_memo states "Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management."
+
+8. Conflicts with the source (conflicts). setBy: statementVerdict, 08_synth_industrial_buyout_memo.txt.
+
+The value creation plan focuses on three main levers.
+
+The memo attributes EBITDA margin expansion to four sources: footprint consolidation (~120 bps), procurement initiatives (~80 bps), automation in Brno (~60 bps), and operating leverage on incremental revenue (~60 bps). The statement says three main levers.
+
+9. Goes beyond the source (partial). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+Second, disciplined organic growth: targeting approximately mid-single-digit growth in line with end markets, plus share gains in medical implants.
+
+08_synth_industrial_buyout_memo states "This growth is composed of: 5% organic growth in line with end-market expansion, 2% from share gain in medical implants, and 2% from contemplated M&A." The statement's 'approximately mid-single-digit growth' is broader and less specific than the source's detailed breakdown, which includes an additional 2% from M&A.
+
+10. Goes beyond the source (partial). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+The firm expects these initiatives to support continued revenue growth and EBITDA margin expansion over the planned holding period, while maintaining a prudent capital structure and governance framework with majority board representation.
+
+08_synth_industrial_buyout_memo states "We have negotiated standard tag-along and drag-along rights, and a clear governance framework giving Halden Group majority board representation (3 of 5 seats)." The source does not address the initiatives supporting revenue growth, EBITDA margin expansion, or maintaining a prudent capital structure.
+
+## NEW_DIRECT_INVESTMENT / Signed or agreed
+
+Words: 481. Range: 250 to 450.
+
+Dear valued investors,
+
+The firm has signed an agreement to acquire a controlling stake in Helvetia Precision Components AG (HPC), a Zurich-headquartered manufacturer of high-precision machined components serving medical devices, aerospace, and semiconductor equipment end markets. The investment thesis centers on HPC’s strong competitive position in regulated, mission-critical applications, exposure to structurally growing markets, and a clear path to operational improvement and inorganic growth.
+
+HPC fits directly within the firm’s European industrials strategy, which targets specialized manufacturing businesses with defensible niches, high cash conversion, and opportunities for operational value creation and consolidation. The precision machining sector in Europe remains fragmented, and the firm views HPC as a scalable platform for disciplined add-on acquisitions.
+
+HPC manufactures complex components typically machined to tolerances of 5 microns or tighter, where reliability requirements and regulatory barriers create high switching costs. Approximately 48% of revenue comes from medical device customers, primarily orthopaedic implants and surgical instruments; 32% from aerospace engine and defense components; and 20% from semiconductor capital equipment, with a focus on EUV-related applications.
+
+The company operates 4 facilities: its headquarters in Winterthur and a larger plant in Olten (both in Switzerland), a US site in Indianapolis, and a lower-cost facility in Brno, Czech Republic. It employs 1’420 people, of whom about 240 are based outside Switzerland. From 2020 to 2024, revenue grew from EUR 312 million to EUR 587 million, a 17.1% compound annual growth rate, while EBITDA increased from EUR 48 million to EUR 103 million and margins improved from 15.4% to 17.5%. Free cash flow conversion averaged 71% over this period.
+
+The firm’s overall view is that HPC is one of a small number of globally qualified suppliers in its core medical implants vertical, with durable customer relationships and through-cycle resilience supported by diversified end markets. The top 10 customers have been with the company for an average of 14 years, and revenue retention from these accounts has been 102% over the past five years.
+
+Under the signed transaction, the firm will acquire a 78% controlling stake in HPC from the founding Schiller family, which will retain a 15% economic interest, with management holding the remaining 7%. Co-investors are expected to participate alongside the firm, and the capital structure includes senior and second-lien debt with leverage of approximately 5.2x trailing EBITDA.
+
+The value creation plan targets revenue growth and margin expansion over a five-year hold. Key initiatives include consolidating the Swiss manufacturing footprint (closing the Winterthur facility and shifting volumes to Olten), centralizing procurement to capture identified savings, and investing in automation at the Brno facility. The firm also intends to support two to three add-on acquisitions from a pipeline of identified targets and to strengthen the management team with a new Chief Commercial Officer and Chief Procurement Officer, while promoting the current COO, Petra Köhler, to CEO and maintaining continuity through the ongoing board role and reinvestment of the Schiller family.
+
+1. Conflicts with the source (conflicts). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+The firm has signed an agreement to acquire a controlling stake in Helvetia Precision Components AG (HPC), a Zurich-headquartered manufacturer of high-precision machined components serving medical devices, aerospace, and semiconductor equipment end markets.
+
+08_synth_industrial_buyout_memo states "We seek approval for Halden Group to invest up to EUR 480 million of equity in the acquisition of Helvetia Precision Components AG ("HPC" or "the Company"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets."
+
+2. Goes beyond the source (beyond). setBy: statementVerdict, 08_synth_industrial_buyout_memo.txt.
+
+HPC fits directly within the firm’s European industrials strategy, which targets specialized manufacturing businesses with defensible niches, high cash conversion, and opportunities for operational value creation and consolidation.
+
+The memo describes HPC's attributes (defensible position, cash conversion, operational levers, M&A consolidation) and is authored by the European Industrials Team, but it does not state that the firm has a European industrials strategy that targets specialized manufacturing businesses with those specific criteria. The characterization of a firm-level strategy with defined targeting criteria is not stated in the source.
+
+3. Goes beyond the source (partial). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+HPC manufactures complex components typically machined to tolerances of 5 microns or tighter, where reliability requirements and regulatory barriers create high switching costs.
+
+The source states that the company manufactures complex precision components typically machined to tolerances of 5 microns or tighter for applications where failure is not an option.
+
+4. Goes beyond the source (partial). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+Approximately 48% of revenue comes from medical device customers, primarily orthopaedic implants and surgical instruments; 32% from aerospace engine and defense components; and 20% from semiconductor capital equipment, with a focus on EUV-related applications.
+
+The source states that roughly 48% of revenue is generated from medical device customers, primarily orthopaedic implants and surgical instruments. It also mentions that 32% comes from aerospace, split between civil aviation engine components and defence applications, and the remaining 20% serves semiconductor capital equipment manufacturers, where HPC supplies critical components used in wafer fabrication tools. However, the source does not mention a focus on EUV-related applications within the semiconductor segment.
+
+5. Not in the source (not_in_source). setBy: statementVerdict, 08_synth_industrial_buyout_memo.txt.
+
+The company operates 4 facilities: its headquarters in Winterthur and a larger plant in Olten (both in Switzerland), a US site in Indianapolis, and a lower-cost facility in Brno, Czech Republic.
+
+08_synth_industrial_buyout_memo states "The Company operates four manufacturing facilities: a headquarters site in Winterthur (Switzerland), a larger production facility in Olten (Switzerland), a US operation in Indianapolis acquired in 2018, and a smaller Czech facility in Brno established in 2021 to serve European aerospace customers at lower cost."
+
+6. Conflicts with the source (conflicts). setBy: evidenceDisplay, 08_synth_industrial_buyout_memo.txt, facts.
+
+Under the signed transaction, the firm will acquire a 78% controlling stake in HPC from the founding Schiller family, which will retain a 15% economic interest, with management holding the remaining 7%.
+
+08_synth_industrial_buyout_memo states "Halden Group would acquire a 78% controlling stake from the founding Schiller family, with the remainder retained by management."
+
+## NEW_SECONDARY_INVESTMENT / As the source states
+
+Words: 446. Range: 250 to 450.
+
+Dear valued investors,
+
+The firm has agreed to acquire a portfolio of five limited partnership interests from Vestmark Pension Scheme at a price of 88% of net asset value as of 30 June 2026. The portfolio comprises mid-market buyout funds managed by four general partners and provides exposure to 47 portfolio companies across Europe and North America. Closing is targeted for November 2026, subject to general partner consents.
+
+The investment thesis centers on acquiring a seasoned, diversified portfolio at a 12% discount to reported NAV, where the firm believes valuations are well supported. A bottom-up review of the 25 largest portfolio companies, representing 81% of NAV, indicated valuation multiples in line with listed and transaction comparables. The firm expects the discount, combined with underlying value creation and realizations, to support an attractive risk-adjusted return profile.
+
+The portfolio offers a balance of near-term liquidity and ongoing growth. Four funds - Northlane Buyout III (2016), Cinderwell Partners II (2017), Hartham Equity IV (2018), and Northlane Buyout IV (2019) - are in harvesting mode, with most companies through their value creation plans. Based on general partner exit projections and the firm’s assessment, a significant share of NAV is expected to be realized over the next three years. Pellam Mid-Market I (2021) is 55% called and continues to invest, adding exposure to newer assets that can drive value once the older funds are largely realized.
+
+This transaction fits the secondaries program’s focus on acquiring LP interests in mid-market buyout funds managed by general partners the firm knows well, in negotiated, seller-led processes where information advantages support conviction and speed. Vestmark approached a limited group of secondary buyers with a defined list of interests, and the transaction was negotiated bilaterally after a short second round.
+
+The firm has a long-standing relationship with three of the funds. It has been an investor in Northlane Buyout III, Northlane Buyout IV, and Cinderwell Partners II since their first closings and has followed their quarterly reporting and portfolio company developments throughout. It conducted full due diligence on Hartham Equity IV in 2022 in connection with a separate secondary opportunity that did not proceed on price grounds. Pellam Mid-Market I represents a new manager relationship; diligence included a review of the last four quarterly reports, underlying company valuations, and a call with the general partner.
+
+The resulting portfolio spans five vintages from 2016 to 2021, with a weighted average age of 6.1 years. Sector exposure is diversified across business services (34% of NAV), industrial technology (28%), healthcare (24%), and consumer (14%, almost entirely within Cinderwell Partners II). No single portfolio company represents more than 6% of NAV, and unfunded commitments are concentrated in Pellam Mid-Market I.
+
+1. Conflicts with the source (conflicts). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+The firm has agreed to acquire a portfolio of five limited partnership interests from Vestmark Pension Scheme at a price of 88% of net asset value as of 30 June 2026.
+
+28_secondary_lp_portfolio_ic states "The team recommends that the Committee approve the acquisition of limited partnership interests in five buyout funds from Vestmark Pension Scheme ("Vestmark"), at a price of 88% of net asset value as reported by the general partners at 30 June 2026."
+
+2. Goes beyond the source (partial). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+The portfolio comprises mid-market buyout funds managed by four general partners and provides exposure to 47 portfolio companies across Europe and North America.
+
+The source states that the interests give exposure to 47 underlying companies, predominantly in the European and North American mid-market. It also mentions that the portfolio spans four managers. However, the source does not specify that these are mid-market buyout funds or that they are managed by four general partners, as the statement claims.
+
+3. Goes beyond the source (partial). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+The firm expects the discount, combined with underlying value creation and realizations, to support an attractive risk-adjusted return profile.
+
+28_secondary_lp_portfolio_ic states "The investment team considers Project Vale an attractive opportunity to acquire a diversified mid-market portfolio, largely managed by GPs we know well, at a meaningful discount to well-supported reported values, with visible near-term liquidity from the older funds complemented by continued growth exposure through Pellam Mid-Market I." The source does not explicitly mention 'risk-adjusted return profile.' The statement's evaluative claim about risk-adjusted returns is broader than what the source states.
+
+4. Goes beyond the source (partial). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+Four funds - Northlane Buyout III (2016), Cinderwell Partners II (2017), Hartham Equity IV (2018), and Northlane Buyout IV (2019) - are in harvesting mode, with most companies through their value creation plans.
+
+The source states that Northlane Buyout III (2016), Cinderwell Partners II (2017), and Hartham Equity IV (2018) are in 'harvesting' mode. It also mentions that the 2016 to 2019 funds hold companies that are largely through their value creation plans. However, the source does not confirm that Northlane Buyout IV (2019) is in harvesting mode, nor does it specifically mention 'most' companies being through their value creation plans.
+
+5. Conflicts with the source (conflicts). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+The firm has a long-standing relationship with three of the funds.
+
+28_secondary_lp_portfolio_ic states "Halden Group was invited into the process on the strength of its existing relationships with two of the four managers."
+
+## NEW_SECONDARY_INVESTMENT / Signed or agreed
+
+Words: 425. Range: 250 to 450.
+
+Dear valued investors,
+
+The firm has signed an agreement to acquire a portfolio of five limited partnership interests from Vestmark Pension Scheme. The portfolio consists of mid-market buyout funds managed by four general partners, purchased at 88% of the net asset value reported as of 30 June 2026, implying a 12% discount to reference NAV.
+
+The investment thesis centers on acquiring a seasoned, diversified portfolio at a discounted entry price, with a balance of near-term liquidity and continued value creation. The team conducted a bottom-up review of the 25 largest portfolio companies, representing 81% of NAV, and believes the reported valuations are well supported, with multiples in line with listed and transaction comparables. The 12% discount therefore provides additional downside protection and potential upside if realizations are achieved at or above carrying values.
+
+The portfolio fits the secondaries program’s focus on acquiring LP interests in mid-market buyout funds managed by general partners the firm knows well, in negotiated, seller-led processes. Vestmark approached a limited group of secondary buyers as part of a consolidation of its private equity program, and the transaction was negotiated bilaterally after a short second round. The firm was invited into the process based on existing relationships with two of the four managers, consistent with its strategy of using information advantages to underwrite assets with conviction and transact efficiently.
+
+The firm is an existing investor in Northlane Buyout III, Northlane Buyout IV and Cinderwell Partners II and has held these positions since the funds’ first closings, with ongoing review of quarterly reporting and detailed knowledge of most underlying portfolio companies. It also completed full due diligence on Hartham Equity IV in 2022 in connection with a separate secondary opportunity that did not proceed on price grounds. Pellam Mid-Market I represents a new manager relationship; diligence included a review of the last four quarterly reports, underlying company valuations and a call with the general partner.
+
+The acquired portfolio spans five vintages from 2016 to 2021 and provides exposure to 47 portfolio companies, predominantly in the European and North American mid-market. Sector exposure is diversified across business services (34% of NAV), industrial technology (28%), healthcare (24%) and consumer (14%, almost entirely within Cinderwell Partners II), with no single company accounting for more than 6% of NAV. Four of the funds are in harvesting mode, while Pellam Mid-Market I, which is 55% called, continues to invest. On a NAV-weighted basis, the portfolio is 6.1 years old, offering a mix of visible near-term distributions from the older funds and ongoing growth potential from the newer assets.
+
+1. Conflicts with the source (conflicts). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+The firm has signed an agreement to acquire a portfolio of five limited partnership interests from Vestmark Pension Scheme.
+
+28_secondary_lp_portfolio_ic states "The team recommends that the Committee approve the acquisition of limited partnership interests in five buyout funds from Vestmark Pension Scheme ("Vestmark"), at a price of 88% of net asset value as reported by the general partners at 30 June 2026."
+
+2. Conflicts with the source (conflicts). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+The portfolio consists of mid-market buyout funds managed by four general partners, purchased at 88% of the net asset value reported as of 30 June 2026, implying a 12% discount to reference NAV.
+
+28_secondary_lp_portfolio_ic states "The team recommends that the Committee approve the acquisition of limited partnership interests in five buyout funds from Vestmark Pension Scheme ("Vestmark"), at a price of 88% of net asset value as reported by the general partners at 30 June 2026."
+
+3. Needs a look (note_withheld). setBy: refusedReading, 28_secondary_lp_portfolio_ic.txt.
+
+The 12% discount therefore provides additional downside protection and potential upside if realizations are achieved at or above carrying values.
+
+The figures in this sentence match the source. The check that reads the whole claim did not finish, so read this sentence against the source yourself.
+
+4. Conflicts with the source (conflicts). setBy: evidenceDisplay, 28_secondary_lp_portfolio_ic.txt, facts.
+
+Sector exposure is diversified across business services (34% of NAV), industrial technology (28%), healthcare (24%) and consumer (14%, almost entirely within Cinderwell Partners II), with no single company accounting for more than 6% of NAV.
+
+28_secondary_lp_portfolio_ic states "The interests give exposure to 47 underlying companies, predominantly in the European and North American mid-market, across business services (34% of NAV), industrial technology (28%), healthcare (24%) and consumer (14%, almost entirely within Cinderwell Partners II)."
+
+## FUND_REVALUATION / As the source states
+
+Words: 203. Range: 120 to 200.
+
+Kestrel Partners Fund IV’s net asset value declined 2.1% in the third quarter of 2026 before cash flows. The movement was driven primarily by a write-down at Brightwater Labs, partly offset by a revaluation uplift at Aurelia Health and the partial realization of Harbourline Foods.
+
+Brightwater, a provider of analytical software and laboratory services to water testing and food safety networks, lost its largest customer during the quarter. The customer, which represented around 35% of Brightwater’s revenue, terminated its contract following an acquisition by a group with in-house laboratories. In response, management is reducing the cost base and pursuing new mid-sized network customers. The firm reduced Brightwater’s valuation by 41% to reflect the lower earnings base and the expected time to rebuild revenue, making it the main driver of the Fund’s NAV decline.
+
+Aurelia, the clinical staff rostering software portfolio company, delivered a strong quarter with 9% growth in annual recurring revenue and an agreed add-on acquisition in Denmark. Its valuation increased 18%, partially offsetting the Brightwater impact. The Fund completed the sale of a 60% stake in Harbourline Foods at the agreed transaction value, with the remaining 40% held at that level, while Corvane Data, Plinth Systems and Tallowmere were broadly unchanged.
+
+1. Goes beyond the source (beyond). setBy: statementVerdict, 35_kestrel_q2_2026_report.txt.
+
+The movement was driven primarily by a write-down at Brightwater Labs, partly offset by a revaluation uplift at Aurelia Health and the partial realization of Harbourline Foods.
+
+The Q3 2026 report says the Brightwater write-down was the main driver of the NAV decline and that Aurelia's 18% uplift offset part of it. The Harbourline realisation is described as a sale completed at the transaction value at which it was already held, not as a contributor to the NAV movement before cash flows, so attributing the movement partly to Harbourline goes beyond the source.
+
+2. Goes beyond the source (partial). setBy: evidenceDisplay, 34_kestrel_q3_2026_report.txt, facts.
+
+In response, management is reducing the cost base and pursuing new mid-sized network customers.
+
+34_kestrel_q3_2026_report states "Management is reducing the cost base in line with lower revenue and is in advanced discussions with two mid-sized networks, although neither has yet signed." It does not confirm that they are actively pursuing these customers as new clients since no contracts have been signed yet.
+
+3. Not in the source (not_in_source). setBy: statementVerdict, 35_kestrel_q2_2026_report.txt.
+
+Aurelia, the clinical staff rostering software portfolio company, delivered a strong quarter with 9% growth in annual recurring revenue and an agreed add-on acquisition in Denmark.
+
+35_kestrel_q2_2026_report states "Aurelia continued to roll out its rostering platform at existing hospital group customers and signed one new customer in the Netherlands. The valuation was held broadly flat. Management is assessing several small add-on opportunities in the Nordic region."
+
+## FUND_CAPITAL_CALL / As the source states
+
+Words: 183. Range: 120 to 200.
+
+Kestrel Partners Fund IV is issuing a capital call to fund two portfolio company investments aligned with its European software strategy.
+
+The largest portion will finance the acquisition of a majority stake in Fjordline Software AS. Fjordline is an Oslo-based provider of cloud-based planning software that supports freight and logistics operators with truck and vessel load planning, container yard management, and delivery-slot allocation across the Nordic region and northern Germany. Its platform is used by more than 300 logistics companies and processes over 40 million planned loads annually. The firm views Fjordline as a mission-critical, recurring-revenue software business with a founder-led management team and a clear plan to expand into Benelux and Poland, launch additional planning modules, and pursue selective bolt-on acquisitions.
+
+The call also funds a follow-on investment in Aurelia Health, the Fund's clinical staff rostering software portfolio company. The capital will support Aurelia Health's acquisition of Medivakt ApS, a Copenhagen-based provider of clinical staff rostering software to Danish hospitals and care providers, giving Aurelia an entry point into the Danish hospital market and extending its footprint in Northern European healthcare software.
+
+1. Goes beyond the source (beyond). setBy: statementVerdict, 30_kestrel_call_notice.txt.
+
+Kestrel Partners Fund IV is issuing a capital call to fund two portfolio company investments aligned with its European software strategy.
+
+The capital call notice lists three uses of proceeds: the Fjordline acquisition, the Aurelia follow-on, and the Q4 2026 management fee. The statement describes the call as funding two portfolio investments, which matches, but it adds that these are "aligned with its European software strategy"; while Kestrel is described as a European software investor in the press release, neither the call notice nor the quarterly report frames the call itself in those strategic terms.
+
+2. Goes beyond the source (beyond). setBy: statementVerdict, 30_kestrel_call_notice.txt.
+
+The capital will support Aurelia Health's acquisition of Medivakt ApS, a Copenhagen-based provider of clinical staff rostering software to Danish hospitals and care providers, giving Aurelia an entry point into the Danish hospital market and extending its footprint in Northern European healthcare software.
+
+The call notice and Q3 report describe Medivakt as giving Aurelia a foothold in the Danish hospital market, but neither source frames the deal as extending Aurelia's footprint in Northern European healthcare software.
+
+## Counts
+
+By state: {"conflicts":13,"note_withheld":3,"beyond":6,"partial":9,"not_in_source":3}
+By branch: {"floorState":3,"uncheckedLook":2,"evidenceDisplay":18,"statementVerdict":10,"refusedReading":1}
+

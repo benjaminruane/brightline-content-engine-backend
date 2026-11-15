@@ -242,6 +242,11 @@ export default async function handler(req, res) {
     if (outputType) {
       pipelineOptions.outputType = outputType;
     }
+    const eventType = typeof body?.eventType === "string" && body.eventType.trim()
+      ? body.eventType.trim()
+      : (typeof body?.scenario === "string" ? body.scenario.trim() : "");
+    if (eventType) pipelineOptions.eventType = eventType;
+    if (body?.dealStatus != null && body.dealStatus !== "") pipelineOptions.dealStatus = body.dealStatus;
     const runStartedAt = new Date().toISOString();
     const draftMetadata = {
       draftHash: getDraftHashPrefix(draftText),

@@ -37,6 +37,8 @@ export default async function handler(req, res) {
       outputType: body.outputType,
       requiredVersion: body.requiredVersion,
       authoringOrganisation: body.authoringOrganisation,
+      eventType: typeof body.eventType === "string" ? body.eventType : body.scenario,
+      dealStatus: body.dealStatus,
     });
     return res.status(200).json({ ok: true, ...result });
   } catch (err) {

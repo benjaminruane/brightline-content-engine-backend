@@ -28,8 +28,9 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt, enforcePgCommentaryWordLimit, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
+import { countWords } from "../lib/qc/token-estimate.mjs";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
@@ -706,6 +707,7 @@ export default async function handler(req, res) {
       investment: safeInvestment,
       specialInstructions: safeSpecialInstructions,
       sources: safeSources,
+      dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
     });
     const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
@@ -818,13 +820,14 @@ Return ONLY JSON:
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     let currentDraftText = stripSourcesUsedBlock(rawDraftText);
 
-    const pgWordLimit = enforcePgCommentaryWordLimit(currentDraftText, {
-      eventType,
-      visibility,
-      requestId: req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null,
-      maxWords: effectiveMaxWords,
-    });
-    currentDraftText = pgWordLimit.draftText;
+    const wordCount = countWords(currentDraftText);
+    if (effectiveMaxWords != null && wordCount > effectiveMaxWords) {
+      console.log(JSON.stringify({
+        event: "output_type_word_count",
+        words: wordCount,
+        maxWords: effectiveMaxWords,
+      }));
+    }
 
     await populateSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
 
@@ -835,8 +838,7 @@ Return ONLY JSON:
       });
     }
 
-    const commentaryForGuard = splitPgDraftOutput(currentDraftText).commentary || currentDraftText;
-    const guardedGenerate = applyPlaceholderGuard(commentaryForGuard, "");
+    const guardedGenerate = applyPlaceholderGuard(currentDraftText, "");
     if (!guardedGenerate.accepted) {
       return res.status(422).json({
         ok: false,

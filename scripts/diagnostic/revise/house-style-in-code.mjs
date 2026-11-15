@@ -40,12 +40,12 @@ const JUDGEMENT = "JUDGEMENT";
 const CLASSIFICATION = {
   smart_quotes: {
     cls: MECHANICAL,
-    fn: "normalizePgHouseStyleCharacters (pg-commentary-cleanup.mjs L14-15)",
+    fn: "normalizePgHouseStyleCharacters (house-characters.mjs)",
     why: "Curly quotes are already rewritten to straight ones on every revision.",
   },
   em_dash: {
     cls: MECHANICAL,
-    fn: "normalizePgHouseStyleCharacters (pg-commentary-cleanup.mjs L16)",
+    fn: "normalizePgHouseStyleCharacters (house-characters.mjs)",
     why: "En and em dashes are already rewritten to hyphens on every revision.",
   },
   percentage_notation: {

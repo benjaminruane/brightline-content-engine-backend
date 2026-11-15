@@ -19,6 +19,7 @@ const SPEC_ELEVEN = [
   "query.js",
   "rewrite.js",
   "suggest-revision.js",
+  "suggest-roles.js",
   "summarize-rewrite-label.js",
   "summarize-source-usage.js",
   "summarize-source.js",
@@ -43,7 +44,7 @@ describe("B286 every model-calling endpoint opens a request budget", () => {
     return callLlmIndex(src) >= 0;
   });
 
-  test("the eleven listed endpoints are exactly the callLLM handlers in api/", () => {
+  test("the listed endpoints are exactly the callLLM handlers in api/", () => {
     assert.deepEqual(modelCalling, [...SPEC_ELEVEN].sort());
   });
 
@@ -60,7 +61,7 @@ describe("B286 every model-calling endpoint opens a request budget", () => {
 
   test("a new api/ file that calls the model without a budget fails this scan", () => {
     const listed = modelCalling.join("\n");
-    assert.equal(modelCalling.length, 11, `model-calling api/ files:\n${listed}`);
+    assert.equal(modelCalling.length, SPEC_ELEVEN.length, `model-calling api/ files:\n${listed}`);
     for (const name of SPEC_ELEVEN) {
       assert.equal(modelCalling.includes(name), true, listed);
     }

@@ -27,7 +27,7 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt, detectRewriteClash, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
 import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
@@ -723,6 +723,7 @@ export default async function handler(req, res) {
       transactionDate,
       investment,
       authoringOrganisation: resolveAuthoringOrganisationName(),
+      dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
     });
     const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
@@ -874,8 +875,7 @@ Return ONLY valid JSON with no markdown or extra text:
       return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
     }
 
-    const commentaryForGuard = splitPgDraftOutput(finalDraftText).commentary || finalDraftText;
-    const guarded = applyPlaceholderGuard(commentaryForGuard, text);
+    const guarded = applyPlaceholderGuard(finalDraftText, text);
     if (!guarded.accepted) {
       return res.status(422).json({
         ok: false,

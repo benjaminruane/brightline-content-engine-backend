@@ -118,7 +118,7 @@ function price(table, provider, model, inputTokens, outputTokens) {
 export async function buildB510Estimate(fixtures) {
   const { getLlmPricingTable } = await import("../../../lib/observability.js");
   const { STAGE_MODELS } = await import("../../../lib/qc/model-config.mjs");
-  const { getPgCommentaryWordLimit } = await import("../../../lib/prompt-library/pg-word-limit.mjs");
+  const { outputTypeWordCeiling } = await import("../../../lib/prompt-library/outputTypeGuidance.js");
   const { estimateTokensFromChars, estimateStatementCount, countWords } = await import(
     "../../../lib/qc/token-estimate.mjs"
   );
@@ -149,7 +149,7 @@ export async function buildB510Estimate(fixtures) {
       estimateTokensFromChars("x".repeat(14000 + sourceChars)),
       1000
     );
-    const limit = getPgCommentaryWordLimit(fixture.textType, fixture.visibility);
+    const limit = outputTypeWordCeiling(fixture.outputType);
     const words = typeof limit === "number" && limit > 0 ? limit : 400;
     const draft = `${"word ".repeat(words)}`;
     const statements = estimateStatementCount(countWords(draft));

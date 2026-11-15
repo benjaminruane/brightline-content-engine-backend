@@ -89,11 +89,9 @@ export default async function handler(req, res) {
       spanName: "source-description-generation",
       metadata: { route: "summarize-source" },
     });
-    const parsed = parseSummarizeResponse(completion?.text, {
-      allowRole: Boolean(namedType) && !single,
-    });
-    const suggestedRole = single ? single.suggestedRole : parsed.suggestedRole;
-    const roleReason = single ? single.roleReason : parsed.roleReason;
+    const parsed = parseSummarizeResponse(completion?.text, { allowRole: false });
+    const suggestedRole = single ? single.suggestedRole : "";
+    const roleReason = single ? single.roleReason : "";
     return res.status(200).json({
       ok: true,
       description: parsed.description,
