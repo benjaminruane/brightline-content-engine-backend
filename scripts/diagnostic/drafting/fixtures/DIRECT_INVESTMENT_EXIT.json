@@ -1,0 +1,12 @@
+{
+  "textType": "DIRECT_INVESTMENT_EXIT",
+  "outputType": "press_release",
+  "visibility": "public",
+  "investment": "atNorth",
+  "transactionDate": "27 February 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "02_pg_atnorth_exit.txt", "role": "facts" },
+    { "file": "11_synth_investor_letter_exit.pdf", "role": "facts" }
+  ]
+}

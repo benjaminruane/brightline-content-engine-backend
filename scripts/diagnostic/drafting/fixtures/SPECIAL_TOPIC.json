@@ -1,0 +1,11 @@
+{
+  "textType": "SPECIAL_TOPIC",
+  "outputType": "reporting_commentary",
+  "visibility": "complete",
+  "investment": "Helvetia Precision Components AG",
+  "transactionDate": "12 December 2025",
+  "specialInstructions": "Summarise the semiconductor segment outlook for clients.",
+  "sources": [
+    { "file": "09_synth_portfolio_update_letter.txt", "role": "facts" }
+  ]
+}

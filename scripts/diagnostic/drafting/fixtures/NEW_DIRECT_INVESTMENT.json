@@ -1,0 +1,11 @@
+{
+  "textType": "NEW_DIRECT_INVESTMENT",
+  "outputType": "investor_letter",
+  "visibility": "complete",
+  "investment": "Helvetia Precision Components AG",
+  "transactionDate": "14 March 2025",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "08_synth_industrial_buyout_memo.txt", "role": "facts" }
+  ]
+}

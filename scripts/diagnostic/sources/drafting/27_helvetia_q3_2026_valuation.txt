@@ -1,0 +1,60 @@
+INVESTMENT COMMITTEE PAPER
+STRICTLY CONFIDENTIAL
+This paper is strictly confidential and is intended only for the Halden Group Investment Committee.
+
+To:        Investment Committee, Halden Group
+From:      Portfolio Valuation Team, Halden Group
+Date:      28 October 2026
+Subject:   Helvetia Precision Components AG, quarterly fair-value recommendation, third quarter 2026
+
+RECOMMENDATION
+
+We recommend that the Committee adopt a fair value for Helvetia Precision Components AG at 30 September 2026 that is 14 percent higher than the value at 30 June 2026. The method is unchanged: enterprise value is earnings before interest, tax, depreciation and amortisation, multiplied by an EV/EBITDA multiple drawn from the trading peers we have used since the original investment. The equity value is that enterprise value less net debt.
+
+The increase is not, in the main, an operating result. About one third of the uplift comes from EBITDA growth in the quarter. The rest comes from higher peer multiples and from the strength of the Swiss franc. We ask the Committee to record the mark on that basis, and not as evidence that the business improved by 14 percent.
+
+COMPANY OVERVIEW
+
+Helvetia Precision Components, based in Winterthur, machines high-precision parts for medical devices, aerospace, and semiconductor equipment. Halden Group holds the controlling position acquired in 2025. The company employs about 1,450 people across Winterthur, Olten, Indianapolis, and a smaller plant in Brno.
+
+In the quarter to 30 September 2026, medical demand was solid. Orthopaedic customers kept the order pattern we saw in the first half, and the largest account shipped against a launch that began last year. Aerospace volumes were steady. The semiconductor segment was soft. Two equipment customers deferred tool orders, and Helvetia's sales into that segment were lower than in the June quarter and lower than the budget for the period.
+
+EBITDA for the quarter was higher than in the June quarter. The increase is real and is the operating third of the valuation uplift. It is not large enough, on its own, to explain a 14 percent rise in fair value. Mix helped: medical work, which carries a better margin than semiconductor work, was a larger share of the quarter. Procurement savings continued at a modest pace against the year-one plan. They are not the driver of the mark.
+
+INVESTMENT THESIS
+
+The original thesis was a defensive medical and aerospace franchise, with a smaller and more cyclical semiconductor exposure, and a plan to widen margins by footprint, procurement, and automation. That thesis is intact. Nothing in this quarter requires the Committee to reopen it.
+
+What this paper is about is the quarterly mark. A fair value that rises 14 percent while only about a third of the move is EBITDA will be read, if we are careless, as an operating success. The recommendation is to take the mark, because the method requires it, and to describe the causes in proportion. Peer multiples moved up. The Swiss franc was stronger against the euro, and Helvetia's earnings, costs, and the peer set do not share one currency. Both of those effects sit outside the factory.
+
+THEMATIC FIT
+
+Helvetia remains the industrials platform through which Halden holds precision machining serving medical and aerospace demand, with a semiconductor side that we accepted as cyclical. The thematic case does not depend on this quarter's multiple. Medical demand being solid is consistent with the theme. Semiconductor softness is the cycle we underwrote, not a break in it.
+
+The valuation method stays EV/EBITDA. We are not introducing a discounted-cash-flow overlay for this quarter, and we are not changing the peer set. Continuity of method is the point. A new method would make the 14 percent impossible to compare with the June mark.
+
+OUR HISTORY WITH THE ASSET
+
+Halden has held Helvetia since the 2025 acquisition. This is the regular quarterly valuation, prepared on the same timetable as the other direct holdings. The June 2026 mark is the base this paper moves from. Operating reviews during the quarter were the ordinary ones: a monthly call with the chief executive and a site day at Olten. No new diligence was commissioned for this mark. The peer multiples are the set circulated with the June paper, re-priced at 30 September.
+
+We have owned the asset through one semiconductor downswing already. The 2023 year, before our entry, showed the same pattern of a soft equipment segment and a resilient medical book. This quarter rhymes with that. It does not repeat the depth of 2023.
+
+TRANSACTION OR TERMS
+
+There is no transaction. No shares are being bought or sold. Net debt moved only with ordinary cash generation and the small working-capital swing the company reported. The recommendation changes the carrying fair value. It does not change the holding, the debt documents, or the governance.
+
+The 14 percent is the change in fair value from 30 June 2026 to 30 September 2026. Of that uplift, about one third is the EBITDA bridge. The remainder is the higher multiple on the peer set and the currency translation effect of a stronger Swiss franc. We have split the remainder between those two causes in the appendix workings. Neither the multiple nor the franc, taken alone, is the whole of the rest, and together they are the larger part.
+
+RISKS
+
+The semiconductor segment can stay soft. If equipment orders do not return in the fourth quarter, EBITDA next quarter may not repeat this quarter's level, and a multiple that has already risen would then sit on a weaker earnings base. We would expect the March mark, if earnings step down, to give back some of what multiples added this quarter.
+
+Currency can reverse. A weaker franc would take back part of this uplift with no change in the factories. That is a reason to describe the uplift honestly now, so a later reversal is not mistaken for an operating miss.
+
+Peer multiples are not a promise. They are the method. If the set de-rates, the mark de-rates, including on the medical earnings that were solid this quarter. The Committee should not treat a multiple-driven gain as cash.
+
+Customer concentration, unchanged from the original paper, remains the largest operating risk and is not the subject of this valuation. The largest medical account is still a material share of revenue. Nothing in the quarter suggested that relationship has weakened.
+
+OVERALL VIEW
+
+The investment team considers the revised fair value to be a measured mark for Helvetia Precision Components, which benefits from solid medical demand, while the structure of the uplift offers only about one third from EBITDA growth and the rest from higher peer multiples and Swiss franc strength.

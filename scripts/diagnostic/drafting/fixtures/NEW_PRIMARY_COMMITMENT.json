@@ -1,0 +1,11 @@
+{
+  "textType": "NEW_PRIMARY_COMMITMENT",
+  "outputType": "investor_letter",
+  "visibility": "complete",
+  "investment": "Aldermoor Capital Fund VI",
+  "transactionDate": "January 2027",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "29_aldermoor_fund_vi_ic.txt", "role": "facts" }
+  ]
+}

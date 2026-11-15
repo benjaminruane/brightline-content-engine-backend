@@ -1,0 +1,11 @@
+{
+  "textType": "DIRECT_INVESTMENT_REVALUATION",
+  "outputType": "reporting_commentary",
+  "visibility": "complete",
+  "investment": "Helvetia Precision Components AG",
+  "transactionDate": "30 September 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "27_helvetia_q3_2026_valuation.txt", "role": "facts" }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "textType": "NEW_SECONDARY_INVESTMENT",
+  "outputType": "investor_letter",
+  "visibility": "complete",
+  "investment": "Vestmark LP portfolio",
+  "transactionDate": "8 September 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "28_secondary_lp_portfolio_ic.txt", "role": "facts" }
+  ]
+}

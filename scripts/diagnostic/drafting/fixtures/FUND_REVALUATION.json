@@ -1,0 +1,12 @@
+{
+  "textType": "FUND_REVALUATION",
+  "outputType": "reporting_commentary",
+  "visibility": "complete",
+  "investment": "Kestrel Partners Fund IV",
+  "transactionDate": "30 September 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "34_kestrel_q3_2026_report.txt", "role": "facts" },
+    { "file": "35_kestrel_q2_2026_report.txt", "role": "context" }
+  ]
+}

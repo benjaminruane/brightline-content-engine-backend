@@ -1,0 +1,13 @@
+{
+  "textType": "FUND_DISTRIBUTION",
+  "outputType": "reporting_commentary",
+  "visibility": "complete",
+  "investment": "Kestrel Partners Fund IV",
+  "transactionDate": "30 September 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "32_kestrel_distribution_notice.txt", "role": "facts" },
+    { "file": "33_kestrel_harbourline_press_release.txt", "role": "context" },
+    { "file": "34_kestrel_q3_2026_report.txt", "role": "context" }
+  ]
+}

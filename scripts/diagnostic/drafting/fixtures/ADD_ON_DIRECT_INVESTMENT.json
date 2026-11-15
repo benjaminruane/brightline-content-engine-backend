@@ -1,0 +1,11 @@
+{
+  "textType": "ADD_ON_DIRECT_INVESTMENT",
+  "outputType": "investor_letter",
+  "visibility": "complete",
+  "investment": "Morava Precision s.r.o.",
+  "transactionDate": "3 November 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "26_addon_morava_memo.txt", "role": "facts" }
+  ]
+}

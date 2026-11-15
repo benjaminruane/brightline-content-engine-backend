@@ -1,0 +1,13 @@
+{
+  "textType": "FUND_CAPITAL_CALL",
+  "outputType": "reporting_commentary",
+  "visibility": "complete",
+  "investment": "Kestrel Partners Fund IV",
+  "transactionDate": "6 October 2026",
+  "specialInstructions": "",
+  "sources": [
+    { "file": "30_kestrel_call_notice.txt", "role": "facts" },
+    { "file": "31_kestrel_fjordline_press_release.txt", "role": "context" },
+    { "file": "34_kestrel_q3_2026_report.txt", "role": "context" }
+  ]
+}
