@@ -193,7 +193,7 @@ export default async function handler(req, res) {
 
     // R7.B46 / F13: split empty-text + unsupported_scanned sources out so they
     // never enter the aligned `sources` array (index === sourceIndex === supportSpans.sourceRefId).
-    const { kept: v3Sources, dropped: droppedForExclude } = splitSourcesForResponse(
+    const { kept: keptSources, dropped: droppedForExclude } = splitSourcesForResponse(
       preparedSources,
       candidateSources
     );
@@ -211,14 +211,14 @@ export default async function handler(req, res) {
       }
     }
 
-    for (const source of v3Sources) {
+    for (const source of keptSources) {
       if (source.text.length > LONG_SOURCE_SOFT_CHAR_WARN) {
         console.warn(
           `[analyse-statements] long source: label=${source.label}, charCount=${source.text.length}. Stage 2 chunking not yet implemented.`
         );
       }
     }
-    const sourceLabels = v3Sources.map((source) => source.label);
+    const sourceLabels = keptSources.map((source) => source.label);
     const sourceCount = new Set(sourceLabels).size;
     const requiredVersion = normalizeRequiredVersion(
       body?.options?.requiredVersion ??
@@ -268,7 +268,7 @@ export default async function handler(req, res) {
 
     const gate = preflightReview({
       draftText,
-      sources: v3Sources,
+      sources: keptSources,
       editorialSystemTokens: 9088,
       complianceSystemTokens: 3000,
       stage2SystemTokens: 4000,
@@ -306,7 +306,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const pipelineResult = await runPipelineV4(draftText, v3Sources, pipelineOptions);
+    const pipelineResult = await runPipelineV4(draftText, keptSources, pipelineOptions);
     const nothingReviewed = pipelineResult?.nothingReviewed === true;
     const outcome = reviewOutcomeFromPipeline(pipelineResult);
     if (!nothingReviewed && !outcome.complete) {
@@ -350,11 +350,11 @@ export default async function handler(req, res) {
     // B45: deterministic AI-tool tracking URL scan (additive; no verdict/pipeline change)
     const provenanceFlags = scanDraftForAiProvenance(draftText);
 
-    // R7.B46: Exact-string contract — sources[i].text === v3Sources[i].text (B40 string).
+    // R7.B46: Exact-string contract — sources[i].text === keptSources[i].text (B40 string).
     // Alignment: sources index === sourceIndex === supportSpans.sourceRefId.
     // Inline full text ~20KB/longform PDF; large/many-source cases may later warrant
     // truncation or fetch-on-open — not built here.
-    const sources = buildResponseSources(v3Sources);
+    const sources = buildResponseSources(keptSources);
     const excludedSources = buildExcludedSources(droppedForExclude);
 
     // Which serving configuration produced this run. Additive; not surfaced in

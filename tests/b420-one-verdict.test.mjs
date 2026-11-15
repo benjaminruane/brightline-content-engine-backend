@@ -5,7 +5,6 @@ import { applyReadingContract, noteEndorses, sentenceState } from "../lib/qc/rea
 import { classifyCard } from "../lib/qc/review-summary.mjs";
 import {
   CAUSAL_EVIDENCE_RULE,
-  editorialVerdictWithoutCausal,
   statementVerdict,
   toneForStatementVerdict,
 } from "../lib/qc/statement-verdict.mjs";
@@ -119,13 +118,11 @@ test("the card edge follows the statement verdict, not the evidence class", () =
   assert.equal(evidenceDisplayVerdictLabel(card.statementVerdict.state, card), "Not in the source");
 });
 
-test("the causal concern leaves the editorial signal and enters the action list as evidence", () => {
+test("a causal concern is filed as evidence", () => {
   const concerns = [
     { concernCode: CAUSAL_EVIDENCE_RULE, severity: "hard_concern", note: "The source does not link them." },
     { concernCode: "marketing_language_excess", severity: "soft_concern", note: "Promotional." },
   ];
-  assert.equal(editorialVerdictWithoutCausal(concerns, "hard_concern"), "concern");
-  assert.equal(editorialVerdictWithoutCausal([concerns[0]], "hard_concern"), "clean");
   const rows = inventoryStatements([
     {
       id: "0",

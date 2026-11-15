@@ -1,0 +1,41 @@
+{
+  "backend": [
+    "lib/build-compliance-signals.cjs",
+    "lib/build-cross-statement-numeric-fragility.cjs",
+    "lib/build-evidence-density-mismatch.cjs",
+    "lib/build-evidence-density-reuse-spread.cjs",
+    "lib/build-evidence-judgement.cjs",
+    "lib/build-fragility-driver-tags-p3.cjs",
+    "lib/build-fragility-drivers.cjs",
+    "lib/build-judgement-aggregation-p4.cjs",
+    "lib/build-scoring-bridge-p4.cjs",
+    "lib/build-suggest-bundle-p5.cjs",
+    "lib/build-suggest-execution-p5.cjs",
+    "lib/build-suggest-priority-p5.cjs",
+    "lib/qc/binding-directness.mjs",
+    "lib/qc/citation-authority.mjs"
+  ],
+  "frontend": [
+    "src/components/Layout/LeftPane.jsx",
+    "src/components/Layout/PanelCollapseToggle.jsx",
+    "src/components/Layout/RightPane.jsx",
+    "src/components/Layout/TwoColumn.jsx",
+    "src/components/WritingBadge.jsx",
+    "src/components/drawers/DrawerTabs.jsx",
+    "src/components/primitives/CharCounter.jsx",
+    "src/components/primitives/CollapsiblePanel.jsx",
+    "src/components/primitives/Input.jsx",
+    "src/components/primitives/TextArea.jsx",
+    "src/modules/drafting/AdvancedSettingsPanel.jsx",
+    "src/modules/drafting/EventTitlePanel.jsx",
+    "src/modules/drafting/QuestionHistoryPanel.jsx",
+    "src/modules/drafting/SourcesPanel.jsx",
+    "src/modules/drafting/qcHighlightMatch.js",
+    "src/modules/drafting/utils/renderInlineCitations.js",
+    "src/modules/drafting/workbenchSnapshotHelpers.js",
+    "src/utils/rewriteWordLimitInference.js",
+    "src/utils/scoreDraft.js",
+    "src/utils/styleGuide.js",
+    "src/utils/themeVolumeIndicator.js"
+  ]
+}

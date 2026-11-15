@@ -17,16 +17,13 @@ const partial = {
   thing2: "The source supports part of this statement.",
 };
 
-test("a finding the headline already states is left off, and the others are returned", () => {
+test("a causal finding stays with the card, and a partial finding is returned beside it", () => {
   const stated = cardEvidenceFindings(
     { statementVerdict: { state: "beyond", setBy: { source: "action", rule: "overreach_unsupported_causal" } } },
     [causal, partial],
   );
-  assert.equal(stated.some((row) => row.rule === "overreach_unsupported_causal"), false);
-  assert.equal(stated.length, 1);
-  assert.equal(stated[0].ref, partial.id);
-  assert.equal(stated[0].quote, partial.thing1.quote);
-  assert.equal(stated[0].note, partial.thing2);
+  assert.equal(stated.some((row) => row.rule === "overreach_unsupported_causal"), true);
+  assert.equal(stated.some((row) => row.rule === "partial"), true);
 
   const extra = cardEvidenceFindings(
     { statementVerdict: { state: "not_in_source", setBy: { source: "fact", status: "not_found" } } },

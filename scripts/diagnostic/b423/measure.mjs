@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { buildDraftMarks, draftFromStatementSpans } from "../../../lib/qc/draft-marks.mjs";
 import { cardEvidenceFindings, displayedEvidenceProse, findingsByStatement, proseContradictsVerdict } from "../../../lib/qc/evidence-findings.mjs";
 import { summariseReview } from "../../../lib/qc/review-summary.mjs";
-import { statementVerdict, toneForStatementVerdict, editorialVerdictWithoutCausal } from "../../../lib/qc/statement-verdict.mjs";
+import { statementVerdict, toneForStatementVerdict } from "../../../lib/qc/statement-verdict.mjs";
 import { summaryBulletsFromReview } from "../../../lib/qc/summary-bullets.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -102,7 +102,7 @@ for (const row of review.statements) {
     statement: text,
     statementVerdict: verdict,
     readingNote: note,
-    editorialVerdict: editorialVerdictWithoutCausal(concerns, card.editorialVerdict),
+    editorialVerdict: card.editorialVerdict,
   };
   const prose = displayedEvidenceProse(verdict.state, note?.text);
   if (prose !== null) next.displayedEvidenceProse = prose;

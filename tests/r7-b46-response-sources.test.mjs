@@ -8,12 +8,12 @@ import {
 
 describe("buildResponseSources", () => {
   test("preserves order and sets index === array position", () => {
-    const v3Sources = [
+    const keptSources = [
       { id: "a", label: "A", text: "alpha", publicationState: "published_external" },
       { id: "b", label: "B", text: "beta", publicationState: "restricted" },
       { id: null, label: "C", text: "gamma", publicationState: "unknown" },
     ];
-    const sources = buildResponseSources(v3Sources);
+    const sources = buildResponseSources(keptSources);
     assert.equal(sources.length, 3);
     assert.deepEqual(
       sources.map((s) => s.index),
@@ -24,13 +24,13 @@ describe("buildResponseSources", () => {
     assert.equal(sources[2].label, "C");
   });
 
-  test("exact-string contract: sources[i].text === v3Sources[i].text (no trim)", () => {
+  test("exact-string contract: sources[i].text === keptSources[i].text (no trim)", () => {
     // Trailing/leading whitespace and newlines must survive — B40 offsets index into this string.
     const raw = "  Revenue grew 12%.\n\n";
-    const v3Sources = [{ id: "s1", label: "Report", text: raw, publicationState: "unknown" }];
-    const sources = buildResponseSources(v3Sources);
+    const keptSources = [{ id: "s1", label: "Report", text: raw, publicationState: "unknown" }];
+    const sources = buildResponseSources(keptSources);
     assert.equal(sources[0].text, raw);
-    assert.equal(sources[0].text, v3Sources[0].text);
+    assert.equal(sources[0].text, keptSources[0].text);
     assert.notEqual(sources[0].text, raw.trim());
   });
 
@@ -130,15 +130,15 @@ describe("buildExcludedSources", () => {
   });
 
   test("excluded sources never affect response sources alignment", () => {
-    // Simulates: uploaded [kept, dropped, kept] → v3Sources is filter(Boolean) of kept only.
-    const v3Sources = [
+    // Simulates: uploaded [kept, dropped, kept] → keptSources is filter(Boolean) of kept only.
+    const keptSources = [
       { id: "keep-0", label: "First", text: "one", publicationState: "unknown" },
       { id: "keep-2", label: "Third", text: "three", publicationState: "unknown" },
     ];
     const dropped = [
       { id: "drop-1", label: "Second", reason: "empty_after_extraction" },
     ];
-    const sources = buildResponseSources(v3Sources);
+    const sources = buildResponseSources(keptSources);
     const excluded = buildExcludedSources(dropped);
     assert.equal(sources.length, 2);
     assert.equal(sources[0].index, 0);
