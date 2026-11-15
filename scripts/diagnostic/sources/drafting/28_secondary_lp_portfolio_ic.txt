@@ -1,74 +1,59 @@
-INVESTMENT COMMITTEE PAPER
-STRICTLY CONFIDENTIAL
-This paper is strictly confidential and is intended only for the Halden Group Investment Committee.
+HALDEN GROUP
+INVESTMENT COMMITTEE PAPER - STRICTLY CONFIDENTIAL
 
-To:        Investment Committee, Halden Group
-From:      Secondaries Team, Halden Group
-Date:      8 September 2026
-Subject:   Proposed purchase of five LP interests from Vestmark Pension Scheme
+To:       Investment Committee
+From:     Secondaries Team
+Date:     8 September 2026
+Subject:  Project Vale - acquisition of five LP interests from Vestmark Pension Scheme
 
-RECOMMENDATION
+1. RECOMMENDATION
 
-We recommend that the Committee approve the purchase from Vestmark Pension Scheme of limited-partner interests in five buyout funds, managed by four firms. The interests are mainly in European and North American mid-market buyouts, with vintages from 2016 to 2021. The price is a discount of about one eighth to reported net asset value. We are not asking the Committee to treat this as a purchase of a mature portfolio, and we are not an existing investor in all five funds.
+The team recommends that the Committee approve the acquisition of limited partnership interests in five buyout funds from Vestmark Pension Scheme ("Vestmark"), at a price of 88% of net asset value as reported by the general partners at 30 June 2026. Closing is targeted for November 2026, subject to general partner consents.
 
-The seller is a pension scheme reducing the number of manager relationships. The process was a negotiated sale of a named list, not an auction of a whole book. Closing is targeted for November 2026, subject to general-partner consents, which have been requested and not refused.
+2. TRANSACTION BACKGROUND
 
-FUND OVERVIEW
+Vestmark is consolidating its private equity programme around a smaller number of manager relationships and approached a limited number of secondary buyers with a defined list of interests. Halden Group was invited into the process on the strength of its existing relationships with two of the four managers. The transaction was negotiated bilaterally following a short second round.
 
-The five funds, and the position Halden already has with each, are these.
+3. THE PORTFOLIO
 
-Northlane Buyout III, vintage 2016, Northlane Capital. A European mid-market fund, now harvesting. Halden is an existing investor.
+Fund                        Manager             Vintage   Region          Status
+Northlane Buyout III        Northlane Capital   2016      Europe          Harvesting
+Cinderwell Partners II      Cinderwell          2017      North America   Harvesting
+Hartham Equity IV           Hartham             2018      Europe          Harvesting
+Northlane Buyout IV         Northlane Capital   2019      Europe          Harvesting
+Pellam Mid-Market I         Pellam              2021      Europe          Investing
 
-Cinderwell Partners II, vintage 2017, Cinderwell. A North American mid-market fund, mostly harvesting, with two companies still held for a later exit. Halden is an existing investor.
+The interests give exposure to 47 underlying companies, predominantly in the European and North American mid-market, across business services (34% of NAV), industrial technology (28%), healthcare (24%) and consumer (14%, almost entirely within Cinderwell Partners II). Four of the funds are past their investment periods and are realising assets; Pellam Mid-Market I is 55% called and continues to make new investments. Weighted by NAV, the portfolio is 6.1 years old.
 
-Hartham Equity IV, vintage 2018, Hartham. A European mid-market fund, harvesting. Halden is not an investor. We diligenced Hartham on an earlier secondary in 2022 and did not proceed, for price, not for the manager.
+4. INVESTMENT MERITS
 
-Northlane Buyout IV, vintage 2019, Northlane Capital. The successor to the 2016 fund, mostly harvesting, with a small tail of newer investments. Halden is an existing investor. This is the third fund of the five in which we already hold an interest.
+Attractive entry price. The purchase price represents a 12% discount to reported NAV. Based on our bottom-up review of the 25 largest companies, representing 81% of NAV, we consider the reported values to be well supported, with valuation multiples in line with listed and transaction comparables.
 
-Pellam Mid-Market I, vintage 2021, Pellam. A European mid-market fund that is still in its investment period. Halden is not an investor, and this is not the fund we diligenced in 2022. One of the five is still investing. The other four are mostly harvesting.
+Near-term liquidity. The 2016 to 2019 funds hold companies that are largely through their value creation plans. General partner exit projections and our own assessment point to a significant share of NAV being realised over the next three years.
 
-Four managers, five funds. Three existing holdings. One earlier diligence. One fund we have not owned and did not diligence on that earlier trade. Sectors across the book are business services, industrial technology, healthcare, and a smaller consumer sleeve in the Cinderwell fund. Geographies are western Europe and North America. The 2016 to 2019 funds are in harvest. The 2021 fund is not.
+Balanced maturity. The inclusion of Pellam Mid-Market I, which is still investing, adds exposure to newer assets and provides a source of continued value creation once the older funds are fully realised.
 
-INVESTMENT THESIS
+Diversification. The portfolio spans four managers, five vintages and 47 companies, with no single company above 6% of NAV.
 
-The merits are the price, the overlap with managers we already know, and a book that is mostly through its investment period without being finished. A discount of about one eighth to reported net asset value is the pricing. We state it in words because the papers do not rest on a single percentage that all five general partners would compute the same way. Reported net asset value is the reference. It is not a promise of exit value.
+5. FIT WITH THE SECONDARIES PROGRAMME
 
-The 2021 fund is the part of the book that can still call capital and can still make new investments. That is a feature of a mixed-vintage purchase, and it is the reason a reader would be wrong to call the portfolio mature. We underwrite the four harvesting funds on the companies they already hold, and we underwrite Pellam on the capital that can still be drawn and on the investments already made.
+The Halden Group secondaries programme focuses on acquiring LP interests in mid-market buyout funds managed by GPs we know well, where our information advantage allows us to underwrite assets with confidence and act quickly in negotiated processes. Project Vale is a typical example of a seller-led portfolio sale in this segment.
 
-We are not underwriting a turnaround of a broken fund. The reports we have read describe ordinary buyout portfolios at this age: some companies ready for sale, some that will take longer, and one fund that is still deploying.
+6. HISTORY WITH THE MANAGERS AND ASSETS
 
-THEMATIC FIT
+Halden Group is an existing investor in Northlane Buyout III, Northlane Buyout IV and Cinderwell Partners II, and has held these positions since the funds' first closings. We have reviewed quarterly reporting on these funds throughout their lives and know most of their portfolio companies well. We undertook full due diligence on Hartham Equity IV in connection with a separate secondary transaction in 2022, which did not proceed on price grounds. Pellam Mid-Market I is a new manager relationship; our diligence comprised a review of the fund's last four quarterly reports, the underlying company valuations and a call with the general partner.
 
-Halden's secondaries programme buys limited-partner interests in mid-market buyout funds where we already have, or have recently formed, a view of the manager. This list fits that programme. It is not a single-asset restructuring and it is not a primary commitment. The thematic point is a diversified set of mid-market interests, priced below reported value, with a known overlap on three of the five.
+7. TERMS
 
-The programme's preference for managers we can reference is met on Northlane and Cinderwell by our existing accounts, and on Hartham by the 2022 diligence. Pellam is the name on this list that the programme has not previously studied at the same depth. The paper does not pretend otherwise. The Pellam work for this trade is new.
+The price of 88% of 30 June 2026 NAV will be adjusted for cash flows between the reference date and closing. Unfunded commitments transfer to Halden Group with the interests and are concentrated in Pellam Mid-Market I. Consents have been requested from all four general partners; none has been declined.
 
-OUR HISTORY WITH THE ASSET
+8. KEY RISKS
 
-Halden is an existing investor in three of the five funds: Northlane Buyout III, Cinderwell Partners II, and Northlane Buyout IV. We diligenced a fourth, Hartham Equity IV, in an earlier secondary in 2022 and walked away on price. We have no existing interest in Hartham Equity IV and no existing interest in Pellam Mid-Market I.
+Valuation: the discount assumes reported values are broadly achievable at exit. Two companies in the older funds have been held longer than planned.
+Consents: a refusal on any fund would require a decision on whether to proceed with the remainder.
+Blind-pool exposure: Pellam Mid-Market I can still make new investments, and our knowledge of this manager is less deep than for the others.
+Manager concentration: two of the five interests are managed by Northlane Capital.
 
-That history is the whole of the overlap. It is three funds, not five. The two Northlane funds are the same manager at two vintages, which is why four managers cover five funds. Our Northlane relationship is the longest of the three. Cinderwell is an account we have held since that fund's first close. Hartham is a file we reopened, not a holding. Pellam is new to us.
+9. CONCLUSION
 
-TRANSACTION OR TERMS
-
-The seller is Vestmark Pension Scheme. The buyer would be Halden's secondaries vehicle. The price is a discount of about one eighth to the net asset value reported by the five general partners at 30 June 2026, with a customary true-up when the September statements arrive. General-partner consent is required for each transfer. Consents have been requested. None has been refused at the date of this paper. Completion is targeted for November 2026.
-
-Unfunded commitments travel with the interests. They are largest, by a wide margin, on the 2021 Pellam fund, which is still investing. The harvesting funds have smaller residual obligations. The purchase agreement sets the treatment of those obligations in the ordinary way. This paper does not restate the cash figures. The point for the Committee is that future funding is concentrated on the one fund that has not finished investing.
-
-No co-buyer is proposed. The seller will transfer the whole of each named interest.
-
-RISKS
-
-Valuation risk sits in the reported net asset values. A discount of about one eighth is only a discount if those values are close to what a buyer of the companies would pay. Two of the portfolios have a company the manager has held longer than the original plan. We have read the explanations. They are plausible. They are not exits.
-
-Consent risk is mechanical and can delay November. A refused consent on one fund would force a decision on whether the other four are still the trade. We would come back to the Committee rather than drop a fund in silence.
-
-The 2021 fund can still make a poor new investment after we have bought the interest. That risk is the price of including a fund that is not yet harvesting. Calling the book mature would hide it.
-
-Manager concentration is moderate. Northlane is two of the five funds. A problem at that manager would touch two interests. We already live with Northlane as an existing investor, so this purchase adds exposure we have chosen before, at a discount to the reported value.
-
-Pellam is the name we know least. The diligence on that fund is the thinnest of the five, because we had no prior file. We have read the last four quarterly reports and spoken to the investor-relations contact. We have not visited a portfolio company.
-
-OVERALL VIEW
-
-The investment team considers the Vestmark interests to be an attractive entry into a mainly harvesting mid-market book, which benefits from an existing holding in three of the five funds, while the structure offers a discount of about one eighth to reported net asset value and leaves one 2021 fund still investing.
+The investment team considers Project Vale an attractive opportunity to acquire a diversified mid-market portfolio, largely managed by GPs we know well, at a meaningful discount to well-supported reported values, with visible near-term liquidity from the older funds complemented by continued growth exposure through Pellam Mid-Market I.

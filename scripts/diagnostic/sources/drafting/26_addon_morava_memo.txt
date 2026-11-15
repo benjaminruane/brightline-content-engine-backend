@@ -1,64 +1,52 @@
-INVESTMENT COMMITTEE PAPER
-STRICTLY CONFIDENTIAL
-This paper is strictly confidential and is intended only for the Halden Group Investment Committee.
+HALDEN GROUP
+INVESTMENT COMMITTEE PAPER - STRICTLY CONFIDENTIAL
 
-To:        Investment Committee, Halden Group
-From:      European Industrials Team, Halden Group
-Date:      3 November 2026
-Subject:   Helvetia Precision Components AG, proposed acquisition of Morava Precision s.r.o.
+To:       Investment Committee
+From:     European Industrials Team
+Date:     3 November 2026
+Subject:  Helvetia Precision Components AG - add-on acquisition of Morava Precision s.r.o.
 
-RECOMMENDATION
+1. RECOMMENDATION
 
-We ask the Committee to note, and to approve at Helvetia level, the acquisition by Helvetia Precision Components AG of Morava Precision s.r.o., a Brno machining business. Helvetia is the buyer. Halden Group is not investing new equity. The purchase will be funded from Helvetia's own cash flow and from an extended debt facility at Helvetia. The agreement was signed on 3 November 2026. Completion is expected in the first quarter of 2027, subject to Czech merger clearance, which counsel expects to be routine.
+The team recommends that the Committee approve the acquisition by Helvetia Precision Components AG ("Helvetia") of 100% of Morava Precision s.r.o. ("Morava"), a precision machining business based in Brno, Czech Republic. The share purchase agreement was signed on 3 November 2026. Completion is expected in the first quarter of 2027, subject to clearance by the Czech competition authority.
 
-The consideration is EUR 42 million on a cash-free, debt-free basis. Helvetia will draw EUR 18 million from an extension of its existing senior facility and will fund the balance from cash already on its balance sheet. No draw is requested from Halden Group, and the holding company's ownership of Helvetia is unchanged.
+Consideration is EUR 42 million on a cash-free, debt-free basis. Helvetia will fund the purchase from cash on balance sheet and an EUR 18 million accordion under its existing senior facility, for which lender consent has been obtained. No additional equity is required from the Halden Group funds.
 
-COMPANY OVERVIEW
+2. MORAVA AT A GLANCE
 
-Morava Precision s.r.o. machines aerospace titanium parts in Brno. The business was founded in 2004 by the Novak family and employs about 310 people on a single site. Revenue for the year to June 2026 was EUR 64 million, with EBITDA of EUR 9 million, a margin of about 14 percent. The work is concentrated in structural fittings and small rotating parts for civil aircraft programmes. The customer list is short and durable: three European aerostructures companies account for about four fifths of sales, and the longest of those relationships began in 2011.
+Morava was founded in 2004 by the Novak family and machines titanium structural fittings and small rotating parts for civil aircraft programmes. The business employs around 310 people at a single site in Brno and holds AS9100 certification together with the customer approvals needed to ship flight hardware directly to its three principal customers, all European aerostructures manufacturers. These three customers account for around 80% of sales; the longest relationship dates back to 2011.
 
-The plant runs large titanium milling cells that Helvetia's own Swiss sites do not have in the same number. Labour and energy costs in Brno are materially below Winterthur and Olten. Lead times on the current book are about fourteen weeks, against more than twenty weeks at Helvetia's Swiss aerospace cell. Scrap on titanium has been brought down over three years and now sits close to the rate Helvetia achieves on stainless work.
+For the twelve months to June 2026, Morava generated revenue of EUR 64 million and EBITDA of EUR 9 million (14% margin). Titanium scrap rates have improved materially over the past three years and are now close to Helvetia's own rates on stainless steel work. Current lead times are around 14 weeks, compared with more than 20 weeks at Helvetia's Swiss aerospace cell.
 
-Morava is not a medical or semiconductor supplier. Its equipment, its quality system, and its customer approvals are aerospace. That is the capacity Helvetia wants. The site holds AS9100 and the customer approvals that let it ship flight hardware without a fresh qualification for the three main accounts.
+3. INVESTMENT RATIONALE
 
-INVESTMENT THESIS
+Capacity where the platform needs it. Helvetia's aerospace order book has outgrown its Swiss titanium capacity, and the business currently meets demand through overtime at Winterthur and Olten and through three external machining suppliers, one of which is Morava. Morava's large-format titanium milling cells are exactly the capability the Swiss sites lack, and labour and energy costs in Brno are substantially below those in Switzerland. Management plans to load the Brno cells with Helvetia overflow work within 18 months of completion while retaining Morava's existing customer base.
 
-Buy-and-build is the stated theme for Helvetia. The original investment memorandum set out a plan to add two or three machining businesses over the hold, aimed at capacity that the Swiss footprint cannot add cheaply. Morava is the first of those additions. It gives Helvetia a low-cost titanium cell already qualified for aerospace, in a city where Helvetia has operated a smaller parts plant since 2021.
+A known asset. Helvetia has bought titanium fittings from Morava for two civil aircraft programmes since 2019, so its quality, delivery and engineering record are known first-hand rather than through diligence alone. This reduces integration and quality risk relative to a typical add-on.
 
-The industrial case is straightforward. Helvetia currently buys titanium fittings from Morava and from two other outside shops. Bringing Morava inside lets Helvetia move a defined book of aerospace work from Swiss overtime and from third parties onto a plant that was built for that alloy. Management's plan, which we have reviewed but not re-underwritten in this paper, is to fill the Brno cells with Helvetia overflow within eighteen months of completion, while keeping Morava's existing aerospace customers.
+Operational adjacency. Helvetia has operated a smaller parts plant in Brno since 2021. Supervision, quality management and procurement can be shared across the two sites from day one.
 
-We are not relying on a multiple re-rating. The case is capacity, cost, and a customer overlap we already know because Helvetia has been on the other side of the supply relationship.
+The case does not rely on multiple arbitrage. Value creation comes from moving work out of high-cost Swiss overtime and third-party suppliers onto owned, lower-cost capacity.
 
-THEMATIC FIT
+4. FIT WITH THE HELVETIA INVESTMENT THESIS
 
-Helvetia was acquired as a precision-components platform serving medical devices, aerospace, and semiconductor equipment. The add-on programme was part of that thesis, not a later invention. Morava sits in the aerospace leg of that plan. It does not extend Helvetia into a new end market, and it does not require Halden to take a new direct position. It deepens a platform we already own, in the geography and the process the original plan named.
+When Halden Group acquired Helvetia in 2025, the investment thesis included a buy-and-build programme of two to three machining add-ons over the holding period, focused on capacity that could not be added cost-effectively in Switzerland. Morava is the first of these and sits squarely in the aerospace leg of the plan. It deepens Helvetia's position in an existing end market rather than extending the platform into a new one.
 
-The Brno site also sits beside Helvetia's existing Czech plant. Supervision, quality staff, and a shared procurement desk are practical, not theoretical. The thematic point is the platform strategy: one more qualified aerospace cell, bought by the company that will use it.
+5. HISTORY WITH THE ASSET
 
-OUR HISTORY WITH THE ASSET
+Beyond the supplier relationship since 2019, Helvetia completed a full vendor audit of Morava in 2024. Halden Group's operating team supported Helvetia management through confirmatory diligence and joined two site visits to Brno in 2026, which confirmed cell layout, certifications and customer approvals and identified no quality or customer issues.
 
-Helvetia has bought from Morava as a supplier since 2019. The purchases were titanium fittings for two civil programmes. Volumes have been steady rather than large, and the quality record over that period is the reason Helvetia put Morava on the short list. Halden Group has had no direct holding in Morava. Our knowledge of the business is through Helvetia's purchasing records, a vendor audit in 2024, and the diligence now completed by Helvetia's management with our operating team in support.
+6. TRANSACTION STRUCTURE
 
-We visited the Brno site twice this year with Helvetia's head of aerospace. The visits confirmed the cell layout and the customer approvals. They did not surface a customer dispute or a quality escape that would change the recommendation.
+The sellers are the Novak family and a small group of employee shareholders. A customary escrow will be held against warranty claims, and the founders will provide transition support for six months, after which they will not hold operating roles. Morava's management will report to Helvetia's aerospace director from completion. Halden Group's ownership of Helvetia is unchanged and no co-investors are involved.
 
-TRANSACTION OR TERMS
+7. KEY RISKS
 
-Helvetia Precision Components AG is the acquiring entity. The sellers are the Novak family and a small employee pool. They will leave a customary escrow for warranty claims and will provide transition support for six months. No Halden equity is being invested. The EUR 42 million consideration is met from Helvetia's cash and from the EUR 18 million extension of Helvetia's own debt facility. Helvetia's lenders have consented to the extension. The facility remains at Helvetia. It is not a Halden obligation and it is not new equity.
+Customer concentration: three customers account for around 80% of sales. Two have provided change-of-control comfort letters; the third is expected to sign before completion.
+Titanium price exposure: alloy costs are largely passed through to customers, but with a lag.
+Integration: alignment of quality systems and management of a second Czech site.
+Clearance timing: a delay beyond the first quarter of 2027 would defer the capacity benefit but would not affect the transaction terms.
 
-Signing took place on 3 November 2026. Completion is expected in the first quarter of 2027, once Czech merger clearance is received. Helvetia's ownership by Halden is unchanged by the transaction. There is no co-investor and no new holding-company instrument.
+8. CONCLUSION
 
-Management of Morava will report to Helvetia's aerospace director from completion. The Novak family will not retain an operating role past the transition period.
-
-RISKS
-
-Customer concentration at Morava is real. Three accounts dominate sales. Helvetia's plan depends on those accounts staying through the change of control, which the contracts allow them to accept or to discuss. Two of the three have given comfort letters. The third has not refused, and has not yet signed.
-
-Titanium prices move. Morava passes a large part of alloy cost through to customers, but the pass-through is lagged. A sharp move between signing and completion would sit with Helvetia. We have not treated that as a reason to delay, because the same exposure already exists in the supply relationship.
-
-Integration risk is the ordinary one: a newly acquired plant, a different language on the shop floor, and a quality system that must be brought onto Helvetia's. The existing supply relationship reduces the unknown. It does not remove the work.
-
-Clearance risk is low on the advice we have. A delay past the first quarter of 2027 would push the capacity benefit by a quarter. It would not change who is buying or how the purchase is funded.
-
-OVERALL VIEW
-
-The investment team considers Morava Precision to be an attractive entry into low-cost aerospace titanium capacity, which benefits from Helvetia's supply relationship since 2019, while the structure offers funding entirely from Helvetia's own cash flow and debt, with no new equity from Halden Group.
+The investment team considers Morava an attractive way to add low-cost, aerospace-qualified titanium capacity to Helvetia at a point when the Swiss sites are capacity-constrained, with execution risk reduced by a five-year supply relationship and an existing Helvetia presence in Brno, and funded entirely within the Helvetia capital structure.

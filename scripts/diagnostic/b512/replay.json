@@ -1,0 +1,559 @@
+{
+  "fixtureFiles": [
+    {
+      "fixture": "ADD_ON_DIRECT_INVESTMENT.json",
+      "file": "26_addon_morava_memo.txt",
+      "role": "facts",
+      "bytes": 5266,
+      "ok": true
+    },
+    {
+      "fixture": "DIRECT_INVESTMENT_EXIT.json",
+      "file": "02_pg_atnorth_exit.txt",
+      "role": "facts",
+      "bytes": 5320,
+      "ok": true
+    },
+    {
+      "fixture": "DIRECT_INVESTMENT_EXIT.json",
+      "file": "11_synth_investor_letter_exit.pdf",
+      "role": "facts",
+      "bytes": 7676,
+      "ok": true
+    },
+    {
+      "fixture": "DIRECT_INVESTMENT_REVALUATION.json",
+      "file": "27_helvetia_q3_2026_valuation.txt",
+      "role": "facts",
+      "bytes": 3688,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_CAPITAL_CALL.json",
+      "file": "30_kestrel_call_notice.txt",
+      "role": "facts",
+      "bytes": 2134,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_CAPITAL_CALL.json",
+      "file": "31_kestrel_fjordline_press_release.txt",
+      "role": "context",
+      "bytes": 2352,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_CAPITAL_CALL.json",
+      "file": "34_kestrel_q3_2026_report.txt",
+      "role": "context",
+      "bytes": 4730,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_DISTRIBUTION.json",
+      "file": "32_kestrel_distribution_notice.txt",
+      "role": "facts",
+      "bytes": 1719,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_DISTRIBUTION.json",
+      "file": "33_kestrel_harbourline_press_release.txt",
+      "role": "context",
+      "bytes": 2263,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_DISTRIBUTION.json",
+      "file": "34_kestrel_q3_2026_report.txt",
+      "role": "context",
+      "bytes": 4730,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_REVALUATION.json",
+      "file": "34_kestrel_q3_2026_report.txt",
+      "role": "facts",
+      "bytes": 4730,
+      "ok": true
+    },
+    {
+      "fixture": "FUND_REVALUATION.json",
+      "file": "35_kestrel_q2_2026_report.txt",
+      "role": "context",
+      "bytes": 3280,
+      "ok": true
+    },
+    {
+      "fixture": "NEW_DIRECT_INVESTMENT.json",
+      "file": "08_synth_industrial_buyout_memo.txt",
+      "role": "facts",
+      "bytes": 11110,
+      "ok": true
+    },
+    {
+      "fixture": "NEW_PRIMARY_COMMITMENT.json",
+      "file": "29_aldermoor_fund_vi_ic.txt",
+      "role": "facts",
+      "bytes": 5158,
+      "ok": true
+    },
+    {
+      "fixture": "NEW_SECONDARY_INVESTMENT.json",
+      "file": "28_secondary_lp_portfolio_ic.txt",
+      "role": "facts",
+      "bytes": 5104,
+      "ok": true
+    },
+    {
+      "fixture": "SPECIAL_TOPIC.json",
+      "file": "09_synth_portfolio_update_letter.txt",
+      "role": "facts",
+      "bytes": 7117,
+      "ok": true
+    }
+  ],
+  "missingFiles": [],
+  "cards": 288,
+  "beforeNotInSource": 12,
+  "afterNotInSource": 11,
+  "afterShownNotInSource": 12,
+  "changed": 36,
+  "errored": 0,
+  "changes": [
+    {
+      "fixtureId": "01",
+      "index": 8,
+      "occurrence": 0,
+      "statement": "The team, led by founder-CEO Mr. Lütke, has demonstrated strong product and management instincts despite Mr. Lütke being a first-time CEO.",
+      "before": "note_withheld",
+      "after": "nothing_raised",
+      "shown": "note_withheld",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "01",
+      "index": 11,
+      "occurrence": 0,
+      "statement": "We recommend approval.",
+      "before": "not_in_source",
+      "after": "nothing_raised",
+      "shown": "not_in_source",
+      "label": "confirmed",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "02",
+      "index": 5,
+      "occurrence": 0,
+      "statement": "As AI workloads continue to drive demand for location-agnostic compute, atNorth is exceptionally well positioned to capitalize on this opportunity.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "02",
+      "index": 6,
+      "occurrence": 0,
+      "statement": "Partners Group will reinvest alongside CPP Investments and Equinix and retain up to 10% of the Company going forward.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "04",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "We are writing to inform you of a new investment in Pinterest (the \"Company\"), a visual discovery and bookmarking platform that lets users organize images they find interesting onto themed boards.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "04",
+      "index": 1,
+      "occurrence": 0,
+      "statement": "We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million, for approximately 20% on a fully-diluted basis.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "04",
+      "index": 11,
+      "occurrence": 0,
+      "statement": "The founders, Mr. Ben Silbermann and Mr. Evan Sharp, are first-time founders but our diligence has been deeply positive.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "confirmed",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "04",
+      "index": 12,
+      "occurrence": 0,
+      "statement": "Mr. Silbermann in particular has built a reputation at Google for being unusually focused on users and product.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "04",
+      "index": 15,
+      "occurrence": 0,
+      "statement": "The risks are clear.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "05",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "Halden Group has agreed to acquire Norwell Aerospace Components, a leading manufacturer of structural composite components and titanium machined parts, from Westhaven Capital.",
+      "before": "conflicts",
+      "after": "not_in_source",
+      "shown": "conflicts",
+      "label": "conflicting",
+      "trueProblem": true,
+      "noteBucket": "conflicts"
+    },
+    {
+      "fixtureId": "08",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "We are writing to inform you of a new investment in Helvetia Precision Components (the \"Company\"), a Zurich-headquartered manufacturer of high-precision machined components for the medical devices, aerospace, and semiconductor end markets.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "08",
+      "index": 2,
+      "occurrence": 0,
+      "statement": "We have invested EUR 480 million of equity for a 78% controlling stake, with the founding Schiller family and management retaining the balance.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "08",
+      "index": 10,
+      "occurrence": 0,
+      "statement": "- End-market growth — structural exposure to medical implants and aerospace build rate increases supports 9% compound revenue growth over the hold.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "08",
+      "index": 17,
+      "occurrence": 0,
+      "statement": "We are confident in the team and the opportunity, and we look forward to providing further updates as the hold progresses.",
+      "before": "not_in_source",
+      "after": "nothing_raised",
+      "shown": "not_in_source",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "09",
+      "index": 8,
+      "occurrence": 0,
+      "statement": "Our base case returns remain intact but the segment will be a moderating factor through 2026.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "11",
+      "index": 7,
+      "occurrence": 0,
+      "statement": "Four bolt-on acquisitions, anchored by HeatTech GmbH for SEK 1.1 billion, added meaningful scale.",
+      "before": "conflicts",
+      "after": "nothing_raised",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "11",
+      "index": 9,
+      "occurrence": 0,
+      "statement": "Total Company revenue grew from SEK 4.2 billion at entry to SEK 11.4 billion at exit, with EBITDA expanding from SEK 480 million to SEK 2.08 billion and margins from 11.4 percent to 18.2 percent.",
+      "before": "note_withheld",
+      "after": "nothing_raised",
+      "shown": "note_withheld",
+      "label": "confirmed",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "12",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "After more than four years of partnership, Meridian Capital has completed the sale of NorTech Industries to Brookfield this week.",
+      "before": "conflicts",
+      "after": "nothing_raised",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "12",
+      "index": 5,
+      "occurrence": 0,
+      "statement": "The numbers tell one story; the team's transformation tells the bigger one.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "13",
+      "index": 2,
+      "occurrence": 0,
+      "statement": "The Company has built strong fundamentals.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "confirmed",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "13",
+      "index": 4,
+      "occurrence": 0,
+      "statement": "EBITDA margin is 11.1% on trailing twelve months revenue of EUR 76 million.",
+      "before": "conflicts",
+      "after": "nothing_raised",
+      "shown": "conflicts",
+      "label": "conflicting",
+      "trueProblem": true,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "14",
+      "index": 2,
+      "occurrence": 0,
+      "statement": "First, the regulatory pathway under the EU Medical Device Regulation (MDR) has matured.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "14",
+      "index": 4,
+      "occurrence": 0,
+      "statement": "Second, payer willingness to reimburse digital health products has improved markedly across the major European markets.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "confirmed",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "14",
+      "index": 11,
+      "occurrence": 0,
+      "statement": "We expect to bring a specific potential investment to consider over the coming months.",
+      "before": "conflicts",
+      "after": "nothing_raised",
+      "shown": "conflicts",
+      "label": "conflicting",
+      "trueProblem": true,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "14",
+      "index": 12,
+      "occurrence": 0,
+      "statement": "We will provide further detail when the work is sufficiently advanced.",
+      "before": "not_in_source",
+      "after": "nothing_raised",
+      "shown": "not_in_source",
+      "label": "no_support",
+      "trueProblem": true,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "15",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "We are writing to inform you of a new investment in Casa Verde Group (the \"Company\"), a Milan-headquartered premium European homeware and kitchenware specialist.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "15",
+      "index": 2,
+      "occurrence": 0,
+      "statement": "We have invested EUR 720 million of equity for an 84% stake.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "15",
+      "index": 9,
+      "occurrence": 0,
+      "statement": "Continued own-brand penetration uplift — own-brand share has grown from 38% in 2020 to 54% in 2025, with continued runway to 70% contributing material gross margin expansion.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "15",
+      "index": 11,
+      "occurrence": 0,
+      "statement": "The format currently operates 18 stores and represents a fifth value driver alongside the four pillars above.",
+      "before": "conflicts",
+      "after": "nothing_raised",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "15",
+      "index": 30,
+      "occurrence": 0,
+      "statement": "We have completed comprehensive diligence covering commercial, financial, legal, and ESG dimensions; the conclusions are circulated separately.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "16",
+      "index": 10,
+      "occurrence": 0,
+      "statement": "Our investment thesis rests on the structural attractiveness of premium women's health (a EUR-denominated category growing at approximately 14 percent annually), Bloom's defensible product credibility and brand position, and a clear international runway in France, Italy, Spain, and selectively in the US over a five-year hold.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "17",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "We are writing to inform you of a new investment in the Urbis Logistics Portfolio, a portfolio of 11 last-mile logistics properties located in major European urban areas.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "partially_confirmed",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "18",
+      "index": 0,
+      "occurrence": 0,
+      "statement": "We are writing to confirm completion of the transaction with Nordic SaaS Holdings (the \"Company\"), a Stockholm-headquartered B2B SaaS platform serving the Nordic real estate and property management sector.",
+      "before": "conflicts",
+      "after": "nothing_raised",
+      "shown": "conflicts",
+      "label": "conflicting",
+      "trueProblem": true,
+      "noteBucket": "none"
+    },
+    {
+      "fixtureId": "18",
+      "index": 2,
+      "occurrence": 0,
+      "statement": "We have invested EUR 158 million for a 60% controlling stake.",
+      "before": "conflicts",
+      "after": "beyond",
+      "shown": "conflicts",
+      "label": "confirmed",
+      "trueProblem": false,
+      "noteBucket": "beyond"
+    },
+    {
+      "fixtureId": "18",
+      "index": 9,
+      "occurrence": 0,
+      "statement": "In summary, the Company combines a defensible competitive position in a growing category and a credible operational team.",
+      "before": "partial",
+      "after": "nothing_raised",
+      "shown": "partial",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "wording"
+    },
+    {
+      "fixtureId": "19",
+      "index": 2,
+      "occurrence": 0,
+      "statement": "The exit of NorTech Industries — which closed in January 2026 at SEK 18.4 billion and generated a 3.56x gross MOIC / 31.4 percent gross IRR — is the largest realisation in the Fund's history and the principal driver of the Fund's current returns trajectory.",
+      "before": "conflicts",
+      "after": "not_in_source",
+      "shown": "conflicts",
+      "label": "",
+      "trueProblem": false,
+      "noteBucket": "conflicts"
+    }
+  ],
+  "lostTrueProblems": [],
+  "gate": "pass"
+}

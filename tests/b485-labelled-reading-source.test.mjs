@@ -11,14 +11,14 @@ function headers(text) {
   return text
     .split("\n\n")
     .filter((block) => block.startsWith("Document:"))
-    .map((block) => block.split("\n").slice(0, 2).join("\n"));
+    .map((block) => block.split("\n").slice(0, 3).join("\n"));
 }
 
 describe("B485 labelled reading source", () => {
   test("an undated document is named and marked no date", () => {
     const text = "The company employs 142 people.";
     const out = readingSourceText([{ label: "alpha memo", text }]);
-    assert.equal(out, `Document: alpha memo\nDate: no date\n\n${text}`);
+    assert.equal(out, `Document: alpha memo\nRole: facts\nDate: no date\n\n${text}`);
   });
 
   test("a same-day pair and a one-dated pair present no order", () => {
@@ -34,14 +34,14 @@ describe("B485 labelled reading source", () => {
       { label: "beta memo", text: "Headcount is 12." },
     ]);
     assert.equal(ORDER.test(headers(one).join("\n")), false);
-    assert.match(one, /^Document: alpha memo\nDate: 28 May 2025$/m);
-    assert.match(one, /^Document: beta memo\nDate: no date$/m);
+    assert.match(one, /^Document: alpha memo\nRole: facts\nDate: 28 May 2025$/m);
+    assert.match(one, /^Document: beta memo\nRole: facts\nDate: no date$/m);
   });
 
   test("a single source is the same text with a label", () => {
     const text = "Revenue was EUR 10 million in the year.";
     const out = readingSourceText([{ label: "only memo", text }]);
     assert.equal(out.endsWith(text), true);
-    assert.equal(out.slice(0, out.length - text.length), "Document: only memo\nDate: no date\n\n");
+    assert.equal(out.slice(0, out.length - text.length), "Document: only memo\nRole: facts\nDate: no date\n\n");
   });
 });

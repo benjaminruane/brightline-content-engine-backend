@@ -28,7 +28,8 @@ import {
   getEventTypeLabel,
   getEventTypeFraming,
 } from "../lib/event-type.js";
-import { buildBasePrompt, enforcePgCommentaryWordLimit, getPgCommentaryWordLimit, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { buildBasePrompt, enforcePgCommentaryWordLimit, splitPgDraftOutput } from "../lib/prompt-library/index.js";
+import { outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
@@ -659,7 +660,7 @@ export default async function handler(req, res) {
     const outputType = normalizeOutputType(rawOutputType);
     const visibility = normalizeVisibility(rawVisibility);
     const typedMaxWords = clampMaxWords(maxWords);
-    const effectiveMaxWords = typedMaxWords ?? getPgCommentaryWordLimit(eventType, visibility);
+    const effectiveMaxWords = typedMaxWords ?? outputTypeWordCeiling(outputType);
     const safeVersionType = visibility === "PUBLIC" ? "public" : "complete";
     const safePublicSearch = Boolean(publicSearch);
     const safeSources = Array.isArray(sources) ? sources : [];

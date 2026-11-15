@@ -110,9 +110,12 @@ describe("rewrite word limit", () => {
 
     assert.equal(res.statusCode, 200);
     const userPrompt = llmSpy.mock.calls[0][0].messages.find((m) => m.role === "user").content;
-    assert.equal(userPrompt.includes("where possible"), false);
-    assert.equal(userPrompt.includes("under ~"), false);
-    assert.equal(/try to/i.test(userPrompt), false);
+    const limitAt = userPrompt.indexOf("Word limit:");
+    assert.ok(limitAt >= 0);
+    const limit = userPrompt.slice(limitAt, limitAt + 280);
+    assert.equal(limit.includes("where possible"), false);
+    assert.equal(limit.includes("under ~"), false);
+    assert.equal(/try to/i.test(limit), false);
     assert.match(
       userPrompt,
       /Word limit: 80 words maximum for the commentary, excluding any Methodology Note\. Write to fit within it\./

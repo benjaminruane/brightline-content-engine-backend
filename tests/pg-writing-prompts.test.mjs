@@ -52,7 +52,7 @@ describe("pg-writing-prompts", () => {
     assert.doesNotMatch(text, /\{TRANSACTION_DATE\}/);
   });
 
-  test("buildBasePrompt places PG scaffold after output-type guidance", () => {
+  test("buildBasePrompt uses guidance and the cover list for a new direct investment", () => {
     const { basePromptText } = buildBasePrompt({
       outputType: "reporting_commentary",
       visibility: "complete",
@@ -63,12 +63,16 @@ describe("pg-writing-prompts", () => {
       sources: [],
     });
     const outputIdx = basePromptText.indexOf("Output type:");
-    const bindingIdx = basePromptText.indexOf("Binding constraints");
+    const guidanceIdx = basePromptText.indexOf("Write the new direct investment.");
     assert.ok(outputIdx >= 0);
-    assert.ok(bindingIdx > outputIdx);
+    assert.ok(guidanceIdx > outputIdx);
+    assert.match(basePromptText, /Cover, in this order:/);
+    assert.match(basePromptText, /Length: 120 to 200 words/);
+    assert.doesNotMatch(basePromptText, /Binding constraints/);
+    assert.doesNotMatch(basePromptText, /---METHODOLOGY---/);
   });
 
-  test("buildBasePrompt uses PG scaffold for demo event types", () => {
+  test("buildBasePrompt uses guidance for a new primary commitment", () => {
     const { basePromptText } = buildBasePrompt({
       outputType: "reporting_commentary",
       visibility: "public",
@@ -78,10 +82,10 @@ describe("pg-writing-prompts", () => {
       specialInstructions: "",
       sources: [],
     });
-    assert.match(basePromptText, /committed to/);
-    assert.match(basePromptText, /Aurora Next Generation Infrastructure/);
-    assert.match(basePromptText, /publicly available information/);
-    assert.match(basePromptText, /exactly ONE paragraph/);
+    assert.match(basePromptText, /Write the new primary commitment/);
+    assert.match(basePromptText, /Leave out, unless the special instructions ask for it:/);
+    assert.match(basePromptText, /the commitment amount/);
+    assert.doesNotMatch(basePromptText, /exactly ONE paragraph/);
   });
 
   test("fund commitment complete binding uses fund in structure constraint", () => {

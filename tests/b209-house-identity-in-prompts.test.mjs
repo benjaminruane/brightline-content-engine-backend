@@ -7,7 +7,6 @@ import { AUTHORING_ORGANISATION_ENV } from "../lib/qc/first-person-actor.mjs";
 
 const REAL_FIRM = "Partners Group";
 const CONFIGURED_HOUSE = "Northwind Capital";
-const DO_NOT_INVENT = "Do not invent a firm name.";
 
 const OUTPUT_TYPES = Object.values(OUTPUT_TYPE);
 const VISIBILITIES = Object.values(VISIBILITY);
@@ -67,7 +66,7 @@ describe("B209a house identity in prompts", () => {
     });
   });
 
-  test("the configured organisation appears where the house is named", () => {
+  test("a new direct investment uses the shared structure and does not name a firm", () => {
     withEnvHouse(CONFIGURED_HOUSE, () => {
       const { basePromptText } = buildBasePrompt({
         outputType: OUTPUT_TYPE.INVESTOR_LETTER,
@@ -76,13 +75,15 @@ describe("B209a house identity in prompts", () => {
         transactionDate: "Mar 2024",
         investment: "Meridian Capital Partners V",
       });
-      assert.match(basePromptText, /Northwind Capital/);
-      assert.match(basePromptText, /The investor is Northwind Capital/);
+      assert.match(basePromptText, /Write the new direct investment/);
+      assert.match(basePromptText, /State the deal's status as the facts source states it/);
+      assert.doesNotMatch(basePromptText, /Binding constraints/);
       assert.equal(basePromptText.includes(REAL_FIRM), false);
+      assert.equal(basePromptText.includes(CONFIGURED_HOUSE), false);
     });
   });
 
-  test("with no organisation configured, no firm is named and the do-not-invent line is present", () => {
+  test("with no organisation configured, no firm is named", () => {
     withEnvHouse(null, () => {
       const { basePromptText } = buildBasePrompt({
         outputType: OUTPUT_TYPE.INVESTOR_LETTER,
@@ -94,7 +95,7 @@ describe("B209a house identity in prompts", () => {
       });
       assert.equal(basePromptText.includes(REAL_FIRM), false);
       assert.equal(basePromptText.includes(CONFIGURED_HOUSE), false);
-      assert.match(basePromptText, new RegExp(DO_NOT_INVENT));
+      assert.doesNotMatch(basePromptText, /---METHODOLOGY---/);
     });
   });
 });

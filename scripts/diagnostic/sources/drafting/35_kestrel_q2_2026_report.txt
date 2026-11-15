@@ -1,62 +1,54 @@
 KESTREL PARTNERS FUND IV
-QUARTERLY REPORT TO LIMITED PARTNERS
-Second quarter 2026
-This report is addressed only to limited partners. It is not for further distribution.
+QUARTERLY REPORT - Q2 2026 (PERIOD ENDED 30 JUNE 2026)
+Confidential - for Limited Partners only
 
-To:        Limited partners, including Halden Group
-From:      Kestrel Partners
-Date:      16 July 2026
-Subject:   Fund IV, report for the quarter ended 30 June 2026
+LETTER TO LIMITED PARTNERS
 
-SUMMARY
+Dear Limited Partners,
 
-Net asset value rose over the quarter, and the rise was modest. The holding that stood out was Harbourline Foods, which had a strong quarter in its chilled ranges. No company was written down by a comparable amount. The fund did not buy or sell a business in the quarter. The agreement to sell a stake in Harbourline was announced on 17 June, and at 30 June it had not completed.
+Fund IV delivered a solid second quarter, with net asset value up 3.4% before cash flows. The highlight was Harbourline Foods, which reported record volumes and, on 17 June, agreed the sale of a 60% stake to Northshore Consumer Partners at a valuation well above our carrying value.
 
-At 30 June 2026 the fund's net TVPI was 1.36 times and the net IRR was 14.8 percent. Both figures are net to limited partners. They are not the same figures the third-quarter report will carry, because this report stops at June.
+KEY FIGURES                       30 Jun 2026     31 Mar 2026
+Net asset value (EUR m)                   678             652
+NAV change before cash flows            +3.4%           +1.2%
+Net TVPI                                 1.66x           1.61x
+Net IRR                                  15.9%           15.4%
+DPI                                      0.37x           0.37x
+Called (% of commitments)                 53%             51%
 
-HARBOURLINE FOODS
+PORTFOLIO DEVELOPMENTS
 
-Harbourline Foods produces chilled meals, pies, and side dishes for retailers in the United Kingdom and Ireland. The quarter was strong. National retailers took the summer range in the volumes the company had planned for, and the Cork plant ran close to the rate the expansion was built for. Waste on the Yorkshire lines was lower than in the first quarter. Management described the quarter as the best trading period since the prior summer, on the measures they use internally: cases shipped, service level, and the margin on the chilled range.
+Harbourline Foods
+Harbourline had an outstanding quarter. Volumes reached a record level following the launch of a new range of premium ready meals with two national grocers, and the company secured a listing with a sixth major UK retailer. The newly automated production line in Yorkshire is now fully operational. On 17 June we agreed the sale of a 60% stake to Northshore Consumer Partners, valuing Harbourline at an enterprise value of GBP 420 million; completion is expected in the third quarter, subject to regulatory approvals. We have revalued Harbourline to the agreed transaction value, an increase of 22% in the quarter, and it was the main contributor to the Fund's NAV growth.
 
-On 17 June 2026 the fund announced an agreement to sell a 60 percent stake to Northshore Consumer Partners, keeping 40 percent. At the date of this report the sale had not completed. Harbourline is still a controlled holding in the table below. The strong quarter is an operating result. It is not the cash from a sale. Partners should not read the modest rise in fund net asset value as if the exit had already been received. The valuation at 30 June reflects the trading and the fact that an agreement exists. Completion, if it happens on the timetable in the announcement, belongs to a later report.
+Aurelia Health
+Aurelia continued to roll out its rostering platform at existing hospital group customers and signed one new customer in the Netherlands. The valuation was held broadly flat. Management is assessing several small add-on opportunities in the Nordic region.
 
-We have owned Harbourline for several years. The work in those years was to make the company a supplier that national retailers could plan a season around. This quarter is evidence that the plants and the range can do that. It is one quarter.
+Brightwater Labs
+Brightwater traded in line with the first quarter. The contract with its largest customer, a national testing network, comes up for renewal in the third quarter, and management is in discussions on terms. Brightwater's valuation was unchanged.
 
-AURELIA HEALTH
+Other holdings
+Corvane Data, Plinth Systems and Tallowmere were valued broadly unchanged. Tallowmere completed a small add-on acquisition in workforce analytics.
 
-Aurelia Health's rostering software continued to be rolled out at the hospital groups already on the platform. No new group was signed in the quarter. The existing rollouts are the activity. The valuation moved up by a small amount on the progress of those rollouts. It was not the main contributor to the fund. Aurelia remains a holding we are content with, and it was a quiet quarter beside Harbourline.
+PORTFOLIO SUMMARY AT 30 JUNE 2026
 
-BRIGHTWATER LABS
+Company              Sector                           Invested   Valuation change in Q2
+Harbourline Foods    Chilled foods                      2020       +22%
+Aurelia Health       Healthcare software                2021       0%
+Brightwater Labs     Laboratory analytics               2021       0%
+Corvane Data         Data infrastructure software       2022       +2%
+Plinth Systems       Construction software              2022       0%
+Tallowmere           Workforce software                 2023       +1%
 
-Brightwater Labs, which sells analytical software and laboratory services to testing networks, traded in line with the first quarter. The largest customer remained in place at 30 June. There is nothing in this report that anticipates a later loss of that customer, because at this date the contract stood. The valuation was held essentially flat. We record that so a reader of a later report can see that June was not the quarter of a write-down.
+PIPELINE
 
-OTHER HOLDINGS
-
-Three smaller software companies made up the rest of the portfolio. One released a version of its product on time. One hired a head of customer teams. One renewed an annual contract with its largest user. None of these changed the fund's net asset value in a way a partner needs a separate paragraph to understand. They are in the table so the list is complete.
-
-PORTFOLIO AT 30 JUNE 2026
-
-Company                Activity                         Position at quarter end
-Harbourline Foods      Chilled foods                    Held, strong quarter, sale agreed and not completed
-Aurelia Health         Clinical rostering software      Held, small valuation increase
-Brightwater Labs       Laboratory analytics             Held, valuation essentially flat
-Other holdings         Three smaller software companies Held, no material move
-
-Fjordline Software is not in this portfolio. The fund had not acquired it by 30 June. Selkirk Analytics is not in this portfolio. It was not in exclusivity at this date.
-
-VALUATION AND FIGURES
-
-The modest increase in net asset value is the number partners should hold onto. We use the word modest because the move is small. Harbourline's quarter was strong at the company. The fund's net asset value did not rise by a matching proportion, because Harbourline is one holding, because the sale had not completed, and because the other holdings were quiet.
-
-Net TVPI of 1.36 times and net IRR of 14.8 percent are the fund-level figures at 30 June 2026. They are net. They will not be repeated unchanged if a later quarter revalues a holding or receives sale proceeds. This report does not forecast the third quarter.
-
-CASH
-
-Calls and distributions during the quarter were the ordinary ones under the fund agreement and were not the story of the period. The story was Harbourline's trading, the modest rise in net asset value, and an agreed sale that had not yet completed.
+We are in advanced discussions on a new platform investment in Nordic logistics software and expect to update you in the coming months.
 
 OUTLOOK
 
-The third quarter, as we saw it in July, had two known events and one unknown. The known events were whether the Harbourline sale would complete on its conditions, and whether Aurelia's rollouts would continue at the same pace. The unknown was ordinary trading at the other companies. We did not, in July, have a Brightwater customer loss to report, and this document does not invent one.
+The agreed partial sale of Harbourline will return significant capital to investors following completion, and we continue to see an attractive pipeline of new opportunities for the remaining investment period.
 
-Kestrel Partners
-16 July 2026
+Yours sincerely,
+
+The Kestrel Partners team
+22 July 2026

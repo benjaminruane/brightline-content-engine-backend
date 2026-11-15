@@ -1,25 +1,37 @@
-KESTREL PARTNERS FUND IV
-CAPITAL CALL NOTICE
-This notice is addressed only to limited partners of Kestrel Partners Fund IV. It is not for further distribution.
+KESTREL PARTNERS FUND IV SCSp
+CAPITAL CALL NOTICE NO. 11
 
-To:        Halden Group, as limited partner
-From:      Kestrel Partners, investor services
-Date:      6 October 2026
-Subject:   Drawdown notice, Fund IV
+Date:            22 September 2026
+To:              Halden Group (Investor ID KP4-0217)
+Payment due:     30 September 2026
+Value date:      30 September 2026
 
-Halden Group is a limited partner in Kestrel Partners Fund IV. This notice calls EUR 3.75 million, which is 9.4 percent of Halden's commitment of EUR 40 million. The amount is due on 28 October 2026, in euros, to the fund account named in the original side letter.
+Dear Limited Partner,
 
-Of the EUR 3.75 million, EUR 3.52 million funds investments and EUR 0.23 million is the management fee for the quarter. The fee is stated here so the limited partner can reconcile the notice. It is part of this call.
+In accordance with Clause 6.2 of the Limited Partnership Agreement of Kestrel Partners Fund IV SCSp (the "Fund"), the General Partner hereby gives notice of a drawdown of capital commitments for the purposes set out below.
 
-The investment portion funds two uses.
+USE OF PROCEEDS                                    Fund total (EUR)    Your share (EUR)
+Acquisition of Fjordline Software AS                    61,200,000           2,448,000
+Follow-on investment in Aurelia Health                  26,800,000           1,072,000
+Management fee (Q4 2026)                                 5,750,000             230,000
+Total drawdown                                          93,750,000           3,750,000
 
-The first is the acquisition of Fjordline Software, a Norwegian company that sells software used by freight operators to plan loads, yards, and delivery slots. Fjordline's customers are logistics companies in the Nordic region and in northern Germany. Kestrel has signed the purchase. The fund's share of the equity, being the portion this call funds for that deal, is included in the EUR 3.52 million above. Fjordline fits Fund IV's strategy of buying software businesses that sit inside a physical supply chain and are already used daily by their customers.
+Fjordline Software AS
+On 18 September 2026 the Fund signed an agreement to acquire a majority stake in Fjordline Software AS, an Oslo-based provider of load, yard and delivery-slot planning software for freight and logistics operators in the Nordic region and northern Germany. Completion is expected on or around 2 October 2026.
 
-The second is a follow-on investment in Aurelia Health, a company the fund already owns. Aurelia provides software to hospital groups for rostering clinical staff. The follow-on funds a bolt-on acquisition by Aurelia of a smaller rostering business in Denmark. The follow-on keeps Aurelia as the owner of the combined product and is the sort of add-on the original Aurelia paper described. The amount of the follow-on attributable to Halden is included in the investment portion of this call, not stated again as a separate draw.
+Aurelia Health
+The follow-on investment will fund Aurelia Health's acquisition of Medivakt ApS, a Copenhagen-based provider of clinical staff rostering software to Danish hospitals and care providers.
 
-After this notice is paid, Halden's called commitment will stand at 62 percent of the EUR 40 million commitment. Unfunded commitment remains. No other draw is noticed in this letter.
+YOUR COMMITMENT                                    EUR
+Total commitment                                   40,000,000
+Contributed prior to this notice                   21,050,000
+This drawdown                                       3,750,000
+Contributed after this notice                      24,800,000 (62.0%)
+Remaining unfunded commitment                      15,200,000
 
-Please pay EUR 3.75 million by 28 October 2026. Late payment follows the fund agreement. Questions can be sent to the investor-services address on the fund's reports.
+Please remit EUR 3,750,000 to the Fund's account at Banque Lumière S.A., Luxembourg, IBAN LU28 0019 4006 4475 0000, quoting your investor ID. Interest on late payments accrues in accordance with Clause 6.7 of the LPA.
 
-Kestrel Partners
-6 October 2026
+Yours faithfully,
+
+Kestrel Partners GP S.à r.l.
+acting as General Partner of Kestrel Partners Fund IV SCSp

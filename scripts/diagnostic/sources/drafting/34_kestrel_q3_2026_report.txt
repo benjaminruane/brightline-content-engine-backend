@@ -1,65 +1,59 @@
 KESTREL PARTNERS FUND IV
-QUARTERLY REPORT TO LIMITED PARTNERS
-Third quarter 2026
-This report is addressed only to limited partners. It is not for further distribution.
+QUARTERLY REPORT - Q3 2026 (PERIOD ENDED 30 SEPTEMBER 2026)
+Confidential - for Limited Partners only
 
-To:        Limited partners, including Halden Group
-From:      Kestrel Partners
-Date:      20 October 2026
-Subject:   Fund IV, report for the quarter ended 30 September 2026
+LETTER TO LIMITED PARTNERS
 
-SUMMARY
+Dear Limited Partners,
 
-Net asset value declined by about 2 percent over the quarter. The decline was mainly a write-down of Brightwater Labs after the company lost a major customer. Gains at Aurelia Health offset part of that write-down and were not large enough to reverse it. The fund also completed the acquisition of Fjordline Software and the sale of a 60 percent stake in Harbourline Foods. A further investment, Selkirk Analytics, is in exclusivity and is not yet a portfolio company.
+The third quarter was an active one for Fund IV. We completed the partial realisation of Harbourline Foods, agreed a new platform investment in Fjordline Software and supported Aurelia Health's first add-on acquisition. At the same time, the quarter brought a setback at Brightwater Labs, which led to a significant write-down and a 2.1% decline in the Fund's net asset value before cash flows.
 
-At 30 September 2026 the fund's net TVPI was 1.29 times and the net IRR was 13.1 percent. Both figures are net to limited partners. They are lower than the figures in the second-quarter report. The change is the Brightwater write-down, partly offset by Aurelia and by the Harbourline sale.
+KEY FIGURES                       30 Sep 2026     30 Jun 2026
+Net asset value (EUR m)                   192             678
+NAV change before cash flows            -2.1%           +3.4%
+Net TVPI                                 1.53x           1.66x
+Net IRR                                  14.1%           15.9%
+DPI                                      1.22x           0.37x
+Called (% of commitments)                 62%             53%
 
-BRIGHTWATER LABS
+The reduction in reported NAV from 30 June reflects the EUR 560 million distribution of Harbourline proceeds, which was paid in October and accrued at quarter end.
 
-Brightwater Labs sells analytical software and related laboratory services to a small number of large customers in water testing and food safety. During the quarter its largest customer, a national testing network, ended the contract. The customer had been a little over a third of Brightwater's revenue. The loss was not a dispute about quality. The customer took the work back into its own laboratories after a change of ownership at the customer.
+PORTFOLIO DEVELOPMENTS
 
-We wrote the holding down to reflect the revenue that has gone and the time it will take to replace it. The write-down is the main reason the fund's net asset value fell. Management is cutting cost in line with the smaller book and is in talks with two smaller networks. Neither talk is a signed contract. We do not treat them as a recovery. The valuation now assumes a smaller company than the one we marked at 30 June.
+Brightwater Labs
+Brightwater, which provides analytical software and laboratory services to water testing and food safety networks, lost its largest customer during the quarter. The customer, a national testing network that accounted for around 35% of Brightwater's revenue, terminated its contract after being acquired by a group that operates its own laboratories. The loss was not related to service quality, and Brightwater's other contracts have renewed as planned. Management is reducing the cost base in line with lower revenue and is in advanced discussions with two mid-sized networks, although neither has yet signed. We have reduced the valuation of Brightwater by 41% to reflect the lower earnings base and the time needed to rebuild it. Brightwater was the main driver of the quarter's NAV decline.
 
-AURELIA HEALTH
+Aurelia Health
+Aurelia, our clinical staff rostering software business, had a strong quarter. Two existing hospital group customers extended the platform to additional sites, and annual recurring revenue grew 9% in the quarter. In September Aurelia agreed to acquire Medivakt ApS, a Danish rostering provider, which will give the company a foothold in the Danish hospital market; the acquisition was funded through a follow-on investment drawn in Capital Call No. 11. We increased the valuation of Aurelia by 18%, which offset part of the Brightwater write-down.
 
-Aurelia Health provides software that hospital groups use to roster clinical staff. The quarter was the other side of the fund's result. Two hospital groups expanded the number of sites on the system, and the Danish bolt-on that the October capital call later funded was agreed in principle during September. The gain in Aurelia's valuation offset part of the Brightwater write-down. It did not offset all of it. Aurelia is performing in line with the plan we described when the fund first invested. The offset is real and partial.
+Harbourline Foods
+On 30 September we completed the sale of a 60% stake in Harbourline to Northshore Consumer Partners, following the agreement announced on 17 June. The sale generated a gross multiple of 2.8x on the cost of the shares sold. The Fund retains a 40% stake, which is held at the transaction value.
 
-FJORDLINE SOFTWARE
+Fjordline Software (subsequent event)
+On 18 September the Fund signed an agreement to acquire a majority stake in Fjordline Software, an Oslo-based provider of planning software for freight and logistics operators. The acquisition completed on 2 October, after the end of the period, and Fjordline will be included in the portfolio from the fourth quarter.
 
-In October, just after the quarter-end for signing and within the events this report covers for partners, Fund IV acquired Fjordline Software. Fjordline, based in Oslo, sells software that freight operators use to plan loads, yards, and delivery slots. Customers are logistics companies in the Nordic region and northern Germany. The acquisition closed in the first days of the fourth quarter. We include it in this report because partners will see it in the capital account that accompanies these pages, and because the call that funded it was noticed in October against work that was agreed in September.
+Other holdings
+Our three smaller software holdings, Corvane Data, Plinth Systems and Tallowmere, were valued broadly unchanged. Corvane renewed its largest customer contract for five years; Plinth delayed a product release to the first quarter of 2027.
 
-Fjordline is a new company in the portfolio. It is not a contributor to the 2 percent decline. It had not been marked for a full quarter.
+PORTFOLIO SUMMARY AT 30 SEPTEMBER 2026
 
-HARBOURLINE FOODS
+Company              Sector                           Invested   Valuation change in Q3
+Aurelia Health       Healthcare software                2021       +18%
+Brightwater Labs     Laboratory analytics               2021       -41%
+Harbourline Foods    Chilled foods (40% retained)       2020       Realised 60% stake
+Corvane Data         Data infrastructure software       2022       +1%
+Plinth Systems       Construction software              2022       0%
+Tallowmere           Workforce software                 2023       -1%
 
-On 30 September 2026 the fund completed the sale of a 60 percent stake in Harbourline Foods. The fund retains 40 percent. The agreement had been announced on 17 June 2026. Completion is the event this quarter records. Harbourline produces chilled foods for retailers in the United Kingdom and Ireland. The partial sale is a realisation of the majority of the position and a decision to remain a minority owner alongside Northshore Consumer Partners. The retained 40 percent is now carried as a minority holding. The sold stake is the source of the distribution partners received in October.
+PIPELINE
 
-SELKIRK ANALYTICS
-
-Selkirk Analytics is in exclusivity. It is a data-services business that cleans and routes operational data for mid-sized manufacturers. We have agreed exclusivity with the seller. We have not signed a purchase agreement, and Selkirk is not in the portfolio table below. We mention it so partners are not surprised if a later report shows a new company, and so nobody reads this quarter as if the investment were already made. Exclusivity can end without a deal.
-
-PORTFOLIO AT 30 SEPTEMBER 2026
-
-Company                Activity                         Position at quarter end
-Aurelia Health         Clinical rostering software      Held, valuation higher
-Brightwater Labs       Laboratory analytics             Held, written down
-Harbourline Foods      Chilled foods                    40 percent retained
-Fjordline Software     Freight planning software        Acquired at the turn of the quarter
-Other holdings         Three smaller software companies Held, no material move
-
-Selkirk Analytics is not in the table. It is in exclusivity only.
-
-OTHER MOVEMENTS
-
-The three smaller software holdings were revalued in the ordinary way. None of them moved enough to explain the quarter. One renewed a contract with an existing customer. One slipped a product release by a few weeks. We have not changed the narrative of the fund on either of those.
-
-Cash at the fund rose with the Harbourline proceeds and then fell with the distribution and with the funding of Fjordline. The net asset value movement partners should remember is the 2 percent decline, caused mainly by Brightwater, partly offset by Aurelia.
+We are in exclusive negotiations to acquire Selkirk Analytics, a provider of data integration services for mid-sized manufacturers, and expect to reach a decision in the fourth quarter.
 
 OUTLOOK
 
-The fourth quarter opens with Fjordline inside the fund, Harbourline as a retained minority, and Brightwater smaller than it was in June. Selkirk either becomes an investment or the exclusivity lapses. We will report which, when we know. We are not guiding a recovery of the Brightwater revenue in this quarter's numbers.
+With Fjordline now in the portfolio and Fund IV 62% called, we expect to make one or two further platform investments before the end of the investment period. Our priorities for the coming quarters are rebuilding Brightwater's customer base, integrating Medivakt into Aurelia and supporting Fjordline's international expansion. We remain confident in the overall quality of the portfolio.
 
-Net TVPI of 1.29 times and net IRR of 13.1 percent are the fund-level figures at 30 September 2026. They replace the second-quarter figures. They are not a forecast.
+Yours sincerely,
 
-Kestrel Partners
+The Kestrel Partners team
 20 October 2026

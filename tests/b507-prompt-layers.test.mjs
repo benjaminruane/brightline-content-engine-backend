@@ -46,18 +46,13 @@ test("layers stay in one order", () => {
 });
 
 test("every text type module exports the shape", async () => {
-  const withScaffold = new Set(["NEW_DIRECT_INVESTMENT", "NEW_PRIMARY_COMMITMENT"]);
   for (const key of Object.values(EVENT_TYPE)) {
     const mod = await import(`../lib/prompt-library/text-types/${key}.mjs`);
     assert.equal(typeof mod.label, "string");
     assert.ok(mod.label.length > 0, key);
     assert.ok(Array.isArray(mod.mustCover), key);
     assert.equal(typeof mod.guidance, "string", key);
-    if (withScaffold.has(key)) {
-      assert.match(mod.guidance, /Binding constraints \(highest precedence/);
-    } else {
-      assert.equal(typeof mod.guidance, "string");
-      assert.ok(mod.guidance.length > 0, key);
-    }
+    assert.ok(mod.guidance.length > 0, key);
+    assert.equal(mod.guidance.includes("Binding constraints"), false, key);
   }
 });

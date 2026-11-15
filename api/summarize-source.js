@@ -5,11 +5,12 @@ import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-
 import {
   SUMMARIZE_SYSTEM_PROMPT,
   parseSummarizeResponse,
+  roleForSingleSource,
   summaryUserMessage,
   textTypeForSummary,
 } from "../lib/source-summary.mjs";
 
-const EMPTY_RESPONSE = { ok: true, description: "", publicationState: "unknown", suggestedRole: "" };
+const EMPTY_RESPONSE = { ok: true, description: "", publicationState: "unknown", suggestedRole: "", roleReason: "" };
 
 export { SUMMARIZE_SYSTEM_PROMPT, parseSummarizeResponse };
 
@@ -71,7 +72,8 @@ export default async function handler(req, res) {
 
   try {
     const namedType = textTypeForSummary(source?.eventType);
-    if (!namedType) {
+    const single = roleForSingleSource(source?.sourceCount);
+    if (!namedType && !single) {
       console.warn("[summarize-source] text type is missing; no suggested role");
     }
     const completion = await callLLM({
@@ -87,10 +89,18 @@ export default async function handler(req, res) {
       spanName: "source-description-generation",
       metadata: { route: "summarize-source" },
     });
-    const { description, publicationState, suggestedRole } = parseSummarizeResponse(completion?.text, {
-      allowRole: Boolean(namedType),
+    const parsed = parseSummarizeResponse(completion?.text, {
+      allowRole: Boolean(namedType) && !single,
     });
-    return res.status(200).json({ ok: true, description, publicationState, suggestedRole });
+    const suggestedRole = single ? single.suggestedRole : parsed.suggestedRole;
+    const roleReason = single ? single.roleReason : parsed.roleReason;
+    return res.status(200).json({
+      ok: true,
+      description: parsed.description,
+      publicationState: parsed.publicationState,
+      suggestedRole,
+      roleReason,
+    });
   } catch {
     return res.status(200).json(EMPTY_RESPONSE);
   } finally {
