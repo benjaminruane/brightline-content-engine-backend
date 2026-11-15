@@ -22,6 +22,7 @@ import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-sour
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
+import { sourcesForPrompt as omitRoleForPrompt } from "../lib/source-role.mjs";
 
 function setCorsHeaders(req, res) {
   const origin = req.headers.origin || "*";
@@ -209,7 +210,7 @@ ${baseDraftText}
 ---
 
 SOURCES (same universe; do not add facts not present here or in the draft):
-${sourcesForPrompt.length ? JSON.stringify(sourcesForPrompt, null, 2) : "(none)"}
+${sourcesForPrompt.length ? JSON.stringify(omitRoleForPrompt(sourcesForPrompt), null, 2) : "(none)"}
 
 WEB RESULTS (optional; cite [1], [2] if you use them):
 ${webResultsForPrompt || "(none)"}

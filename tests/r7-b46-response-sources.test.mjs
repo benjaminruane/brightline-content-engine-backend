@@ -63,6 +63,7 @@ describe("buildResponseSources", () => {
       "index",
       "label",
       "publicationState",
+      "role",
       "text",
     ]);
     assert.equal(sources[0].label, "Annual Report");

@@ -8,6 +8,7 @@
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
+import { sourcesForPrompt } from "../lib/source-role.mjs";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -742,7 +743,7 @@ DRAFT:
 ${text}
 
 SOURCES (for context only; do not add new content):
-${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+${sources.length ? JSON.stringify(sourcesForPrompt(sources), null, 2) : "(none)"}
 
 Return ONLY valid JSON with no markdown or extra text:
 {
@@ -778,7 +779,7 @@ WEB RESULTS:
 ${webResultsForPrompt || "(none)"}
 
 SOURCES:
-${sources.length ? JSON.stringify(sources, null, 2) : "(none)"}
+${sources.length ? JSON.stringify(sourcesForPrompt(sources), null, 2) : "(none)"}
 
 VOICE REQUIREMENT:
 ${voiceInstruction}

@@ -33,6 +33,7 @@ import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
+import { sourcesForPrompt } from "../lib/source-role.mjs";
 
 // ------------------------------------------------------------------
 // CORS
@@ -734,7 +735,7 @@ WEB RESULTS:
 ${webResultsForPrompt || "(none)"}
 
 SOURCES (user uploaded / URLs):
-${safeSources.length ? JSON.stringify(safeSources, null, 2) : "(none)"}
+${safeSources.length ? JSON.stringify(sourcesForPrompt(safeSources), null, 2) : "(none)"}
 
 CRITICAL ATTRIBUTION RULES (HYBRID):
 ${safePublicSearch && webReferences.length > 0 ? `
