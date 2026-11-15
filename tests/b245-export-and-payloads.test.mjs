@@ -9,7 +9,6 @@ import { fileURLToPath } from "node:url";
 import { describe, test } from "vitest";
 import { buildReviewData, renderCanonicalExportText } from "../lib/qc/export-review-data.mjs";
 import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
-import { collectMarginNotes } from "../lib/qc/constructive-feedback.mjs";
 import { buildSortedEntries } from "../lib/revise-actions/sort.mjs";
 import { synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
 import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
@@ -70,21 +69,6 @@ describe("B245 export golden and prose payloads", () => {
     const src = readFileSync(path.join(ROOT, "tests/b245-export-and-payloads.test.mjs"), "utf8");
     assert.equal(src.includes("GOLDEN_BLESS_TOKEN"), true);
     assert.equal(src.includes('process.env.UPDATE_EXPORT_GOLDEN === GOLDEN_BLESS_TOKEN'), true);
-  });
-
-  test("constructive feedback margin notes come from the cards", () => {
-    const payload = loadMeridianLiveFixture();
-    const notes = collectMarginNotes(
-      payload.statements,
-      payload.meta.reviewOptions,
-      fixtureDraftText(payload)
-    );
-    assert.equal(notes.length, 6);
-    assert.equal(notes.filter((note) => note.kind === "evidence").length, 5);
-    const editorial = notes.find((note) => note.kind === "editorial");
-    assert.equal(Boolean(editorial), true);
-    assert.equal(String(editorial.cardNote).includes(EDITORIAL_NOTE_FRAGMENT), true);
-    assert.equal(String(editorial.statementText).includes("We recommend approval"), true);
   });
 
   test("revise action list is sorted from the cards without a model call", () => {

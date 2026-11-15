@@ -2,7 +2,7 @@ import { describe, test } from "vitest";
 import assert from "node:assert/strict";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { OUTPUT_TYPE, VISIBILITY } from "../lib/output-intent.js";
-import { EVENT_TYPE, PG_DEMO_EVENT_TYPE } from "../lib/event-type.js";
+import { EVENT_TYPE, LEGACY_EVENT_TYPE } from "../lib/event-type.js";
 import { AUTHORING_ORGANISATION_ENV } from "../lib/qc/first-person-actor.mjs";
 
 const REAL_FIRM = "Partners Group";
@@ -10,7 +10,7 @@ const CONFIGURED_HOUSE = "Northwind Capital";
 
 const OUTPUT_TYPES = Object.values(OUTPUT_TYPE);
 const VISIBILITIES = Object.values(VISIBILITY);
-const EVENT_TYPES = [...Object.values(EVENT_TYPE), PG_DEMO_EVENT_TYPE.NEW_FUND_COMMITMENT];
+const EVENT_TYPES = [...Object.values(EVENT_TYPE), LEGACY_EVENT_TYPE.NEW_FUND_COMMITMENT];
 
 function withEnvHouse(name, fn) {
   const prev = process.env[AUTHORING_ORGANISATION_ENV];

@@ -4,7 +4,6 @@
  */
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { stripUnquotedCraft } from "../lib/qc/constructive-feedback.mjs";
 import {
   concernContent,
   dropRecord,
@@ -46,15 +45,4 @@ describe("B463 drop record", () => {
     assert.equal(rows[0].content, "2024 paired with 2023");
   });
 
-  test("a dropped craft paragraph is kept, and the piece the reader gets is the kept text", () => {
-    const piece = "Ready.\n\nThe source says the figure.\n\nThis paragraph quotes nothing.";
-    const notes = [{ statementText: "The source says the figure.", kind: "evidence", cardNote: "The source says the figure." }];
-    const bag = [];
-    const shown = stripUnquotedCraft(piece, { draftText: "other draft", notes, droppedParagraphs: bag });
-    const plain = stripUnquotedCraft(piece, { draftText: "other draft", notes });
-    assert.equal(shown, plain);
-    assert.equal(bag.length, 1);
-    assert.match(bag[0], /quotes nothing/);
-    assert.equal(concernContent({ note: "The objection." }), "The objection.");
-  });
 });

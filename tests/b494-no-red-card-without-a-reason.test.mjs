@@ -54,10 +54,11 @@ test("Needs a look uses the mapped sentence, and the screen matches", () => {
   assert.equal(screenSentence(card), reason);
 });
 
-test("an empty reason code uses the empty completion sentence", () => {
-  const sentence = "This check did not run, because the result came back empty.";
+test("an empty reason code does not say the result came back empty", () => {
+  const sentence = "The check that reads the whole claim did not finish, so read this sentence against the source yourself.";
   assert.equal(NOT_CHECKED_SENTENCES[""], sentence);
-  assert.equal(NOT_CHECKED_SENTENCES[""], NOT_CHECKED_SENTENCES.empty_completion);
+  assert.notEqual(NOT_CHECKED_SENTENCES[""], NOT_CHECKED_SENTENCES.empty_result);
+  assert.notEqual(NOT_CHECKED_SENTENCES[""], NOT_CHECKED_SENTENCES.empty_completion);
   for (const code of ["", "   ", null]) {
     const card = {
       statement: "We see continued strong demand for managed IT services.",

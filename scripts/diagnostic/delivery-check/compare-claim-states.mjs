@@ -9,8 +9,6 @@ import { classifyCard, reviewSummaryFromResult, summariseReview } from "../../..
 import { summaryBulletsFromReview } from "../../../lib/qc/summary-bullets.mjs";
 import { evidenceDisplayVerdictLabel } from "../../../lib/qc/evidence-display-verdict.mjs";
 import { renderCanonicalExportText } from "../../../lib/qc/export-review-data.mjs";
-import { collectMarginNotes, CLEAN_DRAFT_FEEDBACK_TEXT, isCardFullyClean } from "../../../lib/qc/constructive-feedback.mjs";
-
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const FIXTURE_DIR = path.join(ROOT, "tests/fixtures/b247");
 const FRONTEND_ROOT = path.resolve(ROOT, "../brightline-content-engine-frontend");
@@ -104,7 +102,6 @@ async function compareState(id, payload, fe, tables, extras = {}) {
     maxWords: 150,
   });
   const assessment = fe.buildReviewerSynthesisPayload(qrs.draft, payload, rows(payload), opts, "assess");
-  const notes = collectMarginNotes(rows(payload), opts, qrs.draft);
   const exportText = exportTextFrom(payload, qrs);
   const exportLines = exportText.split("\n").filter(Boolean);
   const classified = cards(payload).map((card) => classifyCard(card, opts));
@@ -118,8 +115,6 @@ async function compareState(id, payload, fe, tables, extras = {}) {
   const notCheckedCards = classified.filter(
     (cls) => cls.editorial === "notChecked" || cls.compliance === "notChecked" || cls.evidence === "notChecked"
   ).length;
-  const unclean = rows(payload).filter((row) => !isCardFullyClean(row?.qcCard, opts)).length;
-
   const A = tables.A;
   const B = tables.B;
   const C = tables.C;
@@ -376,31 +371,6 @@ async function compareState(id, payload, fe, tables, extras = {}) {
       ["C37"]
     );
   }
-  const feedbackSaysClean = notes.length === 0;
-  const readinessReady = screen.readiness === "Ready";
-  if (feedbackSaysClean !== readinessReady && notes.length === 0 && screen.readiness !== "Ready") {
-    disagreement(
-      B,
-      id,
-      "constructive feedback notes",
-      "readiness",
-      notes.length === 0 ? CLEAN_DRAFT_FEEDBACK_TEXT : `${notes.length} notes`,
-      screen.readiness,
-      ["C40", "C14"]
-    );
-  }
-  if (notes.filter((n) => n.kind !== "coherence").length !== unclean) {
-    disagreement(
-      B,
-      id,
-      "constructive feedback notes (non-coherence)",
-      "unclean cards",
-      notes.filter((n) => n.kind !== "coherence").length,
-      unclean,
-      ["C40"]
-    );
-  }
-
   const filterNotChecked = screen.filterCounts?.not_checked ?? 0;
   const evidenceNotReviewed = (screen.cards || []).filter((card) => card.evidenceBadge === "Not reviewed").length;
   if (evidenceNotReviewed > 0 && filterNotChecked === 0) {
@@ -529,8 +499,6 @@ async function compareState(id, payload, fe, tables, extras = {}) {
     compliance: (screen.cards || []).map((card) => card.complianceLabel),
     assessmentReadiness: assessment?.qcSummary?.readiness ?? null,
     assessmentCounts: assessment?.qcSummary ?? null,
-    feedbackNotes: notes.length,
-    uncleanCards: unclean,
     exportHead: exportLines.slice(0, 8),
     reviewOptions: opts,
     statementCount: cards(payload).length,

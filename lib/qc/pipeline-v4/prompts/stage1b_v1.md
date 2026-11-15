@@ -27,6 +27,6 @@ Wrong: "Gestcompost has expanded its workforce" (Gestcompost is not in that span
 Also wrong as a standalone claim: "expanded its workforce" (no number, date, or proper noun).
 Right (two claims): "Since Suma Capital's investment in 2020, Gestcompost has tripled its EBITDA" and "grown its treatment capacity through new facilities".
 
-Same insertion error: parent "…with Partners Group acting as cornerstone investor and taking two seats on the Company's board."
-Wrong: "Partners Group taking two seats on the Company's board"
+Same insertion error: parent "…with Halden Group acting as cornerstone investor and taking two seats on the Company's board."
+Wrong: "Halden Group taking two seats on the Company's board"
 Right: "taking two seats on the Company's board"
