@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { cardEvidenceFindings, displayedEvidenceProse } from "../lib/qc/evidence-findings.mjs";
+import { EMPTY_HEADLINE_REASON, cardEvidenceFindings, displayedEvidenceProse } from "../lib/qc/evidence-findings.mjs";
 
 const causal = {
   id: "S1:editorial:overreach_unsupported_causal:0",
@@ -37,10 +37,10 @@ test("beyond, conflicts, and not_in_source prose is the note, unless the note as
   const note = "The statement adds a gain the source does not assert.";
   const budgets = "The source says EBITDA is delivered in line with expectations, not in line with budgets.";
   assert.equal(displayedEvidenceProse("beyond", note), note);
-  assert.equal(displayedEvidenceProse("conflicts", "The source confirms the figure as stated."), "");
-  assert.equal(displayedEvidenceProse("conflicts", "The draft aligns with a different company."), "");
+  assert.equal(displayedEvidenceProse("conflicts", "The source confirms the figure as stated."), EMPTY_HEADLINE_REASON);
+  assert.equal(displayedEvidenceProse("conflicts", "The draft aligns with a different company."), EMPTY_HEADLINE_REASON);
   assert.equal(displayedEvidenceProse("nothing_raised", "The source confirms this."), null);
-  assert.equal(displayedEvidenceProse("not_in_source", "The source confirms this."), "");
-  assert.equal(displayedEvidenceProse("not_in_source", ""), "");
+  assert.equal(displayedEvidenceProse("not_in_source", "The source confirms this."), EMPTY_HEADLINE_REASON);
+  assert.equal(displayedEvidenceProse("not_in_source", ""), EMPTY_HEADLINE_REASON);
   assert.equal(displayedEvidenceProse("not_in_source", budgets), budgets);
 });

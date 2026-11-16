@@ -22,13 +22,11 @@ function card(fixtureId, index) {
   return row;
 }
 
-test("a wording note on the unrecorded line is Nothing raised", () => {
+test("a wording note on the unrecorded line stays a partial, not Nothing raised", () => {
   for (const [fixtureId, index] of [["08", 3], ["08", 6], ["14", 3]]) {
     const row = card(fixtureId, index);
-    assert.equal(shownState(row), "nothing_raised", `${fixtureId}:${index}`);
-    assert.equal(shownTier(shownState(row)), "quiet", `${fixtureId}:${index}`);
-    assert.equal(shownLabel(row), "Nothing raised", `${fixtureId}:${index}`);
-    assert.equal((readerEvidenceSentence(row) || "").includes(PARTIAL_UNRECORDED), false);
+    assert.notEqual(shownState(row), "nothing_raised", `${fixtureId}:${index}`);
+    assert.equal(shownLabel(row) === "Goes beyond the source" || shownLabel(row) === "Needs a look", true, `${fixtureId}:${index}`);
   }
 });
 

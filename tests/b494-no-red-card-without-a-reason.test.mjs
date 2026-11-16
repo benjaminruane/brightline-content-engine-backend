@@ -25,12 +25,12 @@ function partial(bucket) {
   };
 }
 
-test("24:6 shape stays Nothing raised", () => {
+test("24:6 shape is Needs a look, not Nothing raised", () => {
   const card = partial("none");
-  assert.equal(shownState(card), "nothing_raised");
-  assert.equal(shownLabel(card), "Nothing raised");
-  assert.equal(shownTier(shownState(card)), "quiet");
-  assert.equal(statementVerdictState(card), "nothing_raised");
+  assert.equal(shownState(card), "note_withheld");
+  assert.equal(shownLabel(card), "Needs a look");
+  assert.equal(shownTier(shownState(card)), "light");
+  assert.equal(statementVerdictState(card), "note_withheld");
 });
 
 test("a conflict or a beyond note on the unrecorded line stays raised", () => {

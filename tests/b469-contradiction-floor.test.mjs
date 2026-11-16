@@ -103,10 +103,10 @@ describe("B469 contradiction floor", () => {
     // B516 leaves 11:9 and 15:12 at Nothing raised. The reader accepted them, so an unfinished match does not raise the label.
     // B473 adds 04:1, which leaves Nothing raised because committed is later than seeking approval.
     // B486 leaves 15:11 quiet. The note and the matcher both say the statement is supported, and the span vote is what raised the stored label.
-    // B488 leaves a wording note whose reason was not recorded under Nothing raised.
+    // B519 no longer quiets an unrecorded partial, so those cards are not in the lighter set.
     assert.equal(heavier, 4);
-    assert.equal(lighter, 9);
+    assert.equal(lighter, 1);
     const quieted = pass.cards.filter((row) => (WEIGHT[row.sentenceLabel] || 0) > (WEIGHT[shownLabel(row)] || 0));
-    assert.deepEqual(quieted.map(keyOf), ["04:12", "04:13", "08:10", "08:12", "14:3", "14:4", "15:11", "15:30", "18:9"]);
+    assert.deepEqual(quieted.map(keyOf), ["15:11"]);
   });
 });

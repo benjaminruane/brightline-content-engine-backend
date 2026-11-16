@@ -30,7 +30,7 @@ const SUPERSESSION_DIR = path.join(DIAG_ROOT, "supersession");
 const ACCIDENT_DIR = path.join(DIAG_ROOT, "claim-spans/evaluative-accident");
 
 const ANCHOR_ENTITY_RE = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g;
-const PRODUCTION_ORG = "Partners Group";
+const PRODUCTION_ORG = "Halden Group";
 const LOCK_ORG = "Meridian Capital";
 
 const quiet = (fn) => {
