@@ -6,10 +6,9 @@
  * set of first-person sentences, three live runs each. Cache is forced off:
  * the model's suggestion is the thing being measured.
  *
- * Sets AUTHORING_ORGANISATION to the fictional house name BEFORE importing
- * reviewer modules, so identification, instruction examples, and style-guide
- * worked examples all use that name for this process only. Production default
- * is untouched.
+ * Passes the fictional house name on the review request, so identification,
+ * instruction examples, and style-guide worked examples all use that name
+ * for this run only.
  *
  * Expected cost (stated before any billed call):
  *   6 sentences x 3 runs = 18 gpt-4o combined editorial+style calls.
@@ -25,7 +24,6 @@ process.env.BRIGHTLINE_EDITORIAL_REVIEW = process.env.BRIGHTLINE_EDITORIAL_REVIE
 
 /** Fictional house for this harness. Not the production default. */
 const HARNESS_HOUSE = "Halden Group";
-process.env.AUTHORING_ORGANISATION = HARNESS_HOUSE;
 
 const { default: editorialRules } = await import("../../lib/rulebook/editorialRules.js");
 const {
@@ -50,7 +48,7 @@ const CALLS = 6 * RUNS_PER_CASE;
 const EXPECTED_COST_USD = 0.48;
 const COST_CEILING_USD = 0.96;
 const HARD_STOP_USD = 2.0;
-const HOUSE = resolveAuthoringOrganisationName();
+const HOUSE = resolveAuthoringOrganisationName(HARNESS_HOUSE);
 
 const NAMED_PREFIX =
   `In June 2025, ${HOUSE} made a commitment to Meridian Capital Partners V.`;
@@ -298,13 +296,14 @@ async function reviewStatement(statement, draft) {
     editorialRules: editorialFiltered,
     outputSlug,
     statementIndex: 0,
+    authoringOrganisation: HARNESS_HOUSE,
   });
 }
 
 async function main() {
   console.log("FIRST-PERSON ACTOR HARNESS");
   console.log("Live measurement: LLM cache forced off.");
-  console.log(`AUTHORING_ORGANISATION override: ${HOUSE}`);
+  console.log(`authoring organisation: ${HOUSE}`);
   console.log(
     `Expected cost: ${CALLS} gpt-4o combined editorial+style calls, ~$${EXPECTED_COST_USD.toFixed(2)} ` +
       `(ceiling ~$${COST_CEILING_USD.toFixed(2)} with retries).`

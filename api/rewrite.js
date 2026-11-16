@@ -725,7 +725,7 @@ export default async function handler(req, res) {
       eventType,
       transactionDate,
       investment,
-      authoringOrganisation: resolveAuthoringOrganisationName(),
+      authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation),
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
     });
     const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");

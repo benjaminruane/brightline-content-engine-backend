@@ -13,7 +13,6 @@ import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { SOURCES_DIR } from "../lib/paths.mjs";
 
 loadLocalEnvFiles({ liveMeasurement: true });
-process.env.AUTHORING_ORGANISATION = "Halden Group";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURES_DIR = path.resolve(__dirname, "../drafting/fixtures");
@@ -340,6 +339,7 @@ async function main() {
           publicSearch: false,
           sources: promptSources,
           bannedWords: [],
+          authoringOrganisation: "Halden Group",
         },
       }, generated);
       if (generated.statusCode !== 200 || generated.body?.ok !== true || typeof generated.body?.draftText !== "string") {
@@ -363,6 +363,7 @@ async function main() {
           visibility: job.fixture.visibility,
           eventType: job.fixture.textType,
           dealStatus: job.dealStatus || "",
+          authoringOrganisation: "Halden Group",
           evidenceEnabled: true,
           editorialEnabled: true,
           complianceEnabled: true,

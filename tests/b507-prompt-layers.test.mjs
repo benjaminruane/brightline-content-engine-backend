@@ -1,19 +1,11 @@
 import assert from "node:assert/strict";
-import { afterAll, test } from "vitest";
+import { test } from "vitest";
 import { EVENT_TYPE } from "../lib/event-type.js";
 import {
   CONTEXT_SOURCE_LINE,
   LAYER_ORDER,
   composeLayers,
 } from "../lib/prompt-library/compose.mjs";
-
-const savedOrg = process.env.AUTHORING_ORGANISATION;
-delete process.env.AUTHORING_ORGANISATION;
-
-afterAll(() => {
-  if (savedOrg === undefined) delete process.env.AUTHORING_ORGANISATION;
-  else process.env.AUTHORING_ORGANISATION = savedOrg;
-});
 
 test("layers stay in one order", () => {
   const facts = composeLayers({

@@ -427,36 +427,22 @@ describe("quoted removal note", () => {
 });
 
 describe("the author's own name is not a checkable particular", () => {
-  const withHouse = (name, fn) => {
-    const prev = process.env.AUTHORING_ORGANISATION;
-    process.env.AUTHORING_ORGANISATION = name;
-    try {
-      return fn();
-    } finally {
-      if (prev === undefined) delete process.env.AUTHORING_ORGANISATION;
-      else process.env.AUTHORING_ORGANISATION = prev;
-    }
-  };
-  const nouns = (t) =>
-    findCheckableParticulars(t)
+  const nouns = (t, house = "Halden Group") =>
+    findCheckableParticulars(t, house)
       .filter((p) => p.kind === "proper_noun")
       .map((p) => p.match);
 
   test("drops the authoring organisation, exactly as it already drops 'we'", () => {
-    withHouse("Halden Group", () => {
-      assert.deepEqual(nouns("Halden Group expects the relationship to deepen."), []);
-      assert.deepEqual(nouns("We expect the relationship to deepen."), []);
-    });
+    assert.deepEqual(nouns("Halden Group expects the relationship to deepen."), []);
+    assert.deepEqual(nouns("We expect the relationship to deepen."), []);
   });
 
   test("keeps a genuine third party, including alongside the author", () => {
-    withHouse("Halden Group", () => {
-      assert.deepEqual(nouns("Meridian Capital expects the relationship to deepen."), [
-        "Meridian Capital",
-      ]);
-      assert.deepEqual(nouns("Halden Group committed to Meridian Capital Partners V."), [
-        "Meridian Capital Partners V",
-      ]);
-    });
+    assert.deepEqual(nouns("Meridian Capital expects the relationship to deepen."), [
+      "Meridian Capital",
+    ]);
+    assert.deepEqual(nouns("Halden Group committed to Meridian Capital Partners V."), [
+      "Meridian Capital Partners V",
+    ]);
   });
 });

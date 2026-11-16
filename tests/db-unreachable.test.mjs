@@ -27,7 +27,6 @@ import {
   resetInProcessDriftMemory,
 } from "../lib/qc/model-drift-reporter.mjs";
 import { withDatabaseStatus, readEnvironmentSummary } from "../api/_lib/env-flags.js";
-import { AUTHORING_ORGANISATION_ENV } from "../lib/qc/first-person-actor.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -177,7 +176,6 @@ describe("B330 health reports database reachability", () => {
   test("health reports the database as unreachable when the credential is refused", async () => {
     vi.stubEnv("DATABASE_URL", "postgresql://neondb_owner:x@localhost/neondb");
     vi.stubEnv("QC_PIPELINE_V4", "1");
-    vi.stubEnv(AUTHORING_ORGANISATION_ENV, "Brightline");
     vi.stubEnv("BRIGHTLINE_EDITORIAL_REVIEW", "1");
     setSqlOverrideForTests(refusingSql());
     const res = await invokeHealth();
@@ -247,7 +245,6 @@ describe("B330 environment.ok is false only for unreachable, not missing", () =>
   test("withDatabaseStatus keeps ok when the URL is unset and clears it when refusing", () => {
     const base = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
-      [AUTHORING_ORGANISATION_ENV]: "Brightline",
       BRIGHTLINE_EDITORIAL_REVIEW: "1",
     });
     assert.equal(base.ok, true);

@@ -135,7 +135,6 @@ describe("B340 health build and resolved flags", () => {
   test("T4 editorial true is OFF and the name is listed without the value", async () => {
     vi.stubEnv("BRIGHTLINE_EDITORIAL_REVIEW", "true");
     vi.stubEnv("QC_PIPELINE_V4", "1");
-    vi.stubEnv("AUTHORING_ORGANISATION", "Brightline");
     const res = await invokeHealth();
     assert.equal(res.body.environment.editorialReview, false);
     assert.equal(res.body.environment.unrecognisedFlags.includes("BRIGHTLINE_EDITORIAL_REVIEW"), true);

@@ -22,6 +22,7 @@ import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 import { resolveReviewOptionsFromBody } from "../lib/qc/review-options.mjs";
+import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
 import {
   beginRequestBudget,
@@ -79,22 +80,13 @@ function resolveOutputType(body) {
   return "";
 }
 
-/** Optional house name from request body. Absent or blank is null (env may still apply downstream). */
+/** Optional house name from the request body field authoringOrganisation. Absent or blank is null. */
 function resolveAuthoringOrganisation(body) {
-  const fromOptions =
-    typeof body?.options?.authoringOrganisation === "string" ? body.options.authoringOrganisation.trim() : "";
-  if (fromOptions) return fromOptions;
-  const fromRoot = typeof body?.authoringOrganisation === "string" ? body.authoringOrganisation.trim() : "";
-  return fromRoot || null;
+  return resolveAuthoringOrganisationName(body?.authoringOrganisation);
 }
 
 function resolveAuthoringOrganisationSource(body) {
-  const fromOptions =
-    typeof body?.options?.authoringOrganisation === "string" ? body.options.authoringOrganisation.trim() : "";
-  if (fromOptions) return "argument";
-  const fromRoot = typeof body?.authoringOrganisation === "string" ? body.authoringOrganisation.trim() : "";
-  if (fromRoot) return "request";
-  return null;
+  return resolveAuthoringOrganisation(body) ? "request" : null;
 }
 
 /** B299: Review toggles from request body. Absent is not requested. Loud at this writer. */

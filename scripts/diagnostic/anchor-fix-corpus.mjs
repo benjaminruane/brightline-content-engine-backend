@@ -21,8 +21,8 @@
  *
  * Toggling the fix needs no code change. corroborationAnchor skips a name only
  * when isAuthoringOrganisationName says so, and that returns false for
- * everything when no organisation is configured. Unsetting AUTHORING_ORGANISATION
- * therefore reproduces the pre-fix behaviour exactly.
+ * everything when no organisation is passed. Passing null therefore
+ * reproduces the pre-fix behaviour exactly.
  *
  * Usage:
  *   node scripts/diagnostic/anchor-fix-corpus.mjs            parts 1-4
@@ -174,23 +174,12 @@ async function baselineRows() {
  * The fix, isolated: deterministic, zero cost
  * ------------------------------------------------------------------ */
 
-const ORG_ENV = "AUTHORING_ORGANISATION";
-
 /**
- * Evaluate a thunk with the anchor fix on (an organisation configured) or off
- * (none configured, so isAuthoringOrganisationName skips nothing and the anchor
- * falls back to the first Title-Case run, which is the pre-fix behaviour).
+ * The organisation is the request argument. Null leaves the anchor on the
+ * first Title-Case run, which is the pre-fix behaviour.
  */
 function withFix(orgOrNull, fn) {
-  const prev = process.env[ORG_ENV];
-  if (orgOrNull) process.env[ORG_ENV] = orgOrNull;
-  else delete process.env[ORG_ENV];
-  try {
-    return fn();
-  } finally {
-    if (prev === undefined) delete process.env[ORG_ENV];
-    else process.env[ORG_ENV] = prev;
-  }
+  return fn(orgOrNull);
 }
 
 /**
@@ -250,6 +239,7 @@ async function replayFix(pairs, passageFor, organisations) {
         withFix(o, () =>
           corePropositionConfirmed(p.statementText, passage, {
             claimType: inferClaimTypeForRelation(p.statementText),
+            authoringOrganisation: o,
           }).corePropositionConfirmed
         );
       const on = core(org);
@@ -265,6 +255,7 @@ async function replayFix(pairs, passageFor, organisations) {
             matchType: "partial_support",
             statementRole: "fact",
             evidenceRole: "fact",
+            authoringOrganisation: o,
           })
         );
       const gOn = gate(org);

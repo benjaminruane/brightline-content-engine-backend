@@ -4,8 +4,6 @@
  *
  * Run: node --experimental-test-module-mocks scripts/diagnostic/b507/baseline.mjs
  */
-delete process.env.AUTHORING_ORGANISATION;
-
 import { mock } from "node:test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -44,7 +42,7 @@ const FIXED = {
   maxWords: 150,
   title: "Assess draft",
   draft: "The firm completed the transaction.",
-  authoringOrganisation: resolveAuthoringOrganisationName(),
+  authoringOrganisation: resolveAuthoringOrganisationName(null),
   source: {
     name: "Memo",
     text: "Northwind Holdings reported revenue of USD 20 million.",

@@ -129,42 +129,23 @@ describe("B13 materiality refinements", () => {
 });
 
 describe("the author is not an attribution", () => {
-  const withHouse = (name, fn) => {
-    const prev = process.env.AUTHORING_ORGANISATION;
-    process.env.AUTHORING_ORGANISATION = name;
-    try {
-      return fn();
-    } finally {
-      if (prev === undefined) delete process.env.AUTHORING_ORGANISATION;
-      else process.env.AUTHORING_ORGANISATION = prev;
-    }
-  };
-  const fires = (t) =>
-    extractStatementFeatures(t).includes("named_person_entity_attribution");
+  const fires = (t, house = "Halden Group") =>
+    extractStatementFeatures(t, house).includes("named_person_entity_attribution");
 
   test("a statement naming only the authoring organisation is not an attribution", () => {
-    withHouse("Halden Group", () => {
-      assert.equal(fires("Halden Group expects the relationship to deepen over the next cycle."), false);
-    });
+    assert.equal(fires("Halden Group expects the relationship to deepen over the next cycle."), false);
   });
 
   test("a third party still fires, and so does the author alongside one", () => {
-    withHouse("Halden Group", () => {
-      assert.equal(fires("Meridian Capital expects the relationship to deepen."), true);
-      assert.equal(fires("Halden Group committed to Meridian Capital Partners V."), true);
-    });
+    assert.equal(fires("Meridian Capital expects the relationship to deepen."), true);
+    assert.equal(fires("Halden Group committed to Meridian Capital Partners V."), true);
   });
 
   test("an explicit attribution verb fires whoever is named", () => {
-    withHouse("Halden Group", () => {
-      assert.equal(fires("According to Halden Group, the fund is performing."), true);
-    });
+    assert.equal(fires("According to Halden Group, the fund is performing."), true);
   });
 
-  test("nothing is suppressed when no organisation is configured", () => {
-    withHouse("", () => {
-      delete process.env.AUTHORING_ORGANISATION;
-      assert.equal(fires("Halden Group expects the relationship to deepen."), true);
-    });
+  test("nothing is suppressed when no organisation is passed", () => {
+    assert.equal(fires("Halden Group expects the relationship to deepen.", null), true);
   });
 });

@@ -16,9 +16,6 @@ import { loadPipelineSources } from "./lib/sources.mjs";
 import { DIAG_ROOT } from "./lib/paths.mjs";
 import { BASELINE_PATH } from "./claim-spans/baseline-cache.mjs";
 
-process.env.AUTHORING_ORGANISATION =
-  process.env.AUTHORING_ORGANISATION || "Partners Group";
-
 const { corePropositionConfirmed, inferClaimTypeForRelation } = await import(
   "../../lib/qc/evidence-relationship.mjs"
 );
@@ -67,6 +64,7 @@ function coreOf(stmt, window) {
   return quiet(() =>
     corePropositionConfirmed(stmt, window, {
       claimType: inferClaimTypeForRelation(stmt),
+      authoringOrganisation: org,
     }).corePropositionConfirmed
   );
 }
@@ -320,7 +318,7 @@ console.log("=== anchor-window-replay (free, no model) ===\n");
 console.log(`stored pairs: ${stored.results.length}`);
 console.log(`source joined: ${replayable.length}  no-source: ${noSource}  skipped cases: ${skipped.join(", ") || "(none)"}`);
 console.log(`W2 located: ${w2able.length}  exact=${locatedExact} ws=${locatedWs} prefix=${locatedPrefix} unlocated=${unlocated}`);
-console.log(`org for presence/core: ${org} (env ${process.env.AUTHORING_ORGANISATION})`);
+console.log(`org for presence/core: ${org}`);
 
 console.log("\n--- F02:S6 per window ---");
 for (const k of ["w1", "w2", "w3"]) {
@@ -403,17 +401,12 @@ if (f21) {
   console.log("\n--- F21:S0 lock under Meridian Capital ---");
   for (const k of ["w1", "w2", "w3"]) {
     const p = presence(f21.statementText, f21[k], LOCK_ORG);
-    const c = f21[k] ? quiet(() => {
-      const prev = process.env.AUTHORING_ORGANISATION;
-      process.env.AUTHORING_ORGANISATION = LOCK_ORG;
-      try {
-        return corePropositionConfirmed(f21.statementText, f21[k], {
-          claimType: inferClaimTypeForRelation(f21.statementText),
-        }).corePropositionConfirmed;
-      } finally {
-        process.env.AUTHORING_ORGANISATION = prev;
-      }
-    }) : null;
+    const c = f21[k] ? quiet(() =>
+      corePropositionConfirmed(f21.statementText, f21[k], {
+        claimType: inferClaimTypeForRelation(f21.statementText),
+        authoringOrganisation: LOCK_ORG,
+      }).corePropositionConfirmed
+    ) : null;
     console.log(`  ${k} presence=${p.hit} core=${c} entity=${JSON.stringify(p.entity)}`);
   }
   console.log("  source has 'project atlas':", String(f21.w3 || "").toLowerCase().includes("project atlas"));

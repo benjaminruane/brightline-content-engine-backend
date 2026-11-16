@@ -14,7 +14,6 @@ import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { SOURCES_DIR } from "../lib/paths.mjs";
 
 loadLocalEnvFiles({ liveMeasurement: true });
-process.env.AUTHORING_ORGANISATION = "Halden Group";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURES_DIR = path.resolve(__dirname, "../drafting/fixtures");
@@ -556,6 +555,7 @@ async function main() {
             publicSearch: false,
             sources: promptSources,
             bannedWords: [],
+            authoringOrganisation: "Halden Group",
           },
         },
         generated
@@ -585,6 +585,7 @@ async function main() {
             evidenceEnabled: true,
             editorialEnabled: true,
             complianceEnabled: true,
+            authoringOrganisation: "Halden Group",
             sources: promptSources.map((source) => ({
               name: source.name,
               label: source.label,

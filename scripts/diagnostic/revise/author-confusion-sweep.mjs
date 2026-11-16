@@ -28,7 +28,6 @@ const OUT_DIR = __dirname;
 const FIXTURE_DIR = path.join(__dirname, "fixtures");
 
 const AUTHOR = "Halden Group";
-process.env.AUTHORING_ORGANISATION = process.env.AUTHORING_ORGANISATION || AUTHOR;
 
 const norm = (s) => String(s ?? "").replace(/\s+/g, " ").trim();
 const trunc = (s, n = 70) => {
@@ -74,8 +73,8 @@ async function sweep() {
 
   /* 1. materiality: named_person_entity_attribution */
   {
-    const a = extractStatementFeatures(AUTHOR_ONLY).includes("named_person_entity_attribution");
-    const t = extractStatementFeatures(THIRD_PARTY).includes("named_person_entity_attribution");
+    const a = extractStatementFeatures(AUTHOR_ONLY, AUTHOR).includes("named_person_entity_attribution");
+    const t = extractStatementFeatures(THIRD_PARTY, AUTHOR).includes("named_person_entity_attribution");
     record({
       site: "lib/qc/materiality.mjs extractStatementFeatures -> named_person_entity_attribution",
       does: "fires a high-signal materiality feature when a statement names a person or entity",
@@ -172,10 +171,11 @@ async function sweep() {
 
   /* 6. deterministic removal: proper_noun particulars */
   {
-    const a = findCheckableParticulars(AUTHOR_ONLY).filter((p) => p.kind === "proper_noun");
-    const t = findCheckableParticulars(THIRD_PARTY).filter((p) => p.kind === "proper_noun");
+    const a = findCheckableParticulars(AUTHOR_ONLY, AUTHOR).filter((p) => p.kind === "proper_noun");
+    const t = findCheckableParticulars(THIRD_PARTY, AUTHOR).filter((p) => p.kind === "proper_noun");
     const mixed = findCheckableParticulars(
-      "Halden Group committed to Meridian Capital Partners V."
+      "Halden Group committed to Meridian Capital Partners V.",
+      AUTHOR
     ).filter((p) => p.kind === "proper_noun");
     const namesAuthor = a.some((p) => norm(p.match).toLowerCase().includes("halden"));
     record({
@@ -204,15 +204,18 @@ async function sweep() {
     // only difference is that one opens with the author's name.
     const excerpt =
       "Meridian Capital Partners V was established in 2026 and has invested in twelve platforms.";
+    const house = { authoringOrganisation: AUTHOR };
     const entityLed = corePropositionConfirmed(
       "Meridian Capital Partners V was established in 2026.",
-      excerpt
+      excerpt,
+      house
     );
     const authorLed = corePropositionConfirmed(
       "Halden Group invested in Meridian Capital Partners V, which was established in 2026.",
-      excerpt
+      excerpt,
+      house
     );
-    const authorOnly = corePropositionConfirmed("Halden Group was established in 2026.", excerpt);
+    const authorOnly = corePropositionConfirmed("Halden Group was established in 2026.", excerpt, house);
     record({
       site: "lib/qc/evidence-relationship.mjs corePropositionConfirmed",
       does:

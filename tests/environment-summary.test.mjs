@@ -1,46 +1,33 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { AUTHORING_ORGANISATION_ENV } from "../lib/qc/first-person-actor.mjs";
 import { isReviseActionListEnabled, readEnvironmentSummary } from "../api/_lib/env-flags.js";
 
 describe("readEnvironmentSummary", () => {
-  test("v4 with house name is ok", () => {
+  test("v4 with editorial review on is ok, and the house name is not in the summary", () => {
     const summary = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
-      [AUTHORING_ORGANISATION_ENV]: "Brightline",
       BRIGHTLINE_EDITORIAL_REVIEW: "1",
     });
     assert.equal(summary.pipelineRoute, "v4");
-    assert.equal(summary.authoringOrganisation, "Brightline");
+    assert.equal(Object.hasOwn(summary, "authoringOrganisation"), false);
     assert.equal(summary.ok, true);
     assert.equal(summary.reviseActionList, false);
   });
 
   test("there is one route, and the summary is not ok without the editorial switch", () => {
-    const summary = readEnvironmentSummary({
-      [AUTHORING_ORGANISATION_ENV]: "Brightline",
-    });
+    const summary = readEnvironmentSummary({});
     assert.equal(summary.pipelineRoute, "v4");
-    assert.equal(summary.authoringOrganisation, "Brightline");
+    assert.equal(Object.hasOwn(summary, "authoringOrganisation"), false);
     assert.equal(summary.ok, false);
   });
 
-  test("v4 without house name is not ok and name is null", () => {
+  test("v4 with editorial review on is ok with no house name configured", () => {
     const summary = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
+      BRIGHTLINE_EDITORIAL_REVIEW: "1",
     });
     assert.equal(summary.pipelineRoute, "v4");
-    assert.equal(summary.authoringOrganisation, null);
-    assert.equal(summary.ok, false);
-  });
-
-  test("whitespace house name trims to null", () => {
-    const summary = readEnvironmentSummary({
-      QC_PIPELINE_V4: "1",
-      [AUTHORING_ORGANISATION_ENV]: "   ",
-    });
-    assert.equal(summary.authoringOrganisation, null);
-    assert.equal(summary.ok, false);
+    assert.equal(summary.ok, true);
   });
 
   test("reviseActionList is true for each accepted value", () => {
@@ -63,7 +50,6 @@ describe("readEnvironmentSummary", () => {
   test("editorialReview is true only when BRIGHTLINE_EDITORIAL_REVIEW is 1", () => {
     const on = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
-      [AUTHORING_ORGANISATION_ENV]: "Brightline",
       BRIGHTLINE_EDITORIAL_REVIEW: "1",
     });
     assert.equal(on.editorialReview, true);
@@ -71,7 +57,6 @@ describe("readEnvironmentSummary", () => {
 
     const off = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
-      [AUTHORING_ORGANISATION_ENV]: "Brightline",
       BRIGHTLINE_EDITORIAL_REVIEW: "0",
     });
     assert.equal(off.editorialReview, false);
@@ -79,7 +64,6 @@ describe("readEnvironmentSummary", () => {
 
     const missing = readEnvironmentSummary({
       QC_PIPELINE_V4: "1",
-      [AUTHORING_ORGANISATION_ENV]: "Brightline",
     });
     assert.equal(missing.editorialReview, false);
     assert.equal(missing.ok, false);

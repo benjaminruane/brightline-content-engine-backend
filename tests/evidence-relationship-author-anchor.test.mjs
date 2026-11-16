@@ -1,15 +1,20 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
-import { corePropositionConfirmed } from "../lib/qc/evidence-relationship.mjs";
+import { corePropositionConfirmed as corePropositionConfirmedRaw } from "../lib/qc/evidence-relationship.mjs";
 
+let requestHouse = null;
+function corePropositionConfirmed(statement, excerpt, options = {}) {
+  return corePropositionConfirmedRaw(statement, excerpt, {
+    authoringOrganisation: requestHouse,
+    ...options,
+  });
+}
 const withHouse = (name, fn) => {
-  const prev = process.env.AUTHORING_ORGANISATION;
-  process.env.AUTHORING_ORGANISATION = name;
+  requestHouse = name;
   try {
     return fn();
   } finally {
-    if (prev === undefined) delete process.env.AUTHORING_ORGANISATION;
-    else process.env.AUTHORING_ORGANISATION = prev;
+    requestHouse = null;
   }
 };
 

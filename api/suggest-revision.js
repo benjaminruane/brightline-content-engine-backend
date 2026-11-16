@@ -142,9 +142,7 @@ export default async function handler(req, res) {
     // Read-only, for the author-statement exemption. Resolution precedence is
     // owned by first-person-actor; with nothing configured it is null and only
     // the first-person path can fire.
-    const authoringOrganisation = resolveAuthoringOrganisationName(
-      body?.options?.authoringOrganisation ?? body?.authoringOrganisation
-    );
+    const authoringOrganisation = resolveAuthoringOrganisationName(body?.authoringOrganisation);
 
     const concerns = gatherConcerns(statements, publicationMap);
     const prompt = buildRevisionPrompt(draftText, concerns, { outputType, requiredVersion });

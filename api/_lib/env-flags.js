@@ -1,4 +1,3 @@
-import { AUTHORING_ORGANISATION_ENV } from "../../lib/qc/first-person-actor.mjs";
 import { isClaimSpansEnabled } from "../../lib/qc/claim-spans.mjs";
 import { isStage2SpanEnabled } from "../../lib/qc/pipeline-v4/stage2-match-sources.mjs";
 import { isLlmCacheEnabled } from "../../lib/qc/llm-cache.mjs";
@@ -83,14 +82,12 @@ export function listUnrecognisedFlags(env = process.env) {
 
 export function readEnvironmentSummary(env = process.env) {
   const pipelineRoute = "v4";
-  const authoringOrganisation = (env[AUTHORING_ORGANISATION_ENV] || "").trim() || null;
   const editorialReview = isEditorialReviewEnabled(env);
   return {
     pipelineRoute,
-    authoringOrganisation,
     reviseActionList: isReviseActionListEnabled(env),
     editorialReview,
-    ok: pipelineRoute === "v4" && authoringOrganisation !== null && editorialReview === true,
+    ok: pipelineRoute === "v4" && editorialReview === true,
     claimSpans: flagReport(isClaimSpansEnabled(), true),
     stage2Span: flagReport(isStage2SpanEnabled(), false),
     llmCache: flagReport(isLlmCacheEnabled(), true),
