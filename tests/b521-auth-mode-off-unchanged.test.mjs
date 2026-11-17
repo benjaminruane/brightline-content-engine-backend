@@ -61,7 +61,7 @@ describe("B521 auth off", () => {
         assert.equal(text.includes("authMode"), true);
       } else {
         assert.equal(text.includes("requireAccount"), true, name);
-        assert.equal(text.includes("Authorization"), true, name);
+        assert.equal(text.includes("applyCors"), true, name);
       }
     }
     const cron = readFileSync(path.resolve("api/cron/langfuse-retention.js"), "utf8");

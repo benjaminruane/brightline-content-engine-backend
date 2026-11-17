@@ -2,6 +2,7 @@
  * B513. One role suggestion for the whole run, from names and descriptions only.
  * One document is facts, with no model call.
  */
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -14,13 +15,6 @@ import {
   textTypeForSummary,
 } from "../lib/source-summary.mjs";
 
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
-}
 
 function documentRows(body) {
   const raw = Array.isArray(body?.documents) ? body.documents : [];
@@ -31,8 +25,7 @@ function documentRows(body) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (applyCors(req, res, { methods: "POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

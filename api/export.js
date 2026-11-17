@@ -1,3 +1,4 @@
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import PDFDocument from "pdfkit";
 import {
@@ -11,12 +12,6 @@ import { buildReviewData, evidenceConcernSuffix } from "../lib/qc/export-review-
 import { reviewSummaryFromResult } from "../lib/qc/review-summary.mjs";
 import { summaryBulletsFromReview } from "../lib/qc/summary-bullets.mjs";
 
-function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Max-Age", "86400");
-}
 
 function safeJsonParse(text) {
   try {
@@ -410,8 +405,7 @@ function buildDocx(payload) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

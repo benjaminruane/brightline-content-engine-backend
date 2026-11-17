@@ -1,5 +1,6 @@
 // api/query.js
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
@@ -23,13 +24,8 @@ function resultsAreGeneric(results = [], entity = "") {
 }
 
 export default async function handler(req, res) {
+  if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
   try {
-    if (req.method === "OPTIONS") {
-      res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-      res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-      return res.status(200).end();
-    }
     const account = await requireAccount(req, res);
     if (!account) return;
     rememberAccount(account);
@@ -43,9 +39,6 @@ export default async function handler(req, res) {
       maxDurationMs: FUNCTION_MAX_DURATION_MS,
       model: STAGE_MODELS["ask-query"].model,
     });
-
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.setHeader("Vary", "Origin");
 
     const {
       question,

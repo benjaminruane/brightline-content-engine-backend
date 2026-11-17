@@ -5,6 +5,7 @@
 // - publicSearch === true: enrich with web search results
 // - publicSearch === false: do not retrieve from web
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -35,13 +36,6 @@ import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
-}
 
 function safeJsonParse(s) {
   try {
@@ -625,7 +619,7 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const header = req?.headers?.["x-brightline-diag"] || null;
   const gateAllowsHeader = process.env.BRIGHTLINE_ALLOW_DIAG_HEADER === "1" || process.env.VERCEL_ENV !== "production";
   const envVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE === "1";

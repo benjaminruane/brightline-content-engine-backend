@@ -11,6 +11,7 @@
 
 console.log("[A3.14.3][IMPORT_OK] api/generate.js loaded");
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import {
   tavilySearch,
@@ -42,12 +43,6 @@ import { sourcesForPrompt } from "../lib/source-role.mjs";
 
 // ------------------------------------------------------------------
 // CORS
-function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-brightline-diag");
-  res.setHeader("Access-Control-Max-Age", "86400");
-}
 
 // ------------------------------------------------------------------
 
@@ -597,7 +592,7 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
 
 export default async function handler(req, res) {
   console.log("[A3.14.3][HANDLER_ENTER] generate");
-  setCorsHeaders(req, res);
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const header = req?.headers?.["x-brightline-diag"] || null;
   const gateAllowsHeader = process.env.BRIGHTLINE_ALLOW_DIAG_HEADER === "1" || process.env.VERCEL_ENV !== "production";
   const envVerbose = process.env.BRIGHTLINE_DIAG_VERBOSE === "1";

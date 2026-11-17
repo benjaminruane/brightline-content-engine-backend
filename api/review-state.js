@@ -1,3 +1,4 @@
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { authMode, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import {
@@ -8,26 +9,6 @@ import {
   validateOwnerKey,
   validateReviewId,
 } from "../lib/db/review-state.mjs";
-
-export const REVIEW_STATE_PRODUCTION_ORIGIN =
-  "https://brightline-content-engine-frontend.vercel.app";
-
-// Localhost CORS is a deliberate loosening for local development. Revisit when user accounts arrive.
-const LOCAL_DEV_ORIGIN_RE = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
-
-export function resolveReviewStateCorsOrigin(requestOrigin) {
-  const origin = Array.isArray(requestOrigin) ? requestOrigin[0] : requestOrigin;
-  if (origin === REVIEW_STATE_PRODUCTION_ORIGIN) return origin;
-  if (typeof origin === "string" && LOCAL_DEV_ORIGIN_RE.test(origin)) return origin;
-  return REVIEW_STATE_PRODUCTION_ORIGIN;
-}
-
-function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", resolveReviewStateCorsOrigin(req.headers?.origin));
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-brightline-diag, x-owner-key");
-  res.setHeader("Access-Control-Max-Age", "86400");
-}
 
 function readJsonBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
@@ -59,13 +40,12 @@ function headerOwnerKey(req) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
+  if (applyCors(req, res, { methods: "GET,POST,DELETE,OPTIONS", headers: ["x-brightline-diag"] })) return;
   res.setHeader("Cache-Control", "private, no-store");
   console.log(
     `[review-state] ${req.method} db=${process.env.DATABASE_URL ? "configured" : "UNSET"}`
   );
 
-  if (req.method === "OPTIONS") return res.status(204).end();
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

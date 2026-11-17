@@ -5,6 +5,7 @@
 // even if the implementation module fails to import or initialize.
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
@@ -48,13 +49,6 @@ import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
 
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
-}
 
 const ROUTE = "analyse-statements";
 const OUTPUT_TYPES = new Set([
@@ -149,11 +143,7 @@ export default async function handler(req, res) {
   req._brightlineRid = rid;
   console.log("[A3.14.5][HANDLER_ENTER]", { rid, route: ROUTE });
 
-  setCorsHeaders(req, res);
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

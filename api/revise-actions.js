@@ -6,6 +6,7 @@
  * Does not import or touch api/suggest-revision.js.
  */
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -14,13 +15,6 @@ import { isReviseActionListEnabled } from "./_lib/env-flags.js";
 
 export { isReviseActionListEnabled };
 
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
-}
 
 function safeJsonParse(s) {
   try {
@@ -31,8 +25,7 @@ function safeJsonParse(s) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

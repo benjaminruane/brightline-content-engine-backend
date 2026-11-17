@@ -1,3 +1,4 @@
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 // /api/web-test.js
 //
@@ -7,27 +8,8 @@ import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs
 // - Does NOT depend on the OpenAI Node SDK (uses fetch directly)
 // - Does NOT touch any existing routes
 
-// --- CORS helper (local to this file only) -------------------------------
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    origin === "null" ? "*" : origin
-  );
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-}
-// ------------------------------------------------------------------------
-
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-
-  // Handle CORS preflight (just in case)
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+  if (applyCors(req, res, { methods: "GET,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

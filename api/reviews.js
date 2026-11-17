@@ -1,17 +1,11 @@
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { listAccountReviews } from "../lib/db/accounts.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
-import { resolveReviewStateCorsOrigin } from "./review-state.js";
 
-function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", resolveReviewStateCorsOrigin(req.headers?.origin));
-  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-owner-key");
-  res.setHeader("Access-Control-Max-Age", "86400");
-}
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
+  if (applyCors(req, res, { methods: "GET,OPTIONS" })) return;
   res.setHeader("Cache-Control", "private, no-store");
   if (req.method === "OPTIONS") return res.status(204).end();
   const account = await requireAccount(req, res);

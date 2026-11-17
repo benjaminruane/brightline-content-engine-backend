@@ -1,3 +1,4 @@
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -14,17 +15,9 @@ const SYNTHESIZE_REVIEW_SYSTEM_PROMPT = [
   "Do not use generic corporate filler. Avoid phrases like 'aligning with our publication's standards', 'ensures adherence to guidelines', 'maintains our quality benchmarks'. If a draft has no editorial or compliance issues, say so plainly: 'editorial and compliance are clean' or 'no concerns flagged on the editorial side'.",
 ].join("\n\n");
 
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-}
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);

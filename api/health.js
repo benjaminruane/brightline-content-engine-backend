@@ -1,17 +1,11 @@
 // api/health.js
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { OUTPUT_TYPE_LENGTH } from "../lib/prompt-library/outputTypeGuidance.js";
 import { readDatabaseStatus } from "../lib/db/client.mjs";
 import { authMode } from "../lib/auth/require-account.mjs";
 import { readBuildIdentity, readEnvironmentSummary, withDatabaseStatus } from "./_lib/env-flags.js";
 
-function setCorsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "https://brightline-content-engine-frontend.vercel.app");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Max-Age", "86400");
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
-}
 
 function buildHouseWordLimits() {
   const houseWordLimits = {};
@@ -22,9 +16,8 @@ function buildHouseWordLimits() {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
 
   const database = await readDatabaseStatus();
   const environment = withDatabaseStatus(readEnvironmentSummary(), database);

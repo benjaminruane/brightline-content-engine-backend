@@ -3,17 +3,11 @@
  * Off unless REVISE_ACTION_LIST is on. Does not call a model.
  */
 
+import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { applyDecisions } from "../lib/revise-actions/apply.mjs";
 import { isReviseActionListEnabled } from "./_lib/env-flags.js";
 
-function setCorsHeaders(req, res) {
-  const origin = req.headers.origin || "*";
-  res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
-  res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
-}
 
 function safeJsonParse(s) {
   try {
@@ -24,8 +18,7 @@ function safeJsonParse(s) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(req, res);
-  if (req.method === "OPTIONS") return res.status(204).end();
+  if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
