@@ -8,6 +8,7 @@ One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
+| 2026-11-17 | One allowed-origins list (`b522`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Tests `tests/b522-frontend-origins.test.mjs`, `tests/b522-every-route-uses-shared-cors.test.mjs`. |
 | 2026-11-17 | Accounts behind AUTH_MODE (`b521`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Tests `tests/b521-auth-mode-off-unchanged.test.mjs`, `tests/b521-require-account.test.mjs`, `tests/b521-review-scoping.test.mjs`, `tests/b521-claim.test.mjs`, `tests/b521-admin-only.test.mjs`, `tests/b521-trace-user.test.mjs`. Frontend tests `tests/b521-auth-off-unchanged.test.mjs`, `tests/b521-token-on-every-call.test.mjs`, `tests/b521-your-texts.test.mjs`. |
 | 2026-11-15 | Feedback polish (`b517`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Tests `tests/b517-feedback-polish.test.mjs`. |
 | 2026-11-15 | Why stored checks come back empty (`b515`). Read of `scripts/diagnostic/b510/run.json`, `b512/run.json`, `b513/run.json`, and `b514/run.json`. No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Report `scripts/diagnostic/b515/DIAG.md`. |
