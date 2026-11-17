@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.93.0",
+    "@clerk/backend": "^3.30.0",
     "@langfuse/client": "^6.1.1",
     "@langfuse/otel": "^6.1.1",
     "@langfuse/tracing": "^6.1.1",

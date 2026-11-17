@@ -1,3 +1,4 @@
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 
 function setCorsHeaders(req, res) {
@@ -5,12 +6,15 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const body = req.body && typeof req.body === "object" ? req.body : {};

@@ -1,3 +1,4 @@
+import { authMode, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import {
   MAX_STATE_BYTES,
@@ -65,9 +66,13 @@ export default async function handler(req, res) {
   );
 
   if (req.method === "OPTIONS") return res.status(204).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "GET" && req.method !== "POST" && req.method !== "DELETE") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+  const scopedAccountId = authMode() === "on" ? account.accountId : null;
 
   const ownerKey = headerOwnerKey(req);
   if (!validateOwnerKey(ownerKey)) {
@@ -94,8 +99,11 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === "GET") {
-      const result = await loadReviewState(sql, { reviewId, ownerKey });
+      const result = await loadReviewState(sql, { reviewId, ownerKey, accountId: scopedAccountId });
       if (!result) return res.status(404).json({ error: "not_found" });
+      if (result.ok === false && result.reason === "not_found") {
+        return res.status(404).json({ error: "not_found" });
+      }
       if (result.ok === false && result.reason === "owner_mismatch") {
         return res.status(403).json({ error: "owner_mismatch" });
       }
@@ -111,6 +119,7 @@ export default async function handler(req, res) {
         reviewId,
         ownerKey,
         state: body.state,
+        accountId: scopedAccountId,
       });
       if (result.ok === false && result.reason === "too_large") {
         return res.status(413).json({
@@ -118,6 +127,9 @@ export default async function handler(req, res) {
           bytes: result.bytes,
           limit: MAX_STATE_BYTES,
         });
+      }
+      if (result.ok === false && result.reason === "not_found") {
+        return res.status(404).json({ error: "not_found" });
       }
       if (result.ok === false && result.reason === "owner_mismatch") {
         return res.status(403).json({ error: "owner_mismatch" });
@@ -128,7 +140,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const result = await deleteReviewState(sql, { reviewId, ownerKey });
+    const result = await deleteReviewState(sql, { reviewId, ownerKey, accountId: scopedAccountId });
+    if (result.ok === false && result.reason === "not_found") {
+      return res.status(404).json({ error: "not_found" });
+    }
     if (result.ok === false && result.reason === "owner_mismatch") {
       return res.status(403).json({ error: "owner_mismatch" });
     }

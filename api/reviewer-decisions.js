@@ -1,5 +1,6 @@
+import { authMode, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
-import { validateOwnerKey, validateReviewId } from "../lib/db/review-state.mjs";
+import { loadReviewState, validateOwnerKey, validateReviewId } from "../lib/db/review-state.mjs";
 import {
   insertReviewerDecision,
   isDecisionKind,
@@ -67,9 +68,13 @@ export default async function handler(req, res) {
   );
 
   if (req.method === "OPTIONS") return res.status(204).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "GET" && req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+  const scopedAccountId = authMode() === "on" ? account.accountId : null;
 
   const ownerKey = headerOwnerKey(req);
   if (!validateOwnerKey(ownerKey)) {
@@ -102,8 +107,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (scopedAccountId) {
+      const visible = await loadReviewState(sql, { reviewId, ownerKey, accountId: scopedAccountId });
+      if (visible && visible.ok === false) return res.status(404).json({ error: "not_found" });
+    }
     if (req.method === "GET") {
-      const rows = await listReviewerDecisions(sql, { reviewId, ownerKey });
+      const rows = await listReviewerDecisions(sql, { reviewId, ownerKey, accountId: scopedAccountId });
       return res.status(200).json({ rows: rows.map(toPublicRow) });
     }
 
@@ -114,6 +123,7 @@ export default async function handler(req, res) {
       draftHash: body.draftHash,
       statement: body.statement,
       payload: body.payload,
+      accountId: scopedAccountId,
     });
     return res.status(200).json({ ok: true, id: result.id });
   } catch (err) {

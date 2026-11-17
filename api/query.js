@@ -1,5 +1,6 @@
 // api/query.js
 
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -26,9 +27,12 @@ export default async function handler(req, res) {
     if (req.method === "OPTIONS") {
       res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
       res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
       return res.status(200).end();
     }
+    const account = await requireAccount(req, res);
+    if (!account) return;
+    rememberAccount(account);
 
     if (req.method !== "POST") {
       return res.status(405).json({ ok: false, error: "Method not allowed" });

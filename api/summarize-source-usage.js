@@ -1,3 +1,4 @@
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
@@ -7,7 +8,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
 }
 
 function safeBody(req) {
@@ -34,6 +35,9 @@ function normalizeUsedFor(text) {
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "POST") return res.status(200).json({ ok: true, usedFor: "" });
 
   const body = safeBody(req);

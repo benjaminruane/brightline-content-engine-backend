@@ -3,6 +3,7 @@
 // Fetches a public URL and returns a readable text blob + a sensible title.
 // Also sets CORS headers so it works from your Vercel frontend.
 
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { clipKeepingFurniture, htmlToReadableText, markPageFurniture } from "../lib/extract-boilerplate.mjs";
 
 // --- CORS helper --------------------------------------------------
@@ -15,7 +16,7 @@ function setCorsHeaders(req, res) {
   );
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
 export default async function handler(req, res) {
@@ -24,6 +25,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });

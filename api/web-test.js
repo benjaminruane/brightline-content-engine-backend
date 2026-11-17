@@ -1,3 +1,4 @@
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 // /api/web-test.js
 //
 // Browser-testable diagnostic endpoint for OpenAI web_search_preview.
@@ -16,7 +17,7 @@ function setCorsHeaders(req, res) {
   );
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 // ------------------------------------------------------------------------
 
@@ -27,6 +28,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
 
   // Enforce GET-only for this diagnostic route
   if (req.method !== "GET") {

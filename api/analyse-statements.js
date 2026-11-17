@@ -5,6 +5,7 @@
 // even if the implementation module fails to import or initialize.
 // A3.8.101: Use ESM dynamic import() to load ESM impl module
 
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
@@ -52,7 +53,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
 }
 
 const ROUTE = "analyse-statements";
@@ -153,6 +154,9 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
 
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "method_not_allowed" });

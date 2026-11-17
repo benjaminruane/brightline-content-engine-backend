@@ -5,6 +5,7 @@
 // Same source set; fresh retrieval within that set allowed.
 // No invention of facts.
 
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -29,7 +30,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-brightline-diag, Authorization");
 }
 
 function safeJsonParse(s) {
@@ -123,6 +124,9 @@ function buildAdaptOptionalGuidance(targetOutputType, quoteAttribution, linkedIn
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(200).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS.adapt;

@@ -2,6 +2,7 @@
 
 import { OUTPUT_TYPE_LENGTH } from "../lib/prompt-library/outputTypeGuidance.js";
 import { readDatabaseStatus } from "../lib/db/client.mjs";
+import { authMode } from "../lib/auth/require-account.mjs";
 import { readBuildIdentity, readEnvironmentSummary, withDatabaseStatus } from "./_lib/env-flags.js";
 
 function setCorsHeaders(req, res) {
@@ -36,5 +37,6 @@ export default async function handler(req, res) {
     environment,
     database,
     build,
+    authMode: authMode(),
   });
 }

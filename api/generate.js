@@ -11,6 +11,7 @@
 
 console.log("[A3.14.3][IMPORT_OK] api/generate.js loaded");
 
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -604,6 +605,9 @@ export default async function handler(req, res) {
   console.log("[A3.14.24][VERBOSE_EFFECTIVE]", { header, gateAllowsHeader, envVerbose, diagVerbose });
 
   if (req.method === "OPTIONS") return res.status(204).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["writing-generate"];

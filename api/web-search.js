@@ -4,6 +4,7 @@
 // This is a generic helper the rest of the backend can call,
 // and it's also handy for debugging from the frontend later.
 
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { tavilySearch } from "../lib/web.js";
 
 // --- CORS helper --------------------------------------------------
@@ -13,7 +14,7 @@ function setCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Origin", origin === "null" ? "*" : origin);
   res.setHeader("Vary", "Origin");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 // ------------------------------------------------------------------
 
@@ -21,6 +22,9 @@ export default async function handler(req, res) {
   setCorsHeaders(req, res);
 
   if (req.method === "OPTIONS") return res.status(200).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 

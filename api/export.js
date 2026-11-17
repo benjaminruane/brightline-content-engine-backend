@@ -1,3 +1,4 @@
+import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import PDFDocument from "pdfkit";
 import {
   Document,
@@ -411,6 +412,9 @@ function buildDocx(payload) {
 export default async function handler(req, res) {
   setCorsHeaders(req, res);
   if (req.method === "OPTIONS") return res.status(204).end();
+  const account = await requireAccount(req, res);
+  if (!account) return;
+  rememberAccount(account);
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   try {
