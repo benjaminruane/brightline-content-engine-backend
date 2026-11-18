@@ -51,8 +51,9 @@ describe("B439 the screen uses the verdict it already holds", () => {
     );
     assert.equal(card.supportState, "conflicting");
     assert.equal(card.displayVerdict, "conflict");
-    assert.equal(card.sentenceLabel, "Conflicts with the source");
-    assert.equal(card.tier, "demands");
+    assert.equal(card.sentenceLabel, "Needs a look");
+    assert.equal(card.tier, "light");
+    assert.equal(card.silences.some((row) => row.id === "conflict_without_reason_downgraded"), true);
     assert.equal(card.editorialConcerns.length, 0);
   });
 

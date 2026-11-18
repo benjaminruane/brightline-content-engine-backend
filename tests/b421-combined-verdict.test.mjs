@@ -52,7 +52,9 @@ test("states follow the strongest reviewer and leave the statement verdict alone
     complianceVerdict: "soft_concern",
     complianceConcerns: [],
   });
-  assert.equal(soft.state, "wording");
+  assert.equal(soft.state, "note_withheld");
+  assert.equal(soft.tone, "amber");
+  assert.equal(soft.label, "Needs a look");
 
   const beyond = statementVerdict({
     facts: [fact("matched")],

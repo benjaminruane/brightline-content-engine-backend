@@ -1,0 +1,506 @@
+{
+  "cards": {
+    "s4": {
+      "text": "Kestrel will retain a 40 percent stake.",
+      "sentenceLabel": "Conflicts with the source",
+      "sentenceState": "conflicts",
+      "tier": "demands",
+      "setBy": {
+        "branch": "evidenceDisplay",
+        "sourceName": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+        "role": "facts",
+        "source": "display"
+      },
+      "statementVerdict": {
+        "state": "conflicts",
+        "tier": "demands",
+        "setBy": {
+          "branch": "evidenceDisplay",
+          "sourceName": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "role": "facts",
+          "source": "display"
+        }
+      },
+      "combinedVerdict": {
+        "state": "conflicts",
+        "tone": "red",
+        "tier": "demands",
+        "label": "Conflicts with the source",
+        "setBy": {
+          "source": "display",
+          "branch": "evidenceDisplay",
+          "sourceName": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "role": "facts"
+        }
+      },
+      "displayVerdict": "conflict",
+      "displayVerdictReason": null,
+      "readingNote": {
+        "refused": true
+      },
+      "displayedEvidenceProse": "This sentence was flagged, but the reason was not recorded. Please read it against the source.",
+      "noteWithheld": {
+        "reason": "documents_disagree",
+        "line": "A note was written for this sentence and could not be shown. That does not mean there was nothing to say."
+      },
+      "noteWithheldLine": "A note was written for this sentence and could not be shown. That does not mean there was nothing to say.",
+      "supersededSourceNotes": [],
+      "sourceRecencyConcerns": [],
+      "complianceVerdict": "clean",
+      "complianceConcerns": [],
+      "complianceNote": "No compliance concerns identified under the listed rules.",
+      "editorialVerdict": "clean",
+      "editorialConcerns": [],
+      "drops": [
+        {
+          "rule": "note_refused",
+          "reason": "documents_disagree",
+          "content": "The press release says Kestrel Partners Fund IV will retain a 40% stake, and the distribution notice confirms the Fund retains a 40% shareholding after completion. The statement says Kestrel will retain a 40 percent stake, which matches both documents."
+        }
+      ],
+      "silences": [
+        {
+          "id": "note_refused",
+          "reason": "documents_disagree",
+          "rawReply": "{\"bucket\":\"none\",\"note\":\"The press release says Kestrel Partners Fund IV will retain a 40% stake, and the distribution notice confirms the Fund retains a 40% shareholding after completion. The statement says Kestrel will retain a 40 percent stake, which matches both documents.\",\"completion\":\"none\",\"disputedIndices\":[],\"documentValues\":[{\"document\":\"Kestrel Partners sale of Harbourline Foods\",\"value\":\"Kestrel Partners Fund IV will retain a 40% stake\"},{\"document\":\"Kestrel Partners Fund IV distribution notice\",\"value\":\"The Fund retains a 40% shareholding\"}]}",
+          "count": 1,
+          "rejections": [],
+          "content": [
+            "The press release says Kestrel Partners Fund IV will retain a 40% stake, and the distribution notice confirms the Fund retains a 40% shareholding after completion. The statement says Kestrel will retain a 40 percent stake, which matches both documents."
+          ]
+        }
+      ],
+      "dealStatus": "Signed or agreed",
+      "summaryClass": {
+        "counted": true,
+        "evidence": "conflicting",
+        "editorial": "clean",
+        "compliance": "clean",
+        "needsAttention": true,
+        "cardTone": "red",
+        "turnedOffLine": null
+      },
+      "evidenceFindings": [],
+      "matchExplanations": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Kestrel Partners sale of Harbourline Foods",
+          "classification": "confirmed",
+          "role": "facts",
+          "explanation": "The source confirms that Kestrel will retain a 40% stake in Harbourline Foods, matching the statement."
+        },
+        {
+          "sourceIndex": 1,
+          "sourceLabel": "Kestrel Partners Fund IV distribution notice",
+          "classification": "confirmed",
+          "role": "facts",
+          "explanation": "The source confirms that Kestrel retains a 40% shareholding in Harbourline Foods Limited, matching the statement."
+        },
+        {
+          "sourceIndex": 2,
+          "sourceLabel": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "classification": "conflicting",
+          "role": "facts",
+          "explanation": "The source confirms that Kestrel will retain a 40% stake in Harbourline Foods after agreeing to sell a 60% stake to Northshore Consumer Partners."
+        }
+      ],
+      "supportSpans": [
+        {
+          "classification": "confirmed",
+          "asOf": null,
+          "passage": "Kestrel Partners Fund IV has agreed to sell a 60% stake in Harbourline Foods Limited (\"Harbourline\"), the UK and Irish chilled prepared foods producer, to Northshore Consumer Partners. The transaction values Harbourline at an enterprise value of GBP 420 million. Kestrel Partners "
+        },
+        {
+          "classification": "confirmed",
+          "asOf": null,
+          "passage": "On 30 September 2026 the Fund completed the sale of a 60% shareholding in Harbourline Foods Limited to Northshore Consumer Partners. The Fund retains a 40% shareholding."
+        },
+        {
+          "classification": "confirmed",
+          "asOf": null,
+          "passage": "On 17 June we agreed the sale of a 60% stake to Northshore Consumer Partners, valuing Harbourline at an enterprise value of GBP 420 million; completion is expected in the third quarter, subject to regulatory approvals."
+        }
+      ]
+    },
+    "s5": {
+      "text": "The sale has completed.",
+      "sentenceLabel": "Conflicts with the source",
+      "sentenceState": "conflicts",
+      "tier": "demands",
+      "setBy": {
+        "branch": "statementVerdict",
+        "sourceName": "Kestrel Partners sale of Harbourline Foods",
+        "role": "facts"
+      },
+      "statementVerdict": {
+        "state": "conflicts",
+        "tier": "demands",
+        "setBy": {
+          "branch": "statementVerdict",
+          "sourceName": "Kestrel Partners sale of Harbourline Foods",
+          "role": "facts"
+        }
+      },
+      "combinedVerdict": {
+        "state": "conflicts",
+        "tone": "red",
+        "tier": "demands",
+        "label": "Conflicts with the source",
+        "setBy": {
+          "source": "note",
+          "branch": "statementVerdict",
+          "sourceName": "Kestrel Partners sale of Harbourline Foods",
+          "role": "facts"
+        }
+      },
+      "displayVerdict": "conflict",
+      "displayVerdictReason": null,
+      "readingNote": {
+        "bucket": "conflicts",
+        "text": "The distribution notice dated 8 October 2026 says the Fund completed the sale of a 60% shareholding in Harbourline on 30 September 2026. The press release and Q2 2026 report say the sale was agreed on 17 June 2026 with completion expected in Q3 2026 subject to regulatory approvals, and the writing inputs say the firm has agreed the transaction.",
+        "disputedIndices": [
+          0
+        ],
+        "disputedElements": [
+          "The"
+        ],
+        "completion": "none",
+        "documentValues": [
+          {
+            "document": "Kestrel Partners sale of Harbourline Foods",
+            "value": "agreed on 17 June 2026, completion expected Q3 2026 subject to regulatory approvals"
+          },
+          {
+            "document": "Kestrel Partners Fund IV distribution notice",
+            "value": "sale of 60% completed on 30 September 2026"
+          },
+          {
+            "document": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+            "value": "agreed 17 June 2026, completion expected in Q3 subject to regulatory approvals"
+          },
+          {
+            "document": "Writing inputs",
+            "value": "the firm has agreed the transaction"
+          }
+        ]
+      },
+      "displayedEvidenceProse": "The distribution notice dated 8 October 2026 says the Fund completed the sale of a 60% shareholding in Harbourline on 30 September 2026. The press release and Q2 2026 report say the sale was agreed on 17 June 2026 with completion expected in Q3 2026 subject to regulatory approvals, and the writing inputs say the firm has agreed the transaction.",
+      "supersededSourceNotes": [],
+      "sourceRecencyConcerns": [],
+      "complianceVerdict": "clean",
+      "complianceConcerns": [],
+      "complianceNote": "No compliance concerns identified under the listed rules.",
+      "editorialVerdict": "clean",
+      "editorialConcerns": [],
+      "dealStatus": "Signed or agreed",
+      "summaryClass": {
+        "counted": true,
+        "evidence": "conflicting",
+        "editorial": "clean",
+        "compliance": "clean",
+        "needsAttention": true,
+        "cardTone": "red",
+        "turnedOffLine": null
+      },
+      "evidenceFindings": [],
+      "matchExplanations": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Kestrel Partners sale of Harbourline Foods",
+          "classification": "conflicting",
+          "role": "facts",
+          "explanation": "The statement asserts that the sale has completed, while the source indicates that the transaction is expected to complete in the future, subject to regulatory approvals. This is a status/modality contradiction."
+        },
+        {
+          "sourceIndex": 1,
+          "sourceLabel": "Kestrel Partners Fund IV distribution notice",
+          "classification": "confirmed",
+          "role": "facts",
+          "explanation": "The source confirms that the sale was completed on 30 September 2026, supporting the statement that the sale has completed."
+        },
+        {
+          "sourceIndex": 2,
+          "sourceLabel": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "classification": "conflicting",
+          "role": "facts",
+          "explanation": "The statement asserts that the sale has completed, while the source indicates that completion is expected in the third quarter, subject to regulatory approvals. This is a status/modality conflict."
+        }
+      ],
+      "supportSpans": [
+        {
+          "classification": "conflicting",
+          "asOf": null,
+          "passage": "The transaction is expected to complete in the third quarter of 2026, subject to customary regulatory approvals."
+        },
+        {
+          "classification": "confirmed",
+          "asOf": null,
+          "passage": "On 30 September 2026 the Fund completed the sale of a 60% shareholding in Harbourline Foods Limited to Northshore Consumer Partners."
+        },
+        {
+          "classification": "conflicting",
+          "asOf": null,
+          "passage": "On 17 June we agreed the sale of a 60% stake to Northshore Consumer Partners, valuing Harbourline at an enterprise value of GBP 420 million; completion is expected in the third quarter, subject to regulatory approvals."
+        }
+      ]
+    },
+    "s12": {
+      "text": "At 30 June 2026 the fund's net asset value stood at EUR 652 million.",
+      "sentenceLabel": "Conflicts with the source",
+      "sentenceState": "conflicts",
+      "tier": "demands",
+      "setBy": {
+        "branch": "floorState",
+        "sourceName": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+        "role": "facts"
+      },
+      "statementVerdict": {
+        "state": "conflicts",
+        "tier": "demands",
+        "setBy": {
+          "branch": "floorState",
+          "sourceName": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "role": "facts"
+        }
+      },
+      "combinedVerdict": {
+        "state": "conflicts",
+        "tone": "red",
+        "tier": "demands",
+        "label": "Conflicts with the source",
+        "setBy": {
+          "source": "note",
+          "branch": "floorState",
+          "sourceName": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "role": "facts"
+        }
+      },
+      "displayVerdict": "conflict",
+      "displayVerdictReason": null,
+      "readingNote": {
+        "bucket": "conflicts",
+        "text": "The Q2 2026 quarterly report gives NAV of EUR 678 million at 30 June 2026, with EUR 652 million being the 31 March 2026 figure. The statement attaches the earlier figure to the later date.",
+        "disputedIndices": [
+          1
+        ],
+        "disputedElements": [
+          "EUR 652 million"
+        ],
+        "completion": "none",
+        "documentValues": [
+          {
+            "document": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+            "value": "EUR 678 million at 30 June 2026"
+          }
+        ]
+      },
+      "displayedEvidenceProse": "The Q2 2026 quarterly report gives NAV of EUR 678 million at 30 June 2026, with EUR 652 million being the 31 March 2026 figure. The statement attaches the earlier figure to the later date.",
+      "supersededSourceNotes": [],
+      "sourceRecencyConcerns": [],
+      "complianceVerdict": "clean",
+      "complianceConcerns": [],
+      "complianceNote": "No compliance concerns identified under the listed rules.",
+      "editorialVerdict": "clean",
+      "editorialConcerns": [],
+      "dealStatus": "Signed or agreed",
+      "summaryClass": {
+        "counted": true,
+        "evidence": "conflicting",
+        "editorial": "clean",
+        "compliance": "clean",
+        "needsAttention": true,
+        "cardTone": "red",
+        "turnedOffLine": null
+      },
+      "evidenceFindings": [],
+      "matchExplanations": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Kestrel Partners sale of Harbourline Foods",
+          "classification": "no_support",
+          "role": "facts",
+          "explanation": "The source does not address the net asset value of the fund as of 30 June 2026. It provides information about a transaction and general details about Kestrel Partners' investment focus and assets under management, but not the specific NAV figure."
+        },
+        {
+          "sourceIndex": 1,
+          "sourceLabel": "Kestrel Partners Fund IV distribution notice",
+          "classification": "partially_confirmed",
+          "role": "facts",
+          "explanation": "The source provides a distribution total but does not state the net asset value of the fund as of 30 June 2026. The statement's period is not addressed in the source."
+        },
+        {
+          "sourceIndex": 2,
+          "sourceLabel": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "classification": "conflicting",
+          "role": "facts",
+          "explanation": "The statement claims the net asset value was EUR 652 million at 30 June 2026, but the source states it was EUR 678 million on that date. This is a magnitude conflict beyond rounding."
+        }
+      ],
+      "supportSpans": [
+        {
+          "classification": "conflicting",
+          "asOf": null,
+          "passage": "KEY FIGURES                       30 Jun 2026     31 Mar 2026\nNet asset value (EUR m)                   678             652"
+        }
+      ]
+    },
+    "s13": {
+      "text": "The fund reports an IRR of 15.9 percent.",
+      "sentenceLabel": "Nothing raised",
+      "sentenceState": "nothing_raised",
+      "tier": "quiet",
+      "setBy": {
+        "branch": "statementVerdict"
+      },
+      "statementVerdict": {
+        "state": "nothing_raised",
+        "tier": "quiet",
+        "setBy": {
+          "branch": "statementVerdict"
+        }
+      },
+      "combinedVerdict": {
+        "state": "wording",
+        "tone": "grey",
+        "tier": "light",
+        "label": "Craft or compliance notes",
+        "setBy": {
+          "source": "compliance",
+          "verdict": "soft_concern"
+        }
+      },
+      "displayVerdict": "supported_full",
+      "displayVerdictReason": null,
+      "readingNote": {
+        "bucket": "wording",
+        "text": "The Q2 2026 quarterly report gives a Net IRR of 15.9% at 30 June 2026. The statement says IRR of 15.9 percent, which restates the same figure.",
+        "disputedIndices": [],
+        "disputedElements": [],
+        "completion": "none",
+        "documentValues": [
+          {
+            "document": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+            "value": "Net IRR 15.9%"
+          }
+        ]
+      },
+      "supersededSourceNotes": [],
+      "sourceRecencyConcerns": [],
+      "complianceVerdict": "soft_concern",
+      "complianceConcerns": [
+        {
+          "concernCode": "return_figure_gross_net_qualifier_missing",
+          "note": "The statement 'The fund reports an IRR of 15.9 percent' presents a return figure without a gross-or-net-of-fees qualifier.",
+          "category": "compliance",
+          "suggestedDirection": "Add 'net of fees' to 'The fund reports an IRR of 15.9 percent' to specify the return figure as net.",
+          "span": [
+            {
+              "startChar": 0,
+              "endChar": 39,
+              "source": "note_quote"
+            }
+          ]
+        }
+      ],
+      "complianceNote": null,
+      "editorialVerdict": "clean",
+      "editorialConcerns": [],
+      "drops": [
+        {
+          "rule": "wording_note_withheld",
+          "reason": "a wording note is recorded and not shown",
+          "content": "The Q2 2026 quarterly report gives a Net IRR of 15.9% at 30 June 2026. The statement says IRR of 15.9 percent, which restates the same figure."
+        }
+      ],
+      "silences": [
+        {
+          "id": "wording_note_withheld",
+          "reason": "a wording note is recorded and not shown",
+          "count": 1,
+          "content": [
+            "The Q2 2026 quarterly report gives a Net IRR of 15.9% at 30 June 2026. The statement says IRR of 15.9 percent, which restates the same figure."
+          ]
+        }
+      ],
+      "dealStatus": "Signed or agreed",
+      "summaryClass": {
+        "counted": true,
+        "evidence": "nothingRaised",
+        "editorial": "clean",
+        "compliance": "concern",
+        "needsAttention": true,
+        "cardTone": "amber",
+        "turnedOffLine": null
+      },
+      "evidenceFindings": [],
+      "matchExplanations": [
+        {
+          "sourceIndex": 0,
+          "sourceLabel": "Kestrel Partners sale of Harbourline Foods",
+          "classification": "no_support",
+          "role": "facts",
+          "explanation": "The source does not address the IRR of the fund. It discusses the sale of a stake in Harbourline Foods but does not provide any information about the fund's IRR."
+        },
+        {
+          "sourceIndex": 1,
+          "sourceLabel": "Kestrel Partners Fund IV distribution notice",
+          "classification": "no_support",
+          "role": "facts",
+          "explanation": "The source does not address the IRR of the fund. It provides details on a specific distribution and the DPI, but does not mention the IRR figure."
+        },
+        {
+          "sourceIndex": 2,
+          "sourceLabel": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+          "classification": "confirmed",
+          "role": "facts",
+          "explanation": "The source confirms the statement by reporting a net IRR of 15.9% for the fund as of 30 June 2026."
+        }
+      ],
+      "supportSpans": [
+        {
+          "classification": "confirmed",
+          "asOf": null,
+          "passage": "Net IRR                                  15.9%           15.4%"
+        }
+      ]
+    }
+  },
+  "inputs": {
+    "s4RawNote": {
+      "bucket": "none",
+      "note": "The press release says Kestrel Partners Fund IV will retain a 40% stake, and the distribution notice confirms the Fund retains a 40% shareholding after completion. The statement says Kestrel will retain a 40 percent stake, which matches both documents.",
+      "completion": "none",
+      "disputedIndices": [],
+      "documentValues": [
+        {
+          "document": "Kestrel Partners sale of Harbourline Foods",
+          "value": "Kestrel Partners Fund IV will retain a 40% stake"
+        },
+        {
+          "document": "Kestrel Partners Fund IV distribution notice",
+          "value": "The Fund retains a 40% shareholding"
+        }
+      ]
+    },
+    "s4WrittenFor": "confirmed",
+    "sources": [
+      {
+        "label": "Kestrel Partners sale of Harbourline Foods",
+        "text": "London, 17 June 2026. The transaction is expected to complete in the third quarter of 2026, subject to customary regulatory approvals. Kestrel Partners Fund IV will retain a 40% stake."
+      },
+      {
+        "label": "Kestrel Partners Fund IV distribution notice",
+        "text": "Date: 8 October 2026. On 30 September 2026 the Fund completed the sale of a 60% shareholding in Harbourline Foods Limited."
+      },
+      {
+        "label": "Kestrel Partners Fund IV quarterly report, Q2 2026",
+        "text": "PERIOD ENDED 30 JUNE 2026. Completion is expected in the third quarter of 2026, subject to regulatory approvals. 22 July 2026. Net IRR 15.9%."
+      }
+    ],
+    "s5Passages": [
+      "The transaction is expected to complete in the third quarter of 2026, subject to customary regulatory approvals.",
+      "On 30 September 2026 the Fund completed the sale of a 60% shareholding in Harbourline Foods Limited.",
+      "Completion is expected in the third quarter of 2026, subject to regulatory approvals."
+    ]
+  }
+}
