@@ -7,6 +7,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
@@ -147,6 +148,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
 
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "method_not_allowed" });
@@ -454,6 +457,7 @@ export default async function handler(req, res) {
     res.status(200).json(safeInternalErrorPayload);
     return;
   } finally {
+    await endBillableRequest({ account, route: "analyse-statements", req });
     await flushObservability();
   }
 }

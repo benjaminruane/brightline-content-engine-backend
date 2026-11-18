@@ -7,6 +7,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -120,6 +121,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS.adapt;
@@ -276,6 +279,7 @@ Return ONLY JSON:
       error: err?.message || "Adapt failed",
     });
   } finally {
+    await endBillableRequest({ account, route: "adapt", req });
     await flushObservability();
   }
 }

@@ -1,5 +1,6 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { synthesisFindingCensus, synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
@@ -21,6 +22,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["synthesize-review"];
@@ -139,6 +142,7 @@ export default async function handler(req, res) {
       reason: ASSESSMENT_REASONS.CALL_FAILED,
     });
   } finally {
+    await endBillableRequest({ account, route: "synthesize-review", req });
     await flushObservability();
   }
 }

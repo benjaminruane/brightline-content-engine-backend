@@ -1,5 +1,6 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -22,6 +23,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(200).json(EMPTY_RESPONSE);
 
   beginRequestBudget({
@@ -99,6 +102,7 @@ export default async function handler(req, res) {
   } catch {
     return res.status(200).json(EMPTY_RESPONSE);
   } finally {
+    await endBillableRequest({ account, route: "summarize-source", req });
     await flushObservability();
   }
 }

@@ -6,6 +6,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { formatWebResultsForPrompt } from "../lib/web.js";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -32,6 +33,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["query-sources"];
@@ -180,6 +183,7 @@ ${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Query sources failed" });
   } finally {
+    await endBillableRequest({ account, route: "query-sources", req });
     await flushObservability();
   }
 }

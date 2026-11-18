@@ -84,8 +84,9 @@ describe("cached input tokens are billed at the cached rate", () => {
     assert.equal(cost, 3.0);
   });
 
-  test("an unpriced model still reports zero", () => {
-    assert.equal(calculateLlmCostUsd("openai", "gpt-9-imaginary", { inputTokens: 1000 }), 0);
+  test("an unlisted model is priced at the highest published rates", () => {
+    const cost = calculateLlmCostUsd("openai", "gpt-9-imaginary", { inputTokens: 1_000_000, outputTokens: 0 });
+    assert.ok(cost > 0);
   });
 });
 

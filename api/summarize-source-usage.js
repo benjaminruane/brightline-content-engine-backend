@@ -1,5 +1,6 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
@@ -31,6 +32,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(200).json({ ok: true, usedFor: "" });
 
   const body = safeBody(req);
@@ -74,6 +77,7 @@ export default async function handler(req, res) {
   } catch {
     return res.status(200).json({ ok: true, usedFor: "" });
   } finally {
+    await endBillableRequest({ account, route: "summarize-source-usage", req });
     await flushObservability();
   }
 }

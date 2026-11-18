@@ -1,6 +1,7 @@
 // A8.2: Short LLM summary of rewrite instructions (fire-and-forget from client; non-blocking for save).
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
@@ -15,6 +16,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
@@ -59,6 +62,7 @@ ${instruction}`,
   } catch (err) {
     return res.status(200).json({ ok: true, label: "" });
   } finally {
+    await endBillableRequest({ account, route: "summarize-rewrite-label", req });
     await flushObservability();
   }
 }

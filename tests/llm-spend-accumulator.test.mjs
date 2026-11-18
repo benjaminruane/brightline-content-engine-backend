@@ -77,34 +77,28 @@ describe("llm spend accumulator", () => {
     assert.ok(spend.costUsd > 0);
   });
 
-  test("T4 an unpriced model increments calls and tokens but not costUsd", () => {
-    const before = getLlmSpend();
-    recordLlmSpend(UNPRICED_PROVIDER, UNPRICED_MODEL, {
-      inputTokens: 400,
-      cachedInputTokens: 40,
-      outputTokens: 80,
-    });
+  test("T4 an unlisted model is counted and priced at the highest published rates", () => {
+    const usage = { inputTokens: 400, cachedInputTokens: 40, outputTokens: 80 };
+    recordLlmSpend(UNPRICED_PROVIDER, UNPRICED_MODEL, usage);
     const spend = getLlmSpend();
-    assert.equal(spend.calls, before.calls + 1);
+    assert.equal(spend.calls, 1);
     assert.equal(spend.inputTokens, 400);
     assert.equal(spend.cachedInputTokens, 40);
     assert.equal(spend.outputTokens, 80);
-    assert.equal(spend.costUsd, before.costUsd);
-    assert.equal(spend.costUsd, 0);
+    assert.equal(spend.costUsd, calculateLlmCostUsd(UNPRICED_PROVIDER, UNPRICED_MODEL, usage));
+    assert.ok(spend.costUsd > 0);
     assert.equal(spend.unpricedCalls, 1);
     assert.deepEqual(spend.unpricedModels, [UNPRICED_KEY]);
-    assert.equal(spend.byModel[UNPRICED_KEY].calls, 1);
     assert.equal(spend.byModel[UNPRICED_KEY].unpricedCalls, 1);
-    assert.equal(spend.byModel[UNPRICED_KEY].costUsd, 0);
   });
 
-  test("T5 formatLlmSpend after an unpriced call contains UNDERCOUNT and the key", () => {
+  test("T5 formatLlmSpend after an unlisted call names the model and the highest rates", () => {
     recordLlmSpend(UNPRICED_PROVIDER, UNPRICED_MODEL, {
       inputTokens: 400,
       outputTokens: 80,
     });
     const line = formatLlmSpend();
-    assert.ok(line.includes("UNDERCOUNT"));
+    assert.ok(line.includes("highest published rates"));
     assert.ok(line.includes(UNPRICED_KEY));
   });
 

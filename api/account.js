@@ -2,6 +2,8 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { findAccount, normaliseWritingFor, updateWritingFor } from "../lib/db/accounts.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
+import { resetsOnIso, resolveAllowanceUsd, usedFraction } from "../lib/spend/allowance.mjs";
+import { spentThisMonthUsd } from "../lib/spend/ledger.mjs";
 
 
 function readJsonBody(req) {
@@ -16,14 +18,21 @@ function readJsonBody(req) {
   return {};
 }
 
-function publicAccount(row, fallback) {
+async function publicAccount(sql, row, fallback) {
   const email = row?.email ?? fallback?.email ?? null;
   const name = row?.name ?? fallback?.name ?? null;
+  const admin = emailIsAdmin(email);
+  const spent = fallback?.accountId ? await spentThisMonthUsd(sql, fallback.accountId) : 0;
+  const allowance = admin ? null : resolveAllowanceUsd(row?.monthly_allowance_usd, process.env.ALLOWANCE_USD_PER_MONTH);
   return {
     name,
     email,
     writingFor: row?.writing_for ?? null,
-    isAdmin: emailIsAdmin(email),
+    isAdmin: admin,
+    allowanceUsd: allowance,
+    spentThisMonthUsd: spent,
+    usedFraction: admin ? null : usedFraction(spent, allowance),
+    resetsOn: resetsOnIso(new Date()),
   };
 }
 
@@ -37,7 +46,7 @@ export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "PUT") {
     return res.status(405).json({ error: "Method not allowed" });
   }
-  if (!account.accountId) return res.status(200).json(publicAccount(null, account));
+  if (!account.accountId) return res.status(200).json(await publicAccount(null, null, account));
 
   let sql;
   try {
@@ -58,10 +67,10 @@ export default async function handler(req, res) {
       }
       const saved = await updateWritingFor(sql, { id: account.accountId, writingFor });
       if (!saved) return res.status(404).json({ error: "not_found" });
-      return res.status(200).json(publicAccount(saved, account));
+      return res.status(200).json(await publicAccount(sql, saved, account));
     }
     const row = await findAccount(sql, account.accountId);
-    return res.status(200).json(publicAccount(row, account));
+    return res.status(200).json(await publicAccount(sql, row, account));
   } catch (err) {
     if (respondIfDbFailure(res, err)) return;
     throw err;

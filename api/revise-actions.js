@@ -8,6 +8,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { runActionList } from "../lib/revise-actions/run.mjs";
@@ -29,6 +30,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
 
   if (!isReviseActionListEnabled()) {
     return res.status(404).json({ ok: false, error: "Not found" });
@@ -65,6 +68,7 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Revise action list failed" });
   } finally {
+    await endBillableRequest({ account, route: "revise-actions", req });
     await flushObservability();
   }
 }

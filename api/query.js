@@ -2,6 +2,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -25,10 +26,13 @@ function resultsAreGeneric(results = [], entity = "") {
 
 export default async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
+  let account = null;
   try {
-    const account = await requireAccount(req, res);
+    account = await requireAccount(req, res);
     if (!account) return;
     rememberAccount(account);
+    if (!(await beginBillableRequest(res, account))) return;
+    enterRequestSpend();
 
     if (req.method !== "POST") {
       return res.status(405).json({ ok: false, error: "Method not allowed" });
@@ -155,6 +159,7 @@ ${references.map(r => `[${r.id}] ${r.title}`).join("\n")}
       error: err.message || "Ask AI failed",
     });
   } finally {
+    await endBillableRequest({ account, route: "query", req });
     await flushObservability();
   }
 }

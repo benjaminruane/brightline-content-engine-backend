@@ -7,6 +7,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
@@ -630,6 +631,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["writing-rewrite"];
@@ -1041,6 +1044,7 @@ Return ONLY valid JSON with no markdown or extra text:
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Rewrite failed" });
   } finally {
+    await endBillableRequest({ account, route: "rewrite", req });
     await flushObservability();
   }
 }

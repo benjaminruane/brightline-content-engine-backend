@@ -4,6 +4,7 @@
  */
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { recheckStatements } from "../lib/qc/reading-review.mjs";
 
@@ -13,6 +14,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
   if (!hasProviderApiKey("anthropic")) {
     return res.status(500).json({ ok: false, error: "Server is missing ANTHROPIC_API_KEY" });
@@ -41,6 +44,7 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(400).json({ ok: false, error: err?.message || "recheck failed" });
   } finally {
+    await endBillableRequest({ account, route: "recheck-statements", req });
     await flushObservability();
   }
 }

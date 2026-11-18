@@ -44,8 +44,9 @@ function storeFor(email) {
         return [row];
       }
       if (sql.includes("from accounts a")) {
-        return [...accounts.values()].map((row) => ({ ...row, text_count: 2 }));
+        return [...accounts.values()].map((row) => ({ ...row, text_count: 2, spent_this_month: 0 }));
       }
+      if (sql.includes("from spend_events")) return [{ spent: 0 }];
       throw new Error(sql);
     },
   };

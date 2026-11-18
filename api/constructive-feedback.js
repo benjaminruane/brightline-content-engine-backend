@@ -1,5 +1,6 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { randomUUID } from "node:crypto";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -17,6 +18,8 @@ export default async function handler(req, res) {
   const account = await requireAccount(req, res);
   if (!account) return;
   rememberAccount(account);
+  if (!(await beginBillableRequest(res, account))) return;
+  enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
   const modelConfig = STAGE_MODELS["constructive-feedback"];
@@ -67,6 +70,7 @@ export default async function handler(req, res) {
     console.warn("[constructive-feedback]", err?.message || err);
     return res.status(200).json({ ok: false, feedbackText: "", isReady: built.readiness === "Ready" });
   } finally {
+    await endBillableRequest({ account, route: "constructive-feedback", req });
     await flushObservability();
   }
 }
