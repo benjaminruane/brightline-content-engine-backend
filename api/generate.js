@@ -22,17 +22,15 @@ import {
 } from "../lib/web.js";
 import {
   normalizeOutputType,
-  normalizeVisibility,
   buildOutputIntent,
-  getPromptGuidance,
+  visibilityForDraft,
 } from "../lib/output-intent.js";
 import {
   normalizeEventType,
   getEventTypeLabel,
-  getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
-import { outputTypeWordCeiling, wordLimitLine } from "../lib/prompt-library/outputTypeGuidance.js";
+import { exceedsLengthAllowance, outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { countWords } from "../lib/qc/token-estimate.mjs";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
@@ -47,7 +45,7 @@ import { sourcesForPrompt } from "../lib/source-role.mjs";
 
 // ------------------------------------------------------------------
 
-const STYLE_GUIDE_INSTRUCTIONS = `
+export const STYLE_GUIDE_INSTRUCTIONS = `
 You are part of an internal writing tool called "Content Engine".
 You produce crisp, professional, investment-grade writing.
 
@@ -58,49 +56,7 @@ General style:
 - Avoid unnecessary adjectives.
 - Use standard English commas (no weird formatting).
 - Avoid thousand separators for years.
-- Write in third-person voice by default (e.g., "the firm", "the company", "it", "they").
-  Use third-person even if source documents use first or second person.
 `.trim();
-
-// Detect voice override in user instructions (Notes or Rewrite instructions)
-function detectVoiceOverride(text) {
-  if (typeof text !== "string" || !text.trim()) return null;
-  
-  const lower = text.toLowerCase();
-  
-  // Check for explicit voice instructions
-  const firstPersonPatterns = [
-    /\b(use|write in|write|employ|adopt)\s+(first[\s-]?person|I|we|our|us)\b/,
-    /\bfirst[\s-]?person\b/,
-    /\buse\s+(I|we|our|us)\b/,
-  ];
-  
-  const secondPersonPatterns = [
-    /\b(use|write in|write|employ|adopt)\s+(second[\s-]?person|you|your)\b/,
-    /\bsecond[\s-]?person\b/,
-    /\buse\s+(you|your)\b/,
-  ];
-  
-  const thirdPersonPatterns = [
-    /\b(use|write in|write|employ|adopt)\s+(third[\s-]?person|it|they|them|their)\b/,
-    /\bthird[\s-]?person\b/,
-  ];
-  
-  // Check in order: explicit third-person override, then first, then second
-  for (const pattern of thirdPersonPatterns) {
-    if (pattern.test(lower)) return "third";
-  }
-  
-  for (const pattern of firstPersonPatterns) {
-    if (pattern.test(lower)) return "first";
-  }
-  
-  for (const pattern of secondPersonPatterns) {
-    if (pattern.test(lower)) return "second";
-  }
-  
-  return null; // No override detected, use default (third-person)
-}
 
 function safeJsonParse(text) {
   try {
@@ -662,7 +618,7 @@ export default async function handler(req, res) {
       ? bodyVisibility
       : (typeof versionType === "string" ? versionType : null);
     const outputType = normalizeOutputType(rawOutputType);
-    const visibility = normalizeVisibility(rawVisibility);
+    const visibility = visibilityForDraft(outputType, rawVisibility);
     const typedMaxWords = clampMaxWords(maxWords);
     const effectiveMaxWords = typedMaxWords ?? outputTypeWordCeiling(outputType);
     const safeVersionType = visibility === "PUBLIC" ? "public" : "complete";
@@ -694,14 +650,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Detect voice override in Notes
-    const voiceOverride = detectVoiceOverride(safeNotes);
-    const voiceInstruction = voiceOverride === "first"
-      ? "Write in first-person voice (use 'I', 'we', 'our', 'us')."
-      : voiceOverride === "second"
-      ? "Write in second-person voice (use 'you', 'your')."
-      : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
-
     const { basePromptText } = buildBasePrompt({
       outputType,
       visibility,
@@ -711,6 +659,7 @@ export default async function handler(req, res) {
       specialInstructions: safeSpecialInstructions,
       sources: safeSources,
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
+      maxWords: typedMaxWords,
     });
     const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
@@ -725,16 +674,7 @@ Output type: ${outputType}
 Visibility: ${visibility}
 Version type: ${safeVersionType || "(none)"}
 
-FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
-${getEventTypeFraming(eventType) ? `
-EVENT TYPE FRAMING (${eventTypeLabel}):
-${getEventTypeFraming(eventType)}
-` : ""}
-
 Web search enabled: ${safePublicSearch ? "true" : "false"}
-
-VOICE REQUIREMENT:
-${voiceInstruction}
 
 WEB RESULTS:
 ${webResultsForPrompt || "(none)"}
@@ -770,14 +710,6 @@ Rules:
 - Use only information from the uploaded sources provided above.
 - You may paraphrase and synthesize uploaded content freely.
 `}
-
-Output constraints:
-${
-  effectiveMaxWords
-    ? `- ${wordLimitLine(effectiveMaxWords)}
-- Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.`
-    : "- No explicit word limit provided."
-}
 
 IMPORTANT:
 At the END of your output, append a line with exactly: [SOURCES_USED]
@@ -826,7 +758,7 @@ Return ONLY JSON:
     const methodologyNote = splitDraft.methodologyNote;
 
     const wordCount = countWords(currentDraftText);
-    if (effectiveMaxWords != null && wordCount > effectiveMaxWords) {
+    if (effectiveMaxWords != null && exceedsLengthAllowance(wordCount, effectiveMaxWords)) {
       console.log(JSON.stringify({
         event: "output_type_word_count",
         words: wordCount,
@@ -878,8 +810,8 @@ Return ONLY JSON:
       outputTypeLabel: outputIntent.outputTypeLabel,
       visibilityLabel: outputIntent.visibilityLabel,
     };
-    if (effectiveMaxWords != null) {
-      metaOutputIntent.maxWords = effectiveMaxWords;
+    if (typedMaxWords != null) {
+      metaOutputIntent.maxWords = typedMaxWords;
     }
 
     return res.status(200).json({

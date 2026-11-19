@@ -17,10 +17,12 @@ import {
 import {
   normalizeOutputType,
   normalizeVisibility,
+  visibilityForDraft,
   buildOutputIntent,
   getPromptGuidance,
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
+import { lengthInstruction } from "../lib/prompt-library/outputTypeGuidance.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -143,7 +145,7 @@ export default async function handler(req, res) {
     const fromOutputType = normalizeOutputType(body.fromOutputType ?? body.from_output_type ?? null);
     const fromVisibility = normalizeVisibility(body.fromVisibility ?? body.from_visibility ?? null);
     const targetOutputType = normalizeOutputType(body.targetOutputType ?? body.target_output_type ?? null);
-    const targetVisibility = normalizeVisibility(body.targetVisibility ?? body.target_visibility ?? null);
+    const targetVisibility = visibilityForDraft(targetOutputType, body.targetVisibility ?? body.target_visibility ?? null);
     const modelId = typeof body.model === "string" && body.model.trim() ? body.model.trim() : modelConfig.model;
     const publicSearch = Boolean(body.publicSearch);
     // X2.2: Optional word-limit override for Adapt (per-output cap persistence)
@@ -220,7 +222,7 @@ Rules:
 - Restructure and re-tone for the target type and visibility.
 - Do not add claims that are not in the base draft or sources.
 ${publicSearch && webReferences.length ? "- If you use web results, cite with [1], [2], etc." : ""}
-${maxWords != null ? `- Word limit: ${maxWords} words maximum. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.` : ""}
+- ${lengthInstruction(targetOutputType, maxWords)}
 
 Return ONLY JSON:
 {

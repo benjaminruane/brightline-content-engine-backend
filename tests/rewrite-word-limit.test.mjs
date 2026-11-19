@@ -109,20 +109,16 @@ describe("rewrite word limit", () => {
     );
 
     assert.equal(res.statusCode, 200);
-    const userPrompt = llmSpy.mock.calls[0][0].messages.find((m) => m.role === "user").content;
-    const limitAt = userPrompt.indexOf("Word limit:");
+    const prompt = llmSpy.mock.calls[0][0].messages.map((m) => m.content).join("\n");
+    const limitAt = prompt.indexOf("Length: 80 words.");
     assert.ok(limitAt >= 0);
-    const limit = userPrompt.slice(limitAt, limitAt + 280);
+    const limit = prompt.slice(limitAt, limitAt + 400);
     assert.equal(limit.includes("where possible"), false);
     assert.equal(limit.includes("under ~"), false);
     assert.equal(/try to/i.test(limit), false);
-    assert.match(
-      userPrompt,
-      /Word limit: 80 words maximum\. Write to fit within it\./
-    );
-    assert.match(
-      userPrompt,
-      /Do not pad to reach the limit\. Do not truncate mid-sentence or drop the closing to meet it\./
-    );
+    assert.equal((prompt.match(/Length:/g) || []).length, 1);
+    assert.equal(prompt.includes("100 to 150 words"), false);
+    assert.equal(prompt.includes("Word limit:"), false);
+    assert.match(prompt, /Do not pad to reach a length\./);
   });
 });

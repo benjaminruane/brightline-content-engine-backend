@@ -20,18 +20,15 @@ import {
 } from "../lib/web.js";
 import {
   normalizeOutputType,
-  normalizeVisibility,
   buildOutputIntent,
-  getPromptGuidance,
+  visibilityForDraft,
   getOutputTypeLabel,
 } from "../lib/output-intent.js";
 import {
   normalizeEventType,
   getEventTypeLabel,
-  getEventTypeFraming,
 } from "../lib/event-type.js";
 import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
-import { outputTypeWordCeiling, wordLimitLine } from "../lib/prompt-library/outputTypeGuidance.js";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
@@ -207,46 +204,6 @@ function normalizeRewriteInstructions(raw) {
   }
 
   return { text: trimmed, ignored: false, reason: null };
-}
-
-// Detect voice override in user instructions (Notes or Rewrite instructions)
-function detectVoiceOverride(text) {
-  if (typeof text !== "string" || !text.trim()) return null;
-  
-  const lower = text.toLowerCase();
-  
-  // Check for explicit voice instructions
-  const firstPersonPatterns = [
-    /\b(use|write in|write|employ|adopt)\s+(first[\s-]?person|I|we|our|us)\b/,
-    /\bfirst[\s-]?person\b/,
-    /\buse\s+(I|we|our|us)\b/,
-  ];
-  
-  const secondPersonPatterns = [
-    /\b(use|write in|write|employ|adopt)\s+(second[\s-]?person|you|your)\b/,
-    /\bsecond[\s-]?person\b/,
-    /\buse\s+(you|your)\b/,
-  ];
-  
-  const thirdPersonPatterns = [
-    /\b(use|write in|write|employ|adopt)\s+(third[\s-]?person|it|they|them|their)\b/,
-    /\bthird[\s-]?person\b/,
-  ];
-  
-  // Check in order: explicit third-person override, then first, then second
-  for (const pattern of thirdPersonPatterns) {
-    if (pattern.test(lower)) return "third";
-  }
-  
-  for (const pattern of firstPersonPatterns) {
-    if (pattern.test(lower)) return "first";
-  }
-  
-  for (const pattern of secondPersonPatterns) {
-    if (pattern.test(lower)) return "second";
-  }
-  
-  return null; // No override detected, use default (third-person)
 }
 
 // Extract citation numbers from text (e.g., [1], [2] -> [1, 2])
@@ -669,7 +626,7 @@ export default async function handler(req, res) {
     const sources = Array.isArray(body.sources) ? body.sources : [];
     // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
     const outputType = normalizeOutputType(body.outputType ?? body.selectedTypes?.[0] ?? null);
-    const visibility = normalizeVisibility(body.visibility ?? body.versionType ?? null);
+    const visibility = visibilityForDraft(outputType, body.visibility ?? body.versionType ?? null);
     const rawEventType = typeof body.eventType === "string" ? body.eventType : (typeof body.scenario === "string" ? body.scenario : "");
     const eventType = normalizeEventType(rawEventType);
     const eventTypeLabel = getEventTypeLabel(eventType);
@@ -679,7 +636,6 @@ export default async function handler(req, res) {
         ? Math.min(2000, Math.max(1, Math.floor(body.maxWords)))
         : null;
 
-    const promptMaxWords = effectiveMaxWords ?? outputTypeWordCeiling(outputType);
     const hasInstructions = typeof rewriteInstructions === "string" && rewriteInstructions.length > 0;
     const hasTarget = Number.isFinite(effectiveMaxWords);
     const isLengthOnly = !hasInstructions && hasTarget;
@@ -705,15 +661,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Detect voice override in Rewrite instructions (A5.13: use normalized only)
-    const voiceOverride = detectVoiceOverride(rewriteInstructions);
-    const voiceInstruction = voiceOverride === "first"
-      ? "Write in first-person voice (use 'I', 'we', 'our', 'us')."
-      : voiceOverride === "second"
-      ? "Write in second-person voice (use 'you', 'your')."
-      : "Write in third-person voice (use 'the firm', 'the company', 'it', 'they', 'their'). This is the default style, even if source documents use first or second person.";
-
-    const eventFraming = getEventTypeFraming(eventType);
     const transactionDate =
       typeof body.transactionDate === "string" && body.transactionDate.trim()
         ? body.transactionDate.trim()
@@ -728,6 +675,7 @@ export default async function handler(req, res) {
       investment,
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation),
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
+      maxWords: effectiveMaxWords,
     });
     const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
@@ -736,12 +684,11 @@ export default async function handler(req, res) {
       "User rewrite instructions are authoritative and override base guidance if they conflict (advisory conflicts may be reported, but do not block).";
 
     const promptBody = isLengthOnly
-      ? `LENGTH-ONLY REWRITE: Adjust the draft to ${effectiveMaxWords} words maximum. Write to fit within it. Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can. Do NOT add new facts, change tone beyond compression/expansion, or introduce new sections. Preserve meaning; remove or merge lower-priority detail first.
+      ? `LENGTH-ONLY REWRITE: Change only the length, to the single length stated in the base guidance. Do not add new facts, change the tone beyond what the length requires, or add sections. Do not drop an essential point. Say it more briefly.
 
 ${rewriteWinsLine}
 
-BASE GUIDANCE (output type):
-${basePromptText}
+Follow the base guidance in the system message.
 
 DRAFT:
 ${text}
@@ -764,14 +711,7 @@ Rewrite the draft based on the instructions. Keep the same output format and vis
 
 ${rewriteWinsLine}
 
-BASE GUIDANCE (output type):
-${basePromptText}
-
-FORMAT GUIDANCE: ${getPromptGuidance(outputType, visibility)}
-${eventFraming ? `
-EVENT TYPE FRAMING (${eventTypeLabel}):
-${eventFraming}
-` : ""}
+Follow the base guidance in the system message.
 
 INSTRUCTIONS:
 ${rewriteInstructions}
@@ -784,9 +724,6 @@ ${webResultsForPrompt || "(none)"}
 
 SOURCES:
 ${sources.length ? JSON.stringify(sourcesForPrompt(sources), null, 2) : "(none)"}
-
-VOICE REQUIREMENT:
-${voiceInstruction}
 
 CRITICAL ATTRIBUTION RULES (HYBRID):
 ${publicSearch && webReferences.length > 0 ? `
@@ -816,10 +753,6 @@ Rules:
 - Use only information from the uploaded sources provided above.
 - You may paraphrase and synthesize uploaded content freely.
 `}
-${promptMaxWords != null ? `\nOutput constraints:
-- ${wordLimitLine(promptMaxWords)}
-- Do not pad to reach the limit. Do not truncate mid-sentence or drop the closing to meet it. If the material will not fit, write the best complete version you can.
-` : ""}
 
 REWRITE REPORT (self-assessment, optional but requested):
 After producing the revised draft, provide a brief machine-readable report:

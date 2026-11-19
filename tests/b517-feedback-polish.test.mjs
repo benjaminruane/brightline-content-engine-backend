@@ -86,10 +86,12 @@ describe("B517 feedback polish", () => {
     assert.equal(below.payload.lengthNote, "11 words, below the 200 to 300 word range for investor letter");
     const aboveLimit = buildConstructiveFeedbackV2(body({ wordLimit: 1 }));
     assert.equal(aboveLimit.payload.lengthNote, "11 words, above your 1 word limit");
-    const aboveRange = buildConstructiveFeedbackV2(body({ draftText: words(320), wordLimit: null }));
-    assert.match(aboveRange.payload.lengthNote, /^320 words, above the 200 to 300 word range/);
+    const withinAllowance = buildConstructiveFeedbackV2(body({ draftText: words(320), wordLimit: null }));
+    assert.equal(Object.hasOwn(withinAllowance.payload, "lengthNote"), false);
+    const aboveRange = buildConstructiveFeedbackV2(body({ draftText: words(340), wordLimit: null }));
+    assert.match(aboveRange.payload.lengthNote, /^340 words, above the 200 to 300 word range/);
 
-    for (const built of [withinLimit, withinRange, below, aboveLimit, aboveRange]) {
+    for (const built of [withinLimit, withinRange, below, aboveLimit, withinAllowance, aboveRange]) {
       const packed = JSON.stringify(built.payload.findings);
       assert.equal(packed.includes("lengthNote"), false);
       assert.equal(packed.includes("wordCountLine"), false);
