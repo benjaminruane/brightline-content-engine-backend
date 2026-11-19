@@ -22,6 +22,7 @@ import {
   getPromptGuidance,
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
+import { normalizePgHouseStyleCharacters } from "../lib/prompt-library/house-characters.mjs";
 import { lengthInstruction } from "../lib/prompt-library/outputTypeGuidance.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
@@ -242,7 +243,9 @@ Return ONLY JSON:
 
     const raw = completion?.text || "";
     const parsed = safeJsonParse(raw) || {};
-    const draftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
+    const draftText = normalizePgHouseStyleCharacters(
+      typeof parsed.draftText === "string" ? parsed.draftText.trim() : ""
+    );
 
     if (!draftText) {
       return res.status(500).json({ ok: false, error: "Adapt failed. Please try again." });
