@@ -32,6 +32,7 @@ import {
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { exceedsLengthAllowance, outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
 import { normalizePgHouseStyleCharacters } from "../lib/prompt-library/house-characters.mjs";
+import { applyNumberSpelling } from "../lib/qc/number-spelling.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { countWords } from "../lib/qc/token-estimate.mjs";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
@@ -755,8 +756,8 @@ Return ONLY JSON:
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(rawDraftText));
-    let currentDraftText = normalizePgHouseStyleCharacters(splitDraft.commentary);
-    const methodologyNote = normalizePgHouseStyleCharacters(splitDraft.methodologyNote);
+    let currentDraftText = applyNumberSpelling(normalizePgHouseStyleCharacters(splitDraft.commentary), { outputType });
+    const methodologyNote = applyNumberSpelling(normalizePgHouseStyleCharacters(splitDraft.methodologyNote), { outputType });
 
     const wordCount = countWords(currentDraftText);
     if (effectiveMaxWords != null && exceedsLengthAllowance(wordCount, effectiveMaxWords)) {
