@@ -23,7 +23,7 @@ const GOLDEN_DIR = path.join(ROOT, "tests/fixtures/b245");
 const GOLDEN_PATH = path.join(GOLDEN_DIR, "meridian-2026-09-18.export.txt");
 const GOLDEN_BLESS_TOKEN = "meridian-2026-09-18";
 const DISCLAIMER =
-  "Compliance flags are based on commonly-observed principles and are not jurisdiction-specific or a substitute for legal counsel. Editorial and Evidence flags are guidance for the reviewer's judgment. All flags require human confirmation before publication.";
+  "Evidence flags compare the draft with the sources you provided and do not check facts beyond them. Editorial flags apply your house rules and general writing practice. Compliance flags are based on commonly observed principles; they are not jurisdiction-specific and are not a substitute for legal advice. All flags are guidance and need your confirmation before publication.";
 const EDITORIAL_NOTE_FRAGMENT = "first-person plural";
 
 function qualityReviewSummary(payload) {

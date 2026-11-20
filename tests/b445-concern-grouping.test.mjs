@@ -41,7 +41,7 @@ describe("B445 concern grouping", () => {
     const [row] = scanMechanics({ statement, outputType: "press_release" });
     assert.equal(row.concernCode, "voice_consistency");
     assert.equal(row.category, "editorial");
-    assert.equal(row.text, "'We' is the writer speaking as we. This piece speaks in the third person.");
+    assert.equal(row.text, "This piece is written in the third person, so \"We\" should be your organisation's name.");
     assert.equal(row.quote, "We");
     assert.equal(row.span.length, 1);
   });
@@ -84,7 +84,7 @@ describe("B445 concern grouping", () => {
     assert.equal(row.span.length, 2);
     assert.equal(
       row.text,
-      "'We' and 'our' are the writer speaking as we. This piece speaks in the third person."
+      "This piece is written in the third person, so \"We\" should be your organisation's name."
     );
     assert.equal(row.suggestedDirection, "Recast 'We' and 'our' into the third person.");
   });

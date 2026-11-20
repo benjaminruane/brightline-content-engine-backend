@@ -13,7 +13,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.
 const FIXTURE_DIR = path.join(ROOT, "tests/fixtures/b247");
 const FRONTEND_ROOT = path.resolve(ROOT, "../brightline-content-engine-frontend");
 const DISCLAIMER =
-  "Compliance flags are based on commonly-observed principles and are not jurisdiction-specific or a substitute for legal counsel. Editorial and Evidence flags are guidance for the reviewer's judgment. All flags require human confirmation before publication.";
+  "Evidence flags compare the draft with the sources you provided and do not check facts beyond them. Editorial flags apply your house rules and general writing practice. Compliance flags are based on commonly observed principles; they are not jurisdiction-specific and are not a substitute for legal advice. All flags are guidance and need your confirmation before publication.";
 
 function loadJson(filePath) {
   return JSON.parse(readFileSync(filePath, "utf8"));
