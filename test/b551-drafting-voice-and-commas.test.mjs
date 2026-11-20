@@ -81,8 +81,8 @@ describe("B551 commas and drafting voice", () => {
     assert.equal(commentary.includes("Write as the firm, in the first person plural (we, our)."), false);
     assert.equal(letter.includes("Write as the firm, in the first person plural (we, our)."), true);
     assert.equal(letter.includes("Dear Investors,"), true);
-    assert.equal(linkedin.includes("Third-person throughout (the firm). Do not use we."), true);
-    assert.equal(linkedin.includes("Write as the firm, in the first person plural (we, our)."), false);
+    assert.equal(linkedin.includes("Write as the firm, in the first person plural (we, our)."), true);
+    assert.equal(linkedin.includes("Third-person throughout (the firm). Do not use we."), false);
     assert.equal(press.includes("third-person"), true);
     assert.equal(commentary.includes("Dear Investors,"), false);
   });

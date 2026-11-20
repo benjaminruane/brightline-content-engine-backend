@@ -24,8 +24,8 @@ const DRIFT =
 const EXPECTED_TABLE = [
   { slug: "reporting_commentary", person: "third person" },
   { slug: "investor_letter", person: "first person plural" },
+  { slug: "linkedin_post", person: "first person plural" },
   { slug: "press_release", person: "third person" },
-  { slug: "linkedin_post", person: "third person" },
 ];
 
 describe("B220 house voice single source", () => {

@@ -42,7 +42,7 @@ describe("B536 assembled prompts", () => {
             if (other !== audience) assert.equal(text.includes(other), false, name);
           }
           const we = text.includes("Write as the firm, in the first person plural (we, our).");
-          const firmVoice = outputType === OUTPUT_TYPE.INVESTOR_LETTER;
+          const firmVoice = outputType === OUTPUT_TYPE.INVESTOR_LETTER || outputType === OUTPUT_TYPE.LINKEDIN_POST;
           assert.equal(we, firmVoice, name);
           if (!firmVoice) assert.equal(/third[- ]person/i.test(text), true, name);
           if (outputType === OUTPUT_TYPE.INVESTOR_LETTER) {

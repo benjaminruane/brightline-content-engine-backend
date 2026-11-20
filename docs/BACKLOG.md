@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B552 | The firm means only the user's firm, another manager's views are credited, and LinkedIn posts say we | `b552` |
 | B551 | Generate and Rewrite read PDF and Word files as text, two-item lists keep no comma, and a draft states the firm's decision as made without a closing summary | `b551` |
 | B550 | A found table figure keeps the table note as its evidence, both passages of a same-source disagreement are on the card, and a new direct investment is written as the firm | `b550` |
 | B549 | A table date is found where the month and year sit, a card shows the reason it has, the excerpt is the passage that reason uses, Oxford comma flags skip introductions and source names, the Reviewer's note and the direct investment brief are tighter, and copy and search are on the screen | `b549` |
