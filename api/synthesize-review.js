@@ -1,7 +1,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { synthesisFindingCensus, synthesisPayloadHasBlankFinding } from "../lib/qc/blank-finding-guard.mjs";
 import { READINESS_LABELS } from "../lib/qc/review-summary.mjs";
@@ -142,7 +142,7 @@ export default async function handler(req, res) {
       reason: ASSESSMENT_REASONS.CALL_FAILED,
     });
   } finally {
-    await endBillableRequest({ account, route: "synthesize-review", req });
+    await endBillableRequest({ account, route: "synthesize-review", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

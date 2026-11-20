@@ -458,7 +458,7 @@ export default async function handler(req, res) {
     res.status(200).json(safeInternalErrorPayload);
     return;
   } finally {
-    await endBillableRequest({ account, route: "analyse-statements", req });
+    await endBillableRequest({ account, route: "analyse-statements", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

@@ -4,7 +4,7 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { deriveQueryFromAsk, runWebSearch } from "../lib/web.js";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
@@ -159,7 +159,7 @@ ${references.map(r => `[${r.id}] ${r.title}`).join("\n")}
       error: err.message || "Ask AI failed",
     });
   } finally {
-    await endBillableRequest({ account, route: "query", req });
+    await endBillableRequest({ account, route: "query", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

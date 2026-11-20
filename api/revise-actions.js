@@ -9,7 +9,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { runActionList } from "../lib/revise-actions/run.mjs";
 import { isReviseActionListEnabled } from "./_lib/env-flags.js";
@@ -64,11 +64,14 @@ export default async function handler(req, res) {
       bannedWords: Array.isArray(body?.bannedWords) ? body.bannedWords : [],
       sourceRulings: body?.sourceRulings,
     });
-    return res.status(200).json(result);
+    return res.status(200).json({
+      ...result,
+      meta: { llmSpend: getLlmSpend() },
+    });
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Revise action list failed" });
   } finally {
-    await endBillableRequest({ account, route: "revise-actions", req });
+    await endBillableRequest({ account, route: "revise-actions", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

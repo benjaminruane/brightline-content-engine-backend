@@ -30,14 +30,14 @@ import {
   getEventTypeLabel,
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
-import { lengthAllowanceWords, outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
+import { lengthAllowanceWords, lengthFloorWords, outputTypeWordCeiling, sourcesCannotSupportLength } from "../lib/prompt-library/outputTypeGuidance.js";
 import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
 import { fitToWordCeiling } from "../lib/qc/word-ceiling.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { countWords } from "../lib/qc/token-estimate.mjs";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
-import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { applyPlaceholderGuard } from "../lib/prompt-library/placeholder-guard.mjs";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 import { sourcesForPrompt } from "../lib/source-role.mjs";
@@ -799,6 +799,47 @@ Return ONLY JSON:
       }));
     }
 
+    if (outputType === "GENERAL_TEXT") {
+      const floor = lengthFloorWords(outputType, typedMaxWords);
+      const sourceText = safeSources
+        .map((row) => (typeof row?.text === "string" ? row.text : ""))
+        .filter((part) => part.trim())
+        .join("\n\n");
+      const sourceWords = countWords(sourceText);
+      if (floor && sourceWords > 0 && countWords(currentDraftText) < floor) {
+        const lengthen = await callLLM({
+          provider: modelConfig.provider,
+          model: modelId,
+          temperature: 0.2,
+          messages: [
+            {
+              role: "system",
+              content: `Rewrite the draft so it is at least ${floor} words and no more than ${ceilingWords || floor} words. Use only the facts in the sources. Do not add a figure, a name, a date, or a claim that is not in the sources. Do not repeat a sentence in different words. Develop each fact into a sentence a reader can follow. Return JSON only: {"draftText":"..."}.`,
+            },
+            { role: "user", content: `Sources:\n${sourceText.slice(0, 8000)}\n\nDraft:\n${currentDraftText}` },
+          ],
+          traceName: "writing-generate-lengthen",
+          spanName: "writing-generate-lengthen",
+          metadata: { route: "generate" },
+        });
+        const lengthened = safeJsonParse(lengthen?.text || "");
+        if (lengthened && typeof lengthened.draftText === "string" && lengthened.draftText.trim()) {
+          currentDraftText = applyDraftHouseStyle(lengthened.draftText, houseOpts);
+        }
+        if (ceilingWords && countWords(currentDraftText) > ceilingWords) {
+          currentDraftText = fitToWordCeiling(currentDraftText, ceilingWords);
+        }
+      }
+      const wordsNow = countWords(currentDraftText);
+      console.log(JSON.stringify({
+        event: "general_length_floor",
+        words: wordsNow,
+        floor,
+        sourceWords,
+        waived: Boolean(floor) && wordsNow < floor && sourcesCannotSupportLength(sourceWords, floor),
+      }));
+    }
+
     await populateSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
 
     if (!currentDraftText.trim()) {
@@ -808,11 +849,11 @@ Return ONLY JSON:
       });
     }
 
-    const guardedGenerate = applyPlaceholderGuard(currentDraftText, "");
+    const guardedGenerate = applyPlaceholderGuard(currentDraftText, "", "Generate");
     if (!guardedGenerate.accepted) {
       return res.status(422).json({
         ok: false,
-        error: PLACEHOLDER_GUARD_MESSAGE,
+        error: guardedGenerate.message,
         code: "PLACEHOLDER_IN_OUTPUT",
       });
     }
@@ -856,6 +897,7 @@ Return ONLY JSON:
         outputIntent: metaOutputIntent,
         eventType,
         eventTypeLabel,
+        llmSpend: getLlmSpend(),
       },
       sourcesUsed: {
         web: {
@@ -875,7 +917,7 @@ Return ONLY JSON:
       error: err?.message || "Unknown error",
     });
   } finally {
-    await endBillableRequest({ account, route: "generate", req });
+    await endBillableRequest({ account, route: "generate", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

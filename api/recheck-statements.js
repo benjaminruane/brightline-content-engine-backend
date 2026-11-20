@@ -5,7 +5,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { recheckStatements } from "../lib/qc/reading-review.mjs";
 
 
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(400).json({ ok: false, error: err?.message || "recheck failed" });
   } finally {
-    await endBillableRequest({ account, route: "recheck-statements", req });
+    await endBillableRequest({ account, route: "recheck-statements", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

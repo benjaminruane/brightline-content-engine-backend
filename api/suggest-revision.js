@@ -10,7 +10,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
   SUGGEST_STAGE_KEYS,
@@ -272,7 +272,7 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Suggest-revision failed" });
   } finally {
-    await endBillableRequest({ account, route: "suggest-revision", req });
+    await endBillableRequest({ account, route: "suggest-revision", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

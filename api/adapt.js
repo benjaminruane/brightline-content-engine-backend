@@ -23,9 +23,10 @@ import {
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
 import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
+import { applyPlaceholderGuard } from "../lib/prompt-library/placeholder-guard.mjs";
 import { lengthInstruction } from "../lib/prompt-library/outputTypeGuidance.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 import { sourcesForPrompt as omitRoleForPrompt } from "../lib/source-role.mjs";
@@ -252,6 +253,15 @@ Return ONLY JSON:
       return res.status(500).json({ ok: false, error: "Adapt failed. Please try again." });
     }
 
+    const guardedAdapt = applyPlaceholderGuard(draftText, baseDraftText, "Adapt");
+    if (!guardedAdapt.accepted) {
+      return res.status(422).json({
+        ok: false,
+        error: guardedAdapt.message,
+        code: "PLACEHOLDER_IN_OUTPUT",
+      });
+    }
+
     const derivation = {
       kind: "ADAPT",
       fromDraftId: baseDraftId ?? null,
@@ -285,7 +295,7 @@ Return ONLY JSON:
       error: err?.message || "Adapt failed",
     });
   } finally {
-    await endBillableRequest({ account, route: "adapt", req });
+    await endBillableRequest({ account, route: "adapt", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

@@ -2,7 +2,7 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { randomUUID } from "node:crypto";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
   constructiveFeedbackSystemPrompt,
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
     console.warn("[constructive-feedback]", err?.message || err);
     return res.status(200).json({ ok: false, feedbackText: "", isReady: built.readiness === "Ready" });
   } finally {
-    await endBillableRequest({ account, route: "constructive-feedback", req });
+    await endBillableRequest({ account, route: "constructive-feedback", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

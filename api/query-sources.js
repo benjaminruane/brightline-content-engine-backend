@@ -8,7 +8,7 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { formatWebResultsForPrompt } from "../lib/web.js";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
@@ -183,7 +183,7 @@ ${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Query sources failed" });
   } finally {
-    await endBillableRequest({ account, route: "query-sources", req });
+    await endBillableRequest({ account, route: "query-sources", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

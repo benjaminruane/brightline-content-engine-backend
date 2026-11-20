@@ -5,7 +5,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 import {
@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     const message = error instanceof Error && error.message ? error.message : "suggest roles failed";
     return res.status(502).json({ ok: false, error: message });
   } finally {
-    await endBillableRequest({ account, route: "suggest-roles", req });
+    await endBillableRequest({ account, route: "suggest-roles", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

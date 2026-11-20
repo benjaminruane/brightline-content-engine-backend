@@ -1,7 +1,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
   } catch {
     return res.status(200).json({ ok: true, usedFor: "" });
   } finally {
-    await endBillableRequest({ account, route: "summarize-source-usage", req });
+    await endBillableRequest({ account, route: "summarize-source-usage", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }

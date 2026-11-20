@@ -8,7 +8,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
-import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
+import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 import { sourcesForPrompt } from "../lib/source-role.mjs";
@@ -32,7 +32,7 @@ import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index
 import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
-import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
+import { applyPlaceholderGuard } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 
 
@@ -820,11 +820,11 @@ Return ONLY valid JSON with no markdown or extra text:
       return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
     }
 
-    const guarded = applyPlaceholderGuard(finalDraftText, text);
+    const guarded = applyPlaceholderGuard(finalDraftText, text, "Rewrite");
     if (!guarded.accepted) {
       return res.status(422).json({
         ok: false,
-        error: PLACEHOLDER_GUARD_MESSAGE,
+        error: guarded.message,
         code: "PLACEHOLDER_IN_OUTPUT",
       });
     }
@@ -983,7 +983,7 @@ Return ONLY valid JSON with no markdown or extra text:
   } catch (err) {
     return res.status(500).json({ ok: false, error: err?.message || "Rewrite failed" });
   } finally {
-    await endBillableRequest({ account, route: "rewrite", req });
+    await endBillableRequest({ account, route: "rewrite", req, spend: getLlmSpend() });
     await flushObservability();
   }
 }
