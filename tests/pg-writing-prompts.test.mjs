@@ -17,7 +17,7 @@ describe("composed writing prompt", () => {
     const guidanceIdx = basePromptText.indexOf("Write the new direct investment.");
     assert.ok(outputIdx >= 0);
     assert.ok(guidanceIdx > outputIdx);
-    assert.match(basePromptText, /Cover, in this order:/);
+    assert.match(basePromptText, /priorities, not a checklist/);
     assert.match(basePromptText, /Length: no more than 165 words\./);
     assert.doesNotMatch(basePromptText, /Binding constraints/);
     assert.match(basePromptText, /---METHODOLOGY---/);

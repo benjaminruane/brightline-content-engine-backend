@@ -27,18 +27,25 @@ describe("B537 length ceiling and Other update", () => {
   });
 
   test("optional points wait until the essentials are covered", () => {
-    const { basePromptText } = buildBasePrompt({
-      eventType: "NEW_DIRECT_INVESTMENT",
+    const exit = buildBasePrompt({
+      eventType: "DIRECT_INVESTMENT_EXIT",
       outputType: "investor_letter",
       visibility: "complete",
     });
     assert.equal(
-      basePromptText.includes(
+      exit.basePromptText.includes(
         "Where space allows. These points are optional. Include one only when the essentials are covered and room remains. Omit every one of them if including it would pass 330 words. Do not write a section called where space allows."
       ),
       true
     );
-    assert.equal(basePromptText.includes("Do not drop an essential point."), true);
+    const direct = buildBasePrompt({
+      eventType: "NEW_DIRECT_INVESTMENT",
+      outputType: "investor_letter",
+      visibility: "complete",
+    });
+    assert.equal(direct.basePromptText.includes("priorities, not a checklist"), true);
+    assert.equal(direct.basePromptText.includes("Where space allows."), false);
+    assert.equal(direct.basePromptText.includes("Do not drop an essential point."), true);
   });
 
   test("Other update leads with the special instructions and leaves out the rest", () => {

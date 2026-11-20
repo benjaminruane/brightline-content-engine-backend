@@ -16,22 +16,19 @@ const fixturesDir = path.join(root, "scripts/diagnostic/drafting/fixtures");
 
 const MUST_COVER = {
   NEW_DIRECT_INVESTMENT: [
-    "investment merits and thesis",
-    "thematic fit within the firm's wider strategy",
-    "history with the asset, if the source gives it",
-    "the overall investment view",
-    "what the company does, where, and its scale",
-    "the transaction (stake, seller, co-investors, status stated exactly as the source states it)",
-    "value creation plan",
-    "Do not state the equity amount or the valuation multiple.",
+    "what the company is and does, and its business model",
+    "the substantive merits and the investment thesis, backed by concrete figures such as percentages where the source has them, not by adjectives",
+    "fit with a wider theme",
+    "any prior history with the company",
+    "the valuation and the stake acquired",
   ],
   ADD_ON_DIRECT_INVESTMENT: [
     "the platform's buy-and-build strategy and how the target fits",
+    "what the target is and does",
     "what the target adds",
-    "rationale",
-    "history with the target",
-    "the overall view",
-    "status",
+    "the valuation and the stake acquired",
+    "rationale, backed by concrete figures where the source has them",
+    "any prior history with the target",
     "The platform company is the acquirer; do not say the firm invested unless the source says so.",
   ],
   DIRECT_INVESTMENT_EXIT: [

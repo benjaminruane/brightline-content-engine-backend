@@ -18,8 +18,8 @@ import {
 import { applyNoteHouseStyle } from "../lib/qc/note-house-style.mjs";
 
 const KEPT_LINES = [
-  "Write one short note to the writer about the draft as a whole.",
-  "Speak as a senior editor talking to a colleague. Say what is strong and what is weak, plainly.",
+  "Write one short note about the draft as a whole.",
+  "Plain senior-editor prose. No salutation and no form of address.",
   "Do not label the parts of the note and do not go sentence by sentence.",
   "Where a weakness has a clear example in the draft, quote the example rather than describing the problem in the abstract.",
   "Do not claim the draft has been checked against the source.",
