@@ -9,8 +9,8 @@ import { OUTPUT_TYPE, getPromptGuidance, visibilityForDraft } from "../lib/outpu
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { writerFeedbackInstructions } from "../lib/qc/reading-review.mjs";
 
-const TEXT_TYPES = Object.values(EVENT_TYPE);
-const OUTPUT_TYPES = Object.values(OUTPUT_TYPE);
+const TEXT_TYPES = Object.values(EVENT_TYPE).filter((id) => id !== "GENERAL");
+const OUTPUT_TYPES = Object.values(OUTPUT_TYPE).filter((id) => id !== "GENERAL_TEXT");
 const VERSIONS = ["complete", "public"];
 
 const AUDIENCE = {

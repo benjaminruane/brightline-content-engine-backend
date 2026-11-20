@@ -1,6 +1,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
-import { findAccount, normaliseWritingFor, updateWritingFor } from "../lib/db/accounts.mjs";
+import { dismissFeedbackBanner, feedbackNotice, findAccount, normaliseWritingFor, updateHouseStyle, updateWritingFor } from "../lib/db/accounts.mjs";
+import { houseStyleForRow, normaliseHouseStyle } from "../lib/house-style-choice.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import { resetsOnIso, resolveAllowanceUsd, usedFraction } from "../lib/spend/allowance.mjs";
 import { spentThisMonthUsd } from "../lib/spend/ledger.mjs";
@@ -24,10 +25,18 @@ async function publicAccount(sql, row, fallback) {
   const admin = emailIsAdmin(email);
   const spent = fallback?.accountId ? await spentThisMonthUsd(sql, fallback.accountId) : 0;
   const allowance = admin ? null : resolveAllowanceUsd(row?.monthly_allowance_usd, process.env.ALLOWANCE_USD_PER_MONTH);
+  const houseStyle = houseStyleForRow(row, admin);
+  let notice = null;
+  if (admin && sql && fallback?.accountId) {
+    notice = await feedbackNotice(sql, row?.feedback_banner_closed_at ?? null);
+  }
   return {
     name,
     email,
     writingFor: row?.writing_for ?? null,
+    spelling: houseStyle.spelling,
+    thousands: houseStyle.thousands,
+    feedbackNotice: notice,
     isAdmin: admin,
     allowanceUsd: allowance,
     spentThisMonthUsd: spent,
@@ -58,14 +67,33 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === "PUT") {
-      let writingFor;
-      try {
-        writingFor = normaliseWritingFor(readJsonBody(req).writingFor);
-      } catch (err) {
-        if (err?.code === "invalid_writing_for") return res.status(400).json({ error: "invalid_writing_for" });
-        throw err;
+      const body = readJsonBody(req);
+      if (body.dismissFeedbackBanner === true) {
+        const saved = await dismissFeedbackBanner(sql, account.accountId);
+        if (!saved) return res.status(404).json({ error: "not_found" });
+        return res.status(200).json(await publicAccount(sql, saved, account));
       }
-      const saved = await updateWritingFor(sql, { id: account.accountId, writingFor });
+      let saved = null;
+      if (Object.prototype.hasOwnProperty.call(body, "writingFor")) {
+        let writingFor;
+        try {
+          writingFor = normaliseWritingFor(body.writingFor);
+        } catch (err) {
+          if (err?.code === "invalid_writing_for") return res.status(400).json({ error: "invalid_writing_for" });
+          throw err;
+        }
+        saved = await updateWritingFor(sql, { id: account.accountId, writingFor });
+      }
+      if (body.spelling != null || body.thousands != null) {
+        let choice;
+        try {
+          choice = normaliseHouseStyle({ spelling: body.spelling, thousands: body.thousands });
+        } catch (err) {
+          return res.status(400).json({ error: "invalid_house_style" });
+        }
+        if (!choice) return res.status(400).json({ error: "invalid_house_style" });
+        saved = await updateHouseStyle(sql, { id: account.accountId, spelling: choice.spelling, thousands: choice.thousands });
+      }
       if (!saved) return res.status(404).json({ error: "not_found" });
       return res.status(200).json(await publicAccount(sql, saved, account));
     }

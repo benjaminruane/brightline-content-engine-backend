@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
-  CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT,
+  constructiveFeedbackSystemPrompt,
   buildConstructiveFeedbackV2,
   normalizeConstructiveFeedbackPlainText,
   prependReadiness,
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       model: modelConfig.model,
       temperature: null,
       messages: [
-        { role: "system", content: CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT },
+        { role: "system", content: constructiveFeedbackSystemPrompt(body.houseStyle) },
         { role: "user", content: JSON.stringify(built.payload, null, 2) },
       ],
       traceId,

@@ -14,6 +14,7 @@ import { annotateSourceRoles, sourceRole, sourcesForPrompt } from "../lib/source
 import { buildResponseSources, splitSourcesForResponse } from "../lib/response-sources.mjs";
 
 const LABELS = [
+  "General",
   "New direct investment",
   "Direct investment add-on",
   "Direct investment exit",
@@ -29,6 +30,7 @@ const LABELS = [
 test("text types keep their keys, in the screen order, and Other update is the default", () => {
   assert.deepEqual(EVENT_TYPE_OPTIONS.map((row) => row.label), LABELS);
   assert.deepEqual(EVENT_TYPE_OPTIONS.map((row) => row.id), [
+    EVENT_TYPE.GENERAL,
     EVENT_TYPE.NEW_DIRECT_INVESTMENT,
     EVENT_TYPE.ADD_ON_DIRECT_INVESTMENT,
     EVENT_TYPE.DIRECT_INVESTMENT_EXIT,

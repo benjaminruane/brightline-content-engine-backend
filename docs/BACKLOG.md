@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B543 | Feedback always sends and reaches Ben, versions only on a real text change, house style per account, the General text type, and example reveals | `b543` |
 |     | Trace metadata for QC runs | r1.2-pre, r1.2-pre.1 |
 |     | Stage 2 prompt v2 (conflict detection) | r1.2.2-prompt-eval, r1.2.3-prompt-v2-production |
 |     | Multi-provider infrastructure (OpenAI + Anthropic) | r1.2.4-multi-provider-infra |

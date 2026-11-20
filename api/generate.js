@@ -664,6 +664,7 @@ export default async function handler(req, res) {
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
       maxWords: typedMaxWords,
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
+      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
     });
     const ceiling = lengthAllowanceWords(effectiveMaxWords);
     const ceilingLine = ceiling

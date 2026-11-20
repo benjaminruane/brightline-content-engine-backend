@@ -235,6 +235,7 @@ export default async function handler(req, res) {
       ? body.eventType.trim()
       : (typeof body?.scenario === "string" ? body.scenario.trim() : "");
     if (eventType) pipelineOptions.eventType = eventType;
+    if (body?.houseStyle && typeof body.houseStyle === "object") pipelineOptions.houseStyle = body.houseStyle;
     if (body?.dealStatus != null && body.dealStatus !== "") pipelineOptions.dealStatus = body.dealStatus;
     const runStartedAt = new Date().toISOString();
     const draftMetadata = {

@@ -1,6 +1,8 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { dismissFeedbackBanner, findAccount } from "../lib/db/accounts.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
+import { sendFeedbackEmail } from "../lib/feedback-email.mjs";
 
 const COMMENT_MAX = 5000;
 const DRAFT_MAX = 20000;
@@ -65,11 +67,27 @@ export default async function handler(req, res) {
          returning id, account_id, comment, meta, draft_snapshot, created_at, read_at`,
         [account.accountId, comment, meta, draft || null]
       );
-      return res.status(200).json({ ok: true, feedback: present(rows[0]) });
+      const saved = rows[0];
+      try {
+        const sender = await findAccount(sql, account.accountId);
+        await sendFeedbackEmail({
+          senderName: sender?.name || account.name || "",
+          senderEmail: sender?.email || account.email || "",
+          comment,
+          detailsLine: typeof meta?.detailsLine === "string" ? meta.detailsLine : "",
+        });
+      } catch (err) {
+        console.warn("[feedback] email not sent:", err?.message || err);
+      }
+      return res.status(200).json({ ok: true, feedback: present(saved) });
     }
 
     if (req.method === "PUT") {
       const body = readJsonBody(req);
+      if (body.dismissBanner === true) {
+        await dismissFeedbackBanner(sql, account.accountId);
+        return res.status(200).json({ ok: true });
+      }
       const id = body.id;
       if (id == null || body.read !== true) return res.status(400).json({ error: "invalid_feedback" });
       const rows = await sql.query(

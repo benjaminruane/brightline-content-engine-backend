@@ -677,6 +677,7 @@ export default async function handler(req, res) {
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation),
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
       maxWords: effectiveMaxWords,
+      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
     });
     const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
