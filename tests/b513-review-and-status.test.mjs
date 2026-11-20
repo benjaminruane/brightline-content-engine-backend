@@ -96,7 +96,7 @@ describe("B513 the reason follows the colour", () => {
     });
     const supportedReason = readerEvidenceSentence(supported);
     assert.equal(shownTrace(supported).state, "note_withheld");
-    assert.match(supportedReason, /The reading of the whole claim found it supported/);
+    assert.equal(supportedReason.includes("The reading of the whole claim found it supported"), false);
     const card = displayCard({
       statement: "The firm has agreed to acquire a portfolio of five limited partnership interests.",
       role: "facts",

@@ -29,8 +29,7 @@ import {
   getEventTypeLabel,
 } from "../lib/event-type.js";
 import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
-import { normalizePgHouseStyleCharacters } from "../lib/prompt-library/house-characters.mjs";
-import { applyNumberSpelling } from "../lib/qc/number-spelling.mjs";
+import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard, PLACEHOLDER_GUARD_MESSAGE } from "../lib/prompt-library/placeholder-guard.mjs";
@@ -808,8 +807,12 @@ Return ONLY valid JSON with no markdown or extra text:
     let finalDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
     const sourcesUsedRows = extractSourcesUsedRows(finalDraftText, sources);
     const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(finalDraftText));
-    finalDraftText = applyNumberSpelling(normalizePgHouseStyleCharacters(splitDraft.commentary), { outputType });
-    const methodologyNote = applyNumberSpelling(normalizePgHouseStyleCharacters(splitDraft.methodologyNote), { outputType });
+    const houseOpts = {
+      outputType,
+      authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation) || "",
+    };
+    finalDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
+    const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);
     await populateSourceUsageSummaries(req, sourcesUsedRows, finalDraftText);
 
     if (!finalDraftText || typeof finalDraftText !== "string") {

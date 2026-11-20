@@ -30,9 +30,9 @@ import {
   getEventTypeLabel,
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
-import { exceedsLengthAllowance, outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
-import { normalizePgHouseStyleCharacters } from "../lib/prompt-library/house-characters.mjs";
-import { applyNumberSpelling } from "../lib/qc/number-spelling.mjs";
+import { lengthAllowanceWords, outputTypeWordCeiling } from "../lib/prompt-library/outputTypeGuidance.js";
+import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
+import { fitToWordCeiling } from "../lib/qc/word-ceiling.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { countWords } from "../lib/qc/token-estimate.mjs";
 import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
@@ -591,6 +591,7 @@ export default async function handler(req, res) {
       publicSearch,
       sources,
       bannedWords: rawBannedWords,
+      authoringOrganisation,
     } = body;
 
     const modelId = typeof model === "string" && model.trim() ? model.trim() : modelConfig.model;
@@ -662,8 +663,13 @@ export default async function handler(req, res) {
       sources: safeSources,
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
       maxWords: typedMaxWords,
+      authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
     });
-    const systemContent = [STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
+    const ceiling = lengthAllowanceWords(effectiveMaxWords);
+    const ceilingLine = ceiling
+      ? `Hard length ceiling: ${ceiling} words. A draft longer than that is wrong. Cover the essential points inside that number and leave out the optional ones.`
+      : "";
+    const systemContent = [ceilingLine, STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
     const userPrompt = `
 You are generating a draft. Follow the style guide.
@@ -756,15 +762,39 @@ Return ONLY JSON:
     const rawDraftText = typeof parsed.draftText === "string" ? parsed.draftText : "";
     const sourcesUsedRows = extractSourcesUsedRows(rawDraftText, safeSources);
     const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(rawDraftText));
-    let currentDraftText = applyNumberSpelling(normalizePgHouseStyleCharacters(splitDraft.commentary), { outputType });
-    const methodologyNote = applyNumberSpelling(normalizePgHouseStyleCharacters(splitDraft.methodologyNote), { outputType });
-
-    const wordCount = countWords(currentDraftText);
-    if (effectiveMaxWords != null && exceedsLengthAllowance(wordCount, effectiveMaxWords)) {
+    const houseOpts = {
+      outputType,
+      authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
+    };
+    let currentDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
+    const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);
+    const ceilingWords = lengthAllowanceWords(effectiveMaxWords);
+    if (ceilingWords && countWords(currentDraftText) > ceilingWords) {
+      const shorten = await callLLM({
+        provider: modelConfig.provider,
+        model: modelId,
+        temperature: 0,
+        messages: [
+          {
+            role: "system",
+            content: `Rewrite the draft so it is at most ${ceilingWords} words. Keep the essential points. Drop optional points first. Do not add facts. Do not change a figure, a name, or a date. Return JSON only: {"draftText":"..."}.`,
+          },
+          { role: "user", content: currentDraftText },
+        ],
+        traceName: "writing-generate-shorten",
+        spanName: "writing-generate-shorten",
+        metadata: { route: "generate" },
+      });
+      const shortened = safeJsonParse(shorten?.text || "");
+      if (shortened && typeof shortened.draftText === "string" && shortened.draftText.trim()) {
+        currentDraftText = applyDraftHouseStyle(shortened.draftText, houseOpts);
+      }
+      currentDraftText = fitToWordCeiling(currentDraftText, ceilingWords);
       console.log(JSON.stringify({
         event: "output_type_word_count",
-        words: wordCount,
+        words: countWords(currentDraftText),
         maxWords: effectiveMaxWords,
+        ceiling: ceilingWords,
       }));
     }
 

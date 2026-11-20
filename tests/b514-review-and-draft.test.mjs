@@ -45,7 +45,7 @@ test("A1 an accepted supporting note turns a closest-passage conflict amber", ()
   assert.equal(traced.setBy.note, "readingNote");
   const reason = readerEvidenceSentence(view());
   assert.match(reason, /serves enterprises/);
-  assert.match(reason, /The reading of the whole claim found it supported/);
+  assert.equal(reason.includes("The reading of the whole claim found it supported"), false);
   assert.equal(reason.includes("\u2014"), false);
   const partial = shownTrace(view({ displayVerdict: "supported_partial" }));
   assert.equal(partial.state, "note_withheld");

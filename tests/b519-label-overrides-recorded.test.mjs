@@ -26,7 +26,7 @@ test("applyContextRole records the label it changes", () => {
 
 test("applyReaderDecides records the label it changes", () => {
   const card = {
-    statement: "We remain constructive on the remaining portfolio.",
+    statement: "The remaining portfolio is concentrated in one sector.",
     displayVerdict: "supported_partial",
     sentenceState: "nothing_raised",
     statementVerdict: { state: "nothing_raised" },

@@ -123,15 +123,16 @@ describe("B184 disagreement card", () => {
     assert.equal(entry.disagreementPassages.filter((row) => row.governs === true).length, 1);
   });
 
-  test("T3 pairing source governs and no pairs: governancePair still present", async () => {
+  test("T3 pairing source governs: the draft takes that document's figure", async () => {
     const result = await runActionList([COMPANIES], {
       callModel: throwingModel(),
       sourceRulings: [{ a: 0, b: 1, governs: 0 }],
     });
     const entry = evidenceEntry(result);
     assert.ok(entry);
-    assert.equal(entry.disposition, "ACKNOWLEDGE");
-    assert.equal(entry.resultingSentence, undefined);
+    assert.equal(entry.disposition, "ACTION");
+    assert.match(String(entry.resultingSentence), /34/);
+    assert.doesNotMatch(String(entry.resultingSentence), /\b36\b/);
     assert.ok(entry.governancePair && typeof entry.governancePair === "object");
     assert.equal(entry.governancePair.a, 0);
     assert.equal(entry.governancePair.b, 1);

@@ -16,7 +16,7 @@ const SENTENCE = "This check did not run, because the match came back empty.";
 
 function partial(bucket) {
   return {
-    statement: "We remain constructive on the remaining portfolio.",
+    statement: "The remaining portfolio is concentrated in one sector.",
     displayVerdict: "supported_partial",
     displayedEvidenceProse: PARTIAL_UNRECORDED,
     sentenceState: "nothing_raised",

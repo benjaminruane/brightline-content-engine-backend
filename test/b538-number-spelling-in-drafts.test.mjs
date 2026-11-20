@@ -51,9 +51,11 @@ describe("B538 number spelling in drafts", () => {
   });
 
   test("generate, rewrite, and adapt spell the draft before it is returned", () => {
+    const helper = readFileSync(new URL("../lib/qc/draft-house-style.mjs", import.meta.url), "utf8");
+    assert.equal(helper.includes("applyNumberSpelling"), true);
     for (const file of ["api/generate.js", "api/rewrite.js", "api/adapt.js"]) {
       const source = readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
-      assert.equal(source.includes("applyNumberSpelling"), true, file);
+      assert.equal(source.includes("applyDraftHouseStyle"), true, file);
     }
   });
 });

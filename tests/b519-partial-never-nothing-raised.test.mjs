@@ -10,7 +10,7 @@ import { shownLabel, shownState } from "../lib/qc/shown-verdict.mjs";
 
 function unrecorded(bucket) {
   return {
-    statement: "We remain constructive on the remaining portfolio.",
+    statement: "The remaining portfolio is concentrated in one sector.",
     displayVerdict: "supported_partial",
     displayedEvidenceProse: PARTIAL_UNRECORDED,
     sentenceState: "nothing_raised",
@@ -37,7 +37,7 @@ test("the unrecorded fallback uses a non-empty evidence summary", () => {
   const summary = "The memo states the remaining portfolio is still compounding.";
   const card = {
     displayVerdict: "supported_partial",
-    statement: "We remain constructive on the remaining portfolio.",
+    statement: "The remaining portfolio is concentrated in one sector.",
     evidenceSummary: summary,
   };
   assert.notEqual(partialSentence(card), PARTIAL_UNRECORDED);

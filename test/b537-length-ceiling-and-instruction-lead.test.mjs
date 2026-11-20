@@ -67,9 +67,11 @@ describe("B537 length ceiling and Other update", () => {
   test("a draft is straightened before generate, rewrite, or adapt returns it", () => {
     const raw = "The firm\u2019s view \u2014 growth of 5\u20136% \u201Cthis year\u201D.";
     assert.equal(normalizePgHouseStyleCharacters(raw), "The firm's view - growth of 5-6% \"this year\".");
+    const helper = readFileSync(new URL("../lib/qc/draft-house-style.mjs", import.meta.url), "utf8");
+    assert.equal(helper.includes("normalizePgHouseStyleCharacters"), true);
     for (const file of ["api/generate.js", "api/rewrite.js", "api/adapt.js"]) {
       const source = readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
-      assert.equal(source.includes("normalizePgHouseStyleCharacters"), true, file);
+      assert.equal(source.includes("applyDraftHouseStyle"), true, file);
     }
   });
 });

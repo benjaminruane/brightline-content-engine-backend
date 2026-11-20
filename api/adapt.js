@@ -22,8 +22,7 @@ import {
   getPromptGuidance,
   OUTPUT_TYPE,
 } from "../lib/output-intent.js";
-import { normalizePgHouseStyleCharacters } from "../lib/prompt-library/house-characters.mjs";
-import { applyNumberSpelling } from "../lib/qc/number-spelling.mjs";
+import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
 import { lengthInstruction } from "../lib/prompt-library/outputTypeGuidance.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { callLLM, flushObservability, hasProviderApiKey } from "../lib/observability.js";
@@ -244,10 +243,8 @@ Return ONLY JSON:
 
     const raw = completion?.text || "";
     const parsed = safeJsonParse(raw) || {};
-    const draftText = applyNumberSpelling(
-      normalizePgHouseStyleCharacters(
-        typeof parsed.draftText === "string" ? parsed.draftText.trim() : ""
-      ),
+    const draftText = applyDraftHouseStyle(
+      typeof parsed.draftText === "string" ? parsed.draftText.trim() : "",
       { outputType: targetOutputType }
     );
 
