@@ -217,8 +217,8 @@ test("E1 to E3 length ranges, the word-limit line, and commentary-only counting"
     visibility: "public",
     eventType: "SPECIAL_TOPIC",
   });
-  assert.match(basePromptText, /Length: 200 to 300 words\. Plan the text to this length from the start\./);
-  assert.equal(wordLimitLine(150), "Length: 150 words. Plan the text to this length from the start. Cover the essential points. Include a point marked where space allows only when the essentials are covered and room remains. No more than 165 words. Do not pad to reach a length. Do not drop an essential point.");
+  assert.match(basePromptText, /Length: no more than 330 words\./);
+  assert.equal(wordLimitLine(150), "Length: no more than 165 words. Say what the sources support, as briefly as that takes, up to that limit. Do not add a sentence the sources do not support to reach a length. Do not drop an essential point.");
   assert.equal(wordLimitLine(150).includes("Methodology"), false);
   const split = splitMethodologyOutput("One two three.\n---METHODOLOGY---\nFour five.");
   assert.equal(countWords(split.commentary), 3);

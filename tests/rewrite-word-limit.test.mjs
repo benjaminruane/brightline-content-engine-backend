@@ -110,7 +110,7 @@ describe("rewrite word limit", () => {
 
     assert.equal(res.statusCode, 200);
     const prompt = llmSpy.mock.calls[0][0].messages.map((m) => m.content).join("\n");
-    const limitAt = prompt.indexOf("Length: 80 words.");
+    const limitAt = prompt.indexOf("Length: no more than 88 words.");
     assert.ok(limitAt >= 0);
     const limit = prompt.slice(limitAt, limitAt + 400);
     assert.equal(limit.includes("where possible"), false);
@@ -119,6 +119,6 @@ describe("rewrite word limit", () => {
     assert.equal((prompt.match(/Length:/g) || []).length, 1);
     assert.equal(prompt.includes("100 to 150 words"), false);
     assert.equal(prompt.includes("Word limit:"), false);
-    assert.match(prompt, /Do not pad to reach a length\./);
+    assert.match(prompt, /Do not add a sentence the sources do not support to reach a length\./);
   });
 });

@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B547 | PDF tables are read row by row, a table figure is not a confident green, length is a ceiling, the header hides developer controls for non-admins, and the feedback banner names the sender and updates while the tab is open | `b547` |
 | B546 | Signed-in accounts failed to load because production was missing the B543 account columns | `b546` |
 | B545 | Signed-in users saw a white screen because a hook ran after the sign-in gate returned early | `b545` |
 | B544 | Press release Generate keeps the brief's placeholders, Caution flags show on General texts, General drafts meet their length, and local runs record their cost | `b544` |

@@ -16,13 +16,13 @@ describe("B537 length ceiling and Other update", () => {
     assert.equal(lengthAllowanceWords(250), 275);
     const range = lengthInstruction("REPORTING_COMMENTARY");
     assert.equal((range.match(/Length:/g) || []).length, 1);
-    assert.equal(range.includes("Length: 100 to 150 words."), true);
-    assert.equal(range.includes("No more than 165 words."), true);
+    assert.equal(range.includes("Length: no more than 165 words."), true);
+    assert.equal(range.includes("100 to 150"), false);
+    assert.equal(range.includes("Do not add a sentence the sources do not support to reach a length."), true);
     assert.equal(range.includes("10%"), false);
     assert.equal(range.includes("leave out the least important point"), false);
     const typed = lengthInstruction("REPORTING_COMMENTARY", 250);
-    assert.equal(typed.includes("Length: 250 words."), true);
-    assert.equal(typed.includes("No more than 275 words."), true);
+    assert.equal(typed.includes("Length: no more than 275 words."), true);
     assert.equal(typed.includes("100 to 150"), false);
   });
 

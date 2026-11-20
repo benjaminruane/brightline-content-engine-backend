@@ -44,7 +44,7 @@ describe("B536 word limit", () => {
       visibility: "complete",
     });
     assert.equal((basePromptText.match(/Length:/g) || []).length, 1);
-    assert.equal(basePromptText.includes("Length: 100 to 150 words."), true);
+    assert.equal(basePromptText.includes("Length: no more than 165 words."), true);
     assert.equal(
       shownWordCountLine({
         draftText: words(120),
@@ -55,7 +55,7 @@ describe("B536 word limit", () => {
       "120 words, within the 100 to 150 word range for reporting commentary"
     );
     const built = review(null, 120);
-    assert.equal(built.brief.includes("Length: 100 to 150 words."), true);
+    assert.equal(built.brief.includes("Length: no more than 165 words."), true);
     assert.equal(built.note, null);
   });
 
@@ -67,7 +67,7 @@ describe("B536 word limit", () => {
       maxWords: 250,
     });
     assert.equal((basePromptText.match(/Length:/g) || []).length, 1);
-    assert.equal(basePromptText.includes("Length: 250 words."), true);
+    assert.equal(basePromptText.includes("Length: no more than 275 words."), true);
     assert.equal(basePromptText.includes("100 to 150"), false);
     const line = shownWordCountLine({
       draftText: words(200),
@@ -78,7 +78,7 @@ describe("B536 word limit", () => {
     assert.equal(line, "200 words, within your 250 word limit");
     assert.equal(line.includes("100 to 150"), false);
     const built = review(250, 200);
-    assert.equal(built.brief.includes("Length: 250 words."), true);
+    assert.equal(built.brief.includes("Length: no more than 275 words."), true);
     assert.equal(built.brief.includes("100 to 150"), false);
     assert.equal(built.note, null);
   });

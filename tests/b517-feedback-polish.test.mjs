@@ -83,7 +83,7 @@ describe("B517 feedback polish", () => {
     assert.equal(Object.hasOwn(withinRange.payload, "lengthNote"), false);
 
     const below = buildConstructiveFeedbackV2(body({ wordLimit: null }));
-    assert.equal(below.payload.lengthNote, "11 words, below the 200 to 300 word range for investor letter");
+    assert.equal(Object.hasOwn(below.payload, "lengthNote"), false);
     const aboveLimit = buildConstructiveFeedbackV2(body({ wordLimit: 1 }));
     assert.equal(aboveLimit.payload.lengthNote, "11 words, above your 1 word limit");
     const withinAllowance = buildConstructiveFeedbackV2(body({ draftText: words(320), wordLimit: null }));

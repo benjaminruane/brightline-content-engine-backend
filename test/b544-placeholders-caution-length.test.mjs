@@ -113,7 +113,7 @@ describe("B544 general length", () => {
     assert.equal(sourcesCannotSupportLength(150, 150), false);
     assert.equal(sourcesCannotSupportLength(400, 150), false);
     const generate = readFileSync(new URL("../api/generate.js", import.meta.url), "utf8");
-    assert.match(generate, /writing-generate-lengthen/);
+    assert.doesNotMatch(generate, /writing-generate-lengthen/);
     assert.match(generate, /sourcesCannotSupportLength/);
   });
 });

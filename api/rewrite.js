@@ -811,6 +811,7 @@ Return ONLY valid JSON with no markdown or extra text:
     const houseOpts = {
       outputType,
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation) || "",
+      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
     };
     finalDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
     const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);

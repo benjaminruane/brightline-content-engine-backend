@@ -246,7 +246,10 @@ Return ONLY JSON:
     const parsed = safeJsonParse(raw) || {};
     const draftText = applyDraftHouseStyle(
       typeof parsed.draftText === "string" ? parsed.draftText.trim() : "",
-      { outputType: targetOutputType }
+      {
+        outputType: targetOutputType,
+        houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
+      }
     );
 
     if (!draftText) {

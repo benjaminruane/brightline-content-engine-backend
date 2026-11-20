@@ -97,7 +97,7 @@ describe("B515 constructive feedback payload", () => {
         outputTypeLabel: "Press release",
         wordLimit: null,
       }),
-      "5 words, below the 200 to 300 word range for a press release"
+      "5 words"
     );
     assert.equal(
       shownWordCountLine({

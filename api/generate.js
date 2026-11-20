@@ -31,6 +31,7 @@ import {
 } from "../lib/event-type.js";
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { lengthAllowanceWords, lengthFloorWords, outputTypeWordCeiling, sourcesCannotSupportLength } from "../lib/prompt-library/outputTypeGuidance.js";
+import { omitDatelineWhenSourceHasBoth } from "../lib/press-dateline.mjs";
 import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
 import { fitToWordCeiling } from "../lib/qc/word-ceiling.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
@@ -766,6 +767,7 @@ Return ONLY JSON:
     const houseOpts = {
       outputType,
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
+      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
     };
     let currentDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
     const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);
@@ -799,37 +801,16 @@ Return ONLY JSON:
       }));
     }
 
+    const sourceText = safeSources
+      .map((row) => (typeof row?.text === "string" ? row.text : ""))
+      .filter((part) => part.trim())
+      .join("\n\n");
+    if (outputType === "PRESS_RELEASE") {
+      currentDraftText = omitDatelineWhenSourceHasBoth(currentDraftText, sourceText);
+    }
     if (outputType === "GENERAL_TEXT") {
       const floor = lengthFloorWords(outputType, typedMaxWords);
-      const sourceText = safeSources
-        .map((row) => (typeof row?.text === "string" ? row.text : ""))
-        .filter((part) => part.trim())
-        .join("\n\n");
       const sourceWords = countWords(sourceText);
-      if (floor && sourceWords > 0 && countWords(currentDraftText) < floor) {
-        const lengthen = await callLLM({
-          provider: modelConfig.provider,
-          model: modelId,
-          temperature: 0.2,
-          messages: [
-            {
-              role: "system",
-              content: `Rewrite the draft so it is at least ${floor} words and no more than ${ceilingWords || floor} words. Use only the facts in the sources. Do not add a figure, a name, a date, or a claim that is not in the sources. Do not repeat a sentence in different words. Develop each fact into a sentence a reader can follow. Return JSON only: {"draftText":"..."}.`,
-            },
-            { role: "user", content: `Sources:\n${sourceText.slice(0, 8000)}\n\nDraft:\n${currentDraftText}` },
-          ],
-          traceName: "writing-generate-lengthen",
-          spanName: "writing-generate-lengthen",
-          metadata: { route: "generate" },
-        });
-        const lengthened = safeJsonParse(lengthen?.text || "");
-        if (lengthened && typeof lengthened.draftText === "string" && lengthened.draftText.trim()) {
-          currentDraftText = applyDraftHouseStyle(lengthened.draftText, houseOpts);
-        }
-        if (ceilingWords && countWords(currentDraftText) > ceilingWords) {
-          currentDraftText = fitToWordCeiling(currentDraftText, ceilingWords);
-        }
-      }
       const wordsNow = countWords(currentDraftText);
       console.log(JSON.stringify({
         event: "general_length_floor",
