@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeAll, describe, test, vi } from "vitest";
 import { InMemorySpanExporter } from "@opentelemetry/sdk-trace";
-import { callLLM } from "../lib/observability.js";
+import { callLLM, useAnthropicClientForTests } from "../lib/observability.js";
 import {
   flushLangfuse,
   newLangfuseTraceId,
@@ -131,6 +131,8 @@ describe("B489 Langfuse span tree", () => {
 
   test("callLLM without a provider key still records an error generation", async () => {
     const traceId = newLangfuseTraceId();
+    const previous = useAnthropicClientForTests(null);
+    try {
     await assert.rejects(
       () =>
         callLLM({
@@ -143,6 +145,9 @@ describe("B489 Langfuse span tree", () => {
         }),
       /ANTHROPIC_API_KEY/
     );
+    } finally {
+      useAnthropicClientForTests(previous);
+    }
     await flushLangfuse();
     const child = exporter.getFinishedSpans().find((span) => span.name === "llm-call");
     assert.ok(child);
