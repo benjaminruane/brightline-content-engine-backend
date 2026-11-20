@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B548 | Table figures keep their column headings, a table is extracted once, a correct table reading is not overridden, and the evidence card shows the evidence reason, a short excerpt, and no empty-match line | `b548` |
 | B547 | PDF tables are read row by row, a table figure is not a confident green, length is a ceiling, the header hides developer controls for non-admins, and the feedback banner names the sender and updates while the tab is open | `b547` |
 | B546 | Signed-in accounts failed to load because production was missing the B543 account columns | `b546` |
 | B545 | Signed-in users saw a white screen because a hook ran after the sign-in gate returned early | `b545` |
