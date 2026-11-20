@@ -69,10 +69,10 @@ describe("B444 mechanics scan", () => {
     ]);
   });
 
-  test("first person is not a concern where the house voice permits it", () => {
+  test("first person is allowed on an investor letter and flagged on a LinkedIn post", () => {
     const statement = "We believe the fund should deliver returns in line with its predecessor.";
     assert.deepEqual(codes(statement, "investor_letter"), []);
-    assert.deepEqual(codes(statement, "linkedin_post"), []);
+    assert.deepEqual(codes(statement, "linkedin_post"), [{ code: "voice_consistency", quote: "We" }]);
   });
 
   test("a spelled percentage that also sits in the matched passage is still a concern", () => {

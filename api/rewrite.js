@@ -12,6 +12,7 @@ import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 import { sourcesForPrompt } from "../lib/source-role.mjs";
+import { draftErrorFromProvider, sourcesForDraftPrompt } from "../lib/draft-sources.mjs";
 import {
   tavilySearch,
   formatWebResultsForPrompt,
@@ -624,7 +625,9 @@ export default async function handler(req, res) {
     const bannedWords = normalizeBannedWords(body.bannedWords);
     const bannedWordsInstruction = bannedWordsLine(bannedWords);
     const publicSearch = Boolean(body.publicSearch);
-    const sources = Array.isArray(body.sources) ? body.sources : [];
+    const preparedSources = await sourcesForDraftPrompt(Array.isArray(body.sources) ? body.sources : []);
+    if (preparedSources.error) return res.status(400).json({ ok: false, error: preparedSources.error });
+    const sources = preparedSources.sources;
     // SPEC X2.0: Rewrite reuses same intent unless explicitly changed
     const outputType = normalizeOutputType(body.outputType ?? body.selectedTypes?.[0] ?? null);
     const visibility = visibilityForDraft(outputType, body.visibility ?? body.versionType ?? null);
@@ -982,6 +985,8 @@ Return ONLY valid JSON with no markdown or extra text:
       },
     });
   } catch (err) {
+    const plain = draftErrorFromProvider(err);
+    if (plain) return res.status(400).json({ ok: false, error: plain });
     return res.status(500).json({ ok: false, error: err?.message || "Rewrite failed" });
   } finally {
     await endBillableRequest({ account, route: "rewrite", req, spend: getLlmSpend() });

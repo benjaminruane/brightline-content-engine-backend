@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "vitest";
 import { CONTEXT_SOURCE_LINE, composeLayers } from "../lib/prompt-library/compose.mjs";
-import { HOUSE_RULES_PARAGRAPHS } from "../lib/prompt-library/house-rules.mjs";
+import { HOUSE_RULES_PARAGRAPHS, houseRulesForEvent } from "../lib/prompt-library/house-rules.mjs";
 import { TEXT_TYPE_MODULES } from "../lib/prompt-library/text-types/index.mjs";
 import { parseSummarizeResponse, textTypeForSummary } from "../lib/source-summary.mjs";
 
@@ -126,9 +126,14 @@ test("house rules and the new source-roles line are in the composed prompt", () 
   assert.equal(fixtures.length, 10);
   for (const fixture of fixtures) {
     const prompt = promptFor(fixture);
-    for (const paragraph of HOUSE_RULES_PARAGRAPHS) {
+    const amountMayStay = fixture.textType === "NEW_DIRECT_INVESTMENT" || fixture.textType === "ADD_ON_DIRECT_INVESTMENT";
+    const paragraphs = amountMayStay
+      ? houseRulesForEvent(fixture.textType).split("\n\n")
+      : HOUSE_RULES_PARAGRAPHS;
+    for (const paragraph of paragraphs) {
       assert.equal(prompt.includes(paragraph), true, fixture.textType);
     }
+    assert.equal(prompt.includes("or the size of the firm's own investment"), !amountMayStay, fixture.textType);
     assert.equal(prompt.includes(OLD_SOURCE_ROLES_LINE), false, fixture.textType);
     for (const item of MUST_COVER[fixture.textType]) {
       assert.equal(prompt.includes(item), true, `${fixture.textType}: ${item}`);

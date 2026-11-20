@@ -42,6 +42,7 @@ import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
 import { sourcesForPrompt } from "../lib/source-role.mjs";
+import { draftErrorFromProvider, sourcesForDraftPrompt } from "../lib/draft-sources.mjs";
 
 // ------------------------------------------------------------------
 // CORS
@@ -627,7 +628,11 @@ export default async function handler(req, res) {
     const effectiveMaxWords = typedMaxWords ?? outputTypeWordCeiling(outputType);
     const safeVersionType = visibility === "PUBLIC" ? "public" : "complete";
     const safePublicSearch = Boolean(publicSearch);
-    const safeSources = Array.isArray(sources) ? sources : [];
+    const preparedSources = await sourcesForDraftPrompt(Array.isArray(sources) ? sources : []);
+    if (preparedSources.error) {
+      return res.status(400).json({ ok: false, error: preparedSources.error });
+    }
+    const safeSources = preparedSources.sources;
     const bannedWords = normalizeBannedWords(rawBannedWords);
     const bannedWordsInstruction = bannedWordsLine(bannedWords);
 
@@ -893,6 +898,8 @@ Return ONLY JSON:
       },
     });
   } catch (err) {
+    const plain = draftErrorFromProvider(err);
+    if (plain) return res.status(400).json({ ok: false, error: plain });
     return res.status(500).json({
       ok: false,
       error: err?.message || "Unknown error",
