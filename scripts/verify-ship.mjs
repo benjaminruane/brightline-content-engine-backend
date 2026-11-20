@@ -99,6 +99,14 @@ if (tests.status !== 0) {
   fail("tests failed");
 }
 
+const coverage = run("node", ["scripts/db/check-migration-coverage.mjs"]);
+const coverageOutput = `${coverage.stdout || ""}${coverage.stderr || ""}`;
+if (coverageOutput) {
+  process.stdout.write(coverageOutput);
+  if (!coverageOutput.endsWith("\n")) process.stdout.write("\n");
+}
+if (coverage.status !== 0) fail("migration coverage failed");
+
 const filesMatch = testOutput.match(/Test Files[^\n]*\((\d+)\)/);
 const testsMatch = testOutput.match(/^\s*Tests[^\n]*\((\d+)\)/m);
 const fileCount = filesMatch ? filesMatch[1] : "unknown";

@@ -2,18 +2,12 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { neon } from "@neondatabase/serverless";
+import { splitSqlStatements } from "../../lib/db/sql-statements.mjs";
 
 const MIGRATIONS_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../../db/migrations"
 );
-
-function splitStatements(sqlText) {
-  return sqlText
-    .split(";")
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0);
-}
 
 async function main() {
   const url = process.env.DATABASE_URL_UNPOOLED;
@@ -36,7 +30,7 @@ async function main() {
   for (const name of names) {
     console.log(`running ${name}`);
     const text = await readFile(path.join(MIGRATIONS_DIR, name), "utf8");
-    const statements = splitStatements(text);
+    const statements = splitSqlStatements(text);
     for (const statement of statements) {
       if (typeof sql.query === "function") {
         await sql.query(statement);

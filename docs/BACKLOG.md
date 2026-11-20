@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B546 | Signed-in accounts failed to load because production was missing the B543 account columns | `b546` |
 | B545 | Signed-in users saw a white screen because a hook ran after the sign-in gate returned early | `b545` |
 | B544 | Press release Generate keeps the brief's placeholders, Caution flags show on General texts, General drafts meet their length, and local runs record their cost | `b544` |
 | B543 | Feedback always sends and reaches Ben, versions only on a real text change, house style per account, the General text type, and example reveals | `b543` |
