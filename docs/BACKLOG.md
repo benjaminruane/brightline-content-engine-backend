@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B550 | A found table figure keeps the table note as its evidence, both passages of a same-source disagreement are on the card, and a new direct investment is written as the firm | `b550` |
 | B549 | A table date is found where the month and year sit, a card shows the reason it has, the excerpt is the passage that reason uses, Oxford comma flags skip introductions and source names, the Reviewer's note and the direct investment brief are tighter, and copy and search are on the screen | `b549` |
 | B548 | Table figures keep their column headings, a table is extracted once, a correct table reading is not overridden, and the evidence card shows the evidence reason, a short excerpt, and no empty-match line | `b548` |
 | B547 | PDF tables are read row by row, a table figure is not a confident green, length is a ceiling, the header hides developer controls for non-admins, and the feedback banner names the sender and updates while the tab is open | `b547` |
