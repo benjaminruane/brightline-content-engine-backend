@@ -24,6 +24,7 @@ const LABELS = [
   "Fund capital call",
   "Fund distribution",
   "Fund revaluation",
+  "Special topic",
   "Other update",
 ];
 
@@ -41,14 +42,17 @@ test("text types keep their keys, in the screen order, and Other update is the d
     EVENT_TYPE.FUND_DISTRIBUTION,
     EVENT_TYPE.FUND_REVALUATION,
     EVENT_TYPE.SPECIAL_TOPIC,
+    EVENT_TYPE.OTHER_UPDATE,
   ]);
   assert.equal(EVENT_TYPE.NEW_PRIMARY_COMMITMENT, "NEW_PRIMARY_COMMITMENT");
   assert.equal(getEventTypeLabel(EVENT_TYPE.ADD_ON_DIRECT_INVESTMENT), "Direct investment add-on");
   assert.equal(getEventTypeLabel(EVENT_TYPE.NEW_PRIMARY_COMMITMENT), "New fund commitment");
-  assert.equal(getEventTypeLabel(EVENT_TYPE.SPECIAL_TOPIC), "Other update");
-  assert.equal(DEFAULT_EVENT_TYPE, EVENT_TYPE.SPECIAL_TOPIC);
-  assert.equal(normalizeEventType(""), EVENT_TYPE.SPECIAL_TOPIC);
-  assert.equal(normalizeEventType(undefined), EVENT_TYPE.SPECIAL_TOPIC);
+  assert.equal(getEventTypeLabel(EVENT_TYPE.SPECIAL_TOPIC), "Special topic");
+  assert.equal(getEventTypeLabel(EVENT_TYPE.OTHER_UPDATE), "Other update");
+  assert.equal(DEFAULT_EVENT_TYPE, EVENT_TYPE.OTHER_UPDATE);
+  assert.equal(normalizeEventType(""), EVENT_TYPE.OTHER_UPDATE);
+  assert.equal(normalizeEventType(undefined), EVENT_TYPE.OTHER_UPDATE);
+  assert.equal(normalizeEventType("SPECIAL_TOPIC"), EVENT_TYPE.SPECIAL_TOPIC);
 });
 
 test("a source role is passed through, and a missing role is facts", () => {

@@ -64,9 +64,10 @@ describe("B553 organisation voice and length", () => {
       assert.equal(text.includes("Do not describe another author's views as the firm's."), true);
       assert.equal(text.includes("The fund distributes and the firm receives.") || text.includes("who paid, who received, who bought and who sold"), true);
     }
-    assert.equal(letter.includes("The fund distributes and the firm receives."), false);
+    assert.equal(letter.includes("The fund distributes. Do not name a recipient."), false);
     const distribution = brief(EVENT_TYPE.FUND_DISTRIBUTION, OUTPUT_TYPE.REPORTING_COMMENTARY, "");
-    assert.equal(distribution.includes("The fund distributes and the firm receives."), true);
+    assert.equal(distribution.includes("The fund distributes. Do not name a recipient."), true);
+    assert.equal(distribution.includes("The fund distributes and the firm receives."), false);
   });
 
   test("the model is told the top of the range, and the allowance stays a trim", () => {

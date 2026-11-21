@@ -44,8 +44,10 @@ describe("B552 firm roles, credit, and LinkedIn voice", () => {
       );
       assert.equal(text.includes("Do not promise a section the draft does not deliver."), true);
     }
-    assert.equal(commentary.includes("The fund distributes and the firm receives."), true);
-    assert.equal(call.includes("The fund calls and the firm pays."), true);
+    assert.equal(commentary.includes("The fund distributes. Do not name a recipient."), true);
+    assert.equal(call.includes("The fund calls. Do not name a payer."), true);
+    assert.equal(commentary.includes("The fund distributes and the firm receives."), false);
+    assert.equal(call.includes("The fund calls and the firm pays."), false);
     assert.equal(commentary.includes("Third-person by default (the firm, the company, it, they)."), true);
     assert.equal(letter.includes("Write as the firm, in the first person plural (we, our)."), true);
   });

@@ -810,7 +810,7 @@ Return ONLY JSON:
           messages: [
             {
               role: "system",
-              content: `Rewrite the draft so it does not state these confidential figures, because they do not appear in a public source: ${named}. Do not add facts. Do not delete any other sentence. Return JSON only: {"draftText":"..."}.`,
+              content: `Rewrite the draft so it does not state these confidential figures or return measures, because they do not appear in a public source: ${named}. A return measure stays out however it is worded or rounded. Do not add facts. Do not delete any other sentence. Return JSON only: {"draftText":"..."}.`,
             },
             { role: "user", content: currentDraftText },
           ],
