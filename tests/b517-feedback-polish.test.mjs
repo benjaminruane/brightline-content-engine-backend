@@ -101,7 +101,7 @@ describe("B517 feedback polish", () => {
 
   test("the house spelling setting is the pop-up value and it is in the prompt", () => {
     const page = readFileSync(
-      new URL("../../brightline-content-engine-frontend/src/modules/settings/HouseRulesPage.jsx", import.meta.url),
+      new URL("../../brightline-content-engine-frontend/src/modules/settings/HouseStylePage.jsx", import.meta.url),
       "utf8"
     );
     const shown = page.match(/export const ACTIVE_STYLE = "([^"]*)";/);
