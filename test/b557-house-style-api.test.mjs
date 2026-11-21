@@ -41,15 +41,17 @@ test("a choice outside the guide is refused, and a valid save stays on that acco
   const page = renderHouseStylePage(saved.choices);
   assert.equal(page.settingsChoices.find((row) => row.id === "quotes").selected, "double");
   assert.deepEqual(page.settingsChoices.map((row) => row.id), [
-    "quotes",
+    "spelling",
+    "dates",
     "numberWords",
     "thousands",
     "magnitude",
-    "dates",
     "periods",
-    "spelling",
+    "quotes",
     "legalIdentifiers",
   ]);
+  assert.equal(page.settingsChoices.find((row) => row.id === "numberWords").example, "three funds, but 13 funds");
+  assert.equal(page.voice.find((row) => row.slug === "investor_letter").sentence, "we, speaking as your organisation.");
   assert.equal(page.settingsChoices.some((row) => row.id === "bannedWords"), false);
   assert.equal(page.principles.some((row) => row.id === "lead_with_what_happened"), true);
 });

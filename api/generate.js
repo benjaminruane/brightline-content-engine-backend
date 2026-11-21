@@ -752,6 +752,7 @@ Return ONLY JSON:
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
       houseStyle,
       sources: safeSources,
+      title: safeTitle,
     };
     const styleFixes = [];
     const drafted = draftHouseStyleReport(splitDraft.commentary, houseOpts);
