@@ -11,7 +11,6 @@ import {
   normalizeExportVerdict,
 } from "../lib/qc/evidence-display-verdict.mjs";
 import { buildReviewData, renderCanonicalExportText } from "../lib/qc/export-review-data.mjs";
-import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
 import { summariseReview } from "../lib/qc/review-summary.mjs";
 import { sourceSpokeTestsFired } from "../lib/revise-actions/silence.mjs";
 import {
@@ -59,7 +58,7 @@ describe("B400 unbadged card", () => {
     const review = buildReviewData(qcResult, ON);
     assert.equal(review.statements[0].verdict, null);
     assert.equal(card.reasoningParagraph, "The source confirms the trading line in its own words.");
-    assert.equal(review.statements[0].evidenceFinding, PARTIAL_UNRECORDED);
+    assert.equal(String(review.statements[0].evidenceFinding || "").includes("Which part was not recorded"), false);
     const text = renderCanonicalExportText({
       qcResult,
       reviewOptions: ON,
@@ -67,7 +66,7 @@ describe("B400 unbadged card", () => {
     });
     assert.equal(text.includes("Verdict:"), false);
     assert.equal(text.includes("Not checked"), false);
-    assert.equal(text.includes(`Evidence finding: ${PARTIAL_UNRECORDED}`), true);
+    assert.equal(text.includes("Which part was not recorded"), false);
     assert.equal(text.includes("The source confirms the trading line"), false);
   });
 

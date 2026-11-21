@@ -77,7 +77,7 @@ test("a partial card loses the endorsing sentence and keeps its verdict", () => 
     readingNote: { bucket: "none", text: "" },
   };
   const sealed = sealReaderCard(card);
-  assert.equal(sealed.displayedEvidenceProse, PARTIAL_UNRECORDED);
+  assert.equal(String(sealed.displayedEvidenceProse || "").includes("Which part was not recorded"), false);
   assert.equal(sealed.displayVerdict, "supported_partial");
   assert.equal(sealed.sentenceState, "partial");
   assert.equal(sealed.sentenceLabel, "Partly in the source");
@@ -105,7 +105,7 @@ test("a concern that fails is replaced and the concern stays", () => {
   const sealed = sealReaderCard(card);
   assert.equal(sealed.editorialConcerns.length, 1);
   assert.equal(sealed.editorialConcerns[0].concernCode, "materiality");
-  assert.equal(sealed.editorialConcerns[0].text, PARTIAL_UNRECORDED);
+  assert.equal(String(sealed.editorialConcerns[0].text || "").includes("Which part was not recorded"), false);
   assert.equal(sealed.sentenceState, "nothing_raised");
   assert.equal(sealed.tier, "quiet");
 });

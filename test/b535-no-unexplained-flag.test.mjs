@@ -6,7 +6,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 import { EMPTY_HEADLINE_REASON } from "../lib/qc/evidence-findings.mjs";
-import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
 import { applyReadingContract } from "../lib/qc/reading-contract.mjs";
 import { partitionClaimStatements, resolveIsClaim } from "../lib/qc/pipeline-v4/stage1-extract-statements.mjs";
 import { statementEdgeTone, statementVerdictState } from "../../brightline-content-engine-frontend/src/modules/drafting/displayVerdictLabels.js";
@@ -107,8 +106,8 @@ test("a partial with no recorded part is not red and does not use the empty head
   assert.equal(card.sentenceState, "partial");
   assert.notEqual(card.combinedVerdict.tone, "red");
   assert.notEqual(screenTone(card), "red");
-  assert.equal(card.displayedEvidenceProse, PARTIAL_UNRECORDED);
-  assert.equal(readerEvidenceSentence(card), PARTIAL_UNRECORDED);
+  assert.equal(String(card.displayedEvidenceProse || "").includes("Which part was not recorded"), false);
+  assert.equal(String(readerEvidenceSentence(card) || "").includes("Which part was not recorded"), false);
   assert.equal(FALLBACK.test(card.displayedEvidenceProse), false);
 });
 

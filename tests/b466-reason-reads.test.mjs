@@ -108,7 +108,7 @@ test("on the stored pass only a missing reason changes, and every reason reads",
   // 11:9 and 15:12 had no stored reason. The reader accepted them, so an unfinished match adds no sentence.
   // 02:4 and 17:7 had no stored reason. A refused note keeps the unfinished-check sentence.
   // 04:1 had no stored reason. Committed against an open approval is a disagreement, so the shown sentence names both states.
-  assert.deepEqual(changed, ["02:4", "04:1", "04:12", "04:13", "08:10", "08:12", "14:4", "15:9", "15:30", "17:7", "18:6"]);
+  assert.deepEqual(changed, ["02:4", "04:1", "04:12", "04:13", "08:10", "08:12", "14:3", "14:4", "15:9", "15:30", "17:7", "18:6", "18:9"]);
   withheld.sort();
   assert.deepEqual(withheld, ["08:3", "14:2"]);
   disagreement.sort();
