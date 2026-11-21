@@ -33,6 +33,7 @@ import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { lengthAllowanceWords, lengthFloorWords, outputTypeWordCeiling, sourcesCannotSupportLength } from "../lib/prompt-library/outputTypeGuidance.js";
 import { omitDatelineWhenSourceHasBoth } from "../lib/press-dateline.mjs";
 import { draftHouseStyleReport } from "../lib/qc/draft-house-style.mjs";
+import { settlePublicDraft } from "../lib/style-guide/public-figures.mjs";
 import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { fitToWordCeiling } from "../lib/qc/word-ceiling.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
@@ -750,6 +751,7 @@ Return ONLY JSON:
       outputType,
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
       houseStyle,
+      sources: safeSources,
     };
     const styleFixes = [];
     const drafted = draftHouseStyleReport(splitDraft.commentary, houseOpts);
@@ -794,6 +796,48 @@ Return ONLY JSON:
       .map((row) => (typeof row?.text === "string" ? row.text : ""))
       .filter((part) => part.trim())
       .join("\n\n");
+    let publicFigureNote = "";
+    const settled = await settlePublicDraft({
+      draft: currentDraftText,
+      sources: safeSources,
+      visibility,
+      regenerate: async (figures) => {
+        const named = figures.map((row) => row.surface).join(", ");
+        const retry = await callLLM({
+          provider: modelConfig.provider,
+          model: modelId,
+          temperature: 0,
+          messages: [
+            {
+              role: "system",
+              content: `Rewrite the draft so it does not state these confidential figures, because they do not appear in a public source: ${named}. Do not add facts. Do not delete any other sentence. Return JSON only: {"draftText":"..."}.`,
+            },
+            { role: "user", content: currentDraftText },
+          ],
+          traceName: "writing-generate-public-figures",
+          spanName: "writing-generate-public-figures",
+          metadata: { route: "generate" },
+        });
+        const parsedRetry = safeJsonParse(retry?.text || "");
+        return parsedRetry && typeof parsedRetry.draftText === "string" ? parsedRetry.draftText : "";
+      },
+    });
+    if (settled.regenerated && settled.text !== currentDraftText) {
+      const restyled = draftHouseStyleReport(settled.text, houseOpts);
+      currentDraftText = restyled.text;
+      styleFixes.push(...restyled.fired);
+      const again = await settlePublicDraft({
+        draft: currentDraftText,
+        sources: safeSources,
+        visibility,
+        regenerate: async () => currentDraftText,
+      });
+      publicFigureNote = again.note;
+    } else {
+      publicFigureNote = settled.note;
+      if (settled.text) currentDraftText = settled.text;
+    }
+
     if (outputType === "PRESS_RELEASE") {
       currentDraftText = omitDatelineWhenSourceHasBoth(currentDraftText, sourceText);
     }
@@ -863,6 +907,7 @@ Return ONLY JSON:
       draftText: currentDraftText,
       methodologyNote,
       styleFixes: [...new Set(styleFixes)],
+      publicFigureNote,
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,

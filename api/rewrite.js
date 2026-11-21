@@ -806,6 +806,7 @@ Return ONLY valid JSON with no markdown or extra text:
       outputType,
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation) || "",
       houseStyle,
+      sources,
     };
     finalDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
     const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);

@@ -57,7 +57,7 @@ describe("B551 commas and drafting voice", () => {
     );
 
     const three = "The fund owns ships, trains and planes.";
-    assert.equal(applyDraftHouseStyle(three, US), "The fund owns ships, trains, and planes.");
+    assert.equal(applyDraftHouseStyle(three, US), three);
     assert.equal(
       applyListCommas("The deal team included legal, tax and operations advisers."),
       "The deal team included legal, tax, and operations advisers."
@@ -70,8 +70,9 @@ describe("B551 commas and drafting voice", () => {
     const linkedin = brief(EVENT_TYPE.GENERAL, OUTPUT_TYPE.LINKEDIN_POST);
     const press = brief(EVENT_TYPE.GENERAL, OUTPUT_TYPE.PRESS_RELEASE);
     for (const text of [commentary, letter, linkedin, press]) {
-      assert.equal(text.includes("State the firm's decision as made"), true);
-      assert.equal(text.includes("Do not write recommended, proposed, seek approval, or is recommended to."), true);
+      assert.equal(text.includes("state the firm's decision as made"), true);
+      assert.equal(text.includes("agreed to invest, committed, or agreed to acquire"), true);
+      assert.equal(text.includes("the draft says it was recommended, not that the firm committed"), false);
       assert.equal(text.includes("Do not add a closing sentence that only repeats points already made."), true);
       assert.equal(text.includes("The top of the length range is the limit."), true);
       assert.equal(text.includes("cover that point before the draft stops short of the range."), true);

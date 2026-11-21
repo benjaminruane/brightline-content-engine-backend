@@ -180,7 +180,8 @@ test("C1 an unconfirmed status on a deal text type tells the writer to stay with
     dealStatus: "As the source states",
   });
   assert.match(basePromptText, /The writer has not confirmed the deal status/);
-  assert.match(basePromptText, /not that it was approved, agreed or completed/);
+  assert.match(basePromptText, /state the firm's decision as made/);
+  assert.match(basePromptText, /Claim completion only when a source says it is done/);
 });
 
 test("D1 a supported reading does not mark a missing name as not in the source", () => {

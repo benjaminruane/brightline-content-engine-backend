@@ -44,7 +44,7 @@ describe("B555 house conventions", () => {
     assert.equal(fixed('The partner said "growth remains on track".'), "The partner said 'growth remains on track'.");
     assert.equal(fixed("The partner said 'growth remains on track'.", { ...HOUSE, quotes: "double" }), 'The partner said "growth remains on track".');
     assert.equal(fixed("The general partner called capital."), "The manager called capital.");
-    assert.equal(fixed("Results arrived in Q3 2026, the first half was H1 2026, and FY2025 is closed."), "Results arrived in third quarter of 2026, the first half was first half of 2026, and financial year 2025 is closed.");
+    assert.equal(fixed("Results arrived in Q3 2026, the first half was H1 2026, and FY2025 is closed."), "Results arrived in the third quarter of 2026, the first half was the first half of 2026, and financial year 2025 is closed.");
     assert.equal(fixed("The holding ran from 2016 to 2019 and also 2010 to 2012."), "The holding ran from 2016 to 2019 and also 2010-2012.");
     assert.equal(fixed("The paper used listed comparables."), "The paper used public market comparables.");
     assert.equal(dealWordHits("The deal closed.").length, 1);

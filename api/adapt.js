@@ -262,6 +262,7 @@ Return ONLY JSON:
       {
         outputType: targetOutputType,
         houseStyle,
+        sources: sourcesForPrompt,
       }
     );
 
