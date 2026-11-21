@@ -471,6 +471,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B553 | We means the user's organisation, a draft does not invent the firm's actions, and length aims at the range | `b553` |
 | B552 | The firm means only the user's firm, another manager's views are credited, and LinkedIn posts say we | `b552` |
 | B551 | Generate and Rewrite read PDF and Word files as text, two-item lists keep no comma, and a draft states the firm's decision as made without a closing summary | `b551` |
 | B550 | A found table figure keeps the table note as its evidence, both passages of a same-source disagreement are on the card, and a new direct investment is written as the firm | `b550` |

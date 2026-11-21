@@ -65,7 +65,7 @@ describe("B536 assembled prompts", () => {
   test("a typed limit is the only length, and LinkedIn and press stay public", () => {
     const typed = brief(EVENT_TYPE.NEW_PRIMARY_COMMITMENT, OUTPUT_TYPE.REPORTING_COMMENTARY, "complete", 250);
     assert.equal((typed.match(/Length:/g) || []).length, 1);
-    assert.equal(typed.includes("Length: no more than 275 words."), true);
+    assert.equal(typed.includes("Length: no more than 250 words."), true);
     assert.equal(typed.includes("100 to 150"), false);
     assert.equal(visibilityForDraft(OUTPUT_TYPE.LINKEDIN_POST, "complete"), "PUBLIC");
     assert.equal(visibilityForDraft(OUTPUT_TYPE.PRESS_RELEASE, "complete"), "PUBLIC");

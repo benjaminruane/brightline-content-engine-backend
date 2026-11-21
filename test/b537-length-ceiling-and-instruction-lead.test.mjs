@@ -16,13 +16,15 @@ describe("B537 length ceiling and Other update", () => {
     assert.equal(lengthAllowanceWords(250), 275);
     const range = lengthInstruction("REPORTING_COMMENTARY");
     assert.equal((range.match(/Length:/g) || []).length, 1);
-    assert.equal(range.includes("Length: no more than 165 words."), true);
+    assert.equal(range.includes("Length: no more than 150 words."), true);
+    assert.equal(range.includes("165"), false);
     assert.equal(range.includes("100 to 150"), false);
     assert.equal(range.includes("Do not add a sentence the sources do not support to reach a length."), true);
     assert.equal(range.includes("10%"), false);
     assert.equal(range.includes("leave out the least important point"), false);
     const typed = lengthInstruction("REPORTING_COMMENTARY", 250);
-    assert.equal(typed.includes("Length: no more than 275 words."), true);
+    assert.equal(typed.includes("Length: no more than 250 words."), true);
+    assert.equal(typed.includes("275"), false);
     assert.equal(typed.includes("100 to 150"), false);
   });
 
@@ -34,7 +36,7 @@ describe("B537 length ceiling and Other update", () => {
     });
     assert.equal(
       exit.basePromptText.includes(
-        "Where space allows. These points are optional. Include one only when the essentials are covered and room remains. Omit every one of them if including it would pass 330 words. Do not write a section called where space allows."
+        "Where space allows. These points are optional. Include one only when the essentials are covered and room remains. Omit every one of them if including it would pass 300 words. Do not write a section called where space allows."
       ),
       true
     );

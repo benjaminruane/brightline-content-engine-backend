@@ -18,7 +18,7 @@ describe("composed writing prompt", () => {
     assert.ok(outputIdx >= 0);
     assert.ok(guidanceIdx > outputIdx);
     assert.match(basePromptText, /priorities, not a checklist/);
-    assert.match(basePromptText, /Length: no more than 165 words\./);
+    assert.match(basePromptText, /Length: no more than 150 words\./);
     assert.doesNotMatch(basePromptText, /Binding constraints/);
     assert.match(basePromptText, /---METHODOLOGY---/);
   });

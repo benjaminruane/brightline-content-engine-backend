@@ -73,7 +73,7 @@ describe("B551 commas and drafting voice", () => {
       assert.equal(text.includes("State the firm's decision as made"), true);
       assert.equal(text.includes("Do not write recommended, proposed, seek approval, or is recommended to."), true);
       assert.equal(text.includes("Do not add a closing sentence that only repeats points already made."), true);
-      assert.equal(text.includes("Words up to the ceiling are tolerance, not a target."), true);
+      assert.equal(text.includes("The top of the length range is the limit."), true);
       assert.equal(text.includes("cover that point before the draft stops short of the range."), true);
       assert.equal(text.includes("Describe only what the draft actually contains."), true);
     }

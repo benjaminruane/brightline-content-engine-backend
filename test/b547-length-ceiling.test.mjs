@@ -13,7 +13,9 @@ import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
 describe("B547 length ceiling", () => {
   test("the lower end is not a target and a short draft is not called short", () => {
     const line = lengthInstruction("GENERAL_TEXT");
-    assert.equal(line.includes("no more than 275 words"), true);
+    assert.equal(line.includes("no more than 250 words"), true);
+    assert.equal(line.includes("275"), false);
+    assert.equal(line.includes("10%"), false);
     assert.equal(line.includes("150 to 250"), false);
     assert.equal(line.includes("Do not add a sentence the sources do not support to reach a length."), true);
     assert.equal(line.includes("Do not drop an essential point."), true);

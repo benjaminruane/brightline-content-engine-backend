@@ -672,9 +672,9 @@ export default async function handler(req, res) {
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
       houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
     });
-    const ceiling = lengthAllowanceWords(effectiveMaxWords);
-    const ceilingLine = ceiling
-      ? `Hard length ceiling: ${ceiling} words. A draft longer than that is wrong. Cover the essential points inside that number and leave out the optional ones.`
+    const modelLimit = effectiveMaxWords;
+    const ceilingLine = modelLimit
+      ? `Hard length ceiling: ${modelLimit} words. A draft longer than that is wrong. Cover the essential points inside that number and leave out the optional ones.`
       : "";
     const systemContent = [ceilingLine, STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
@@ -785,7 +785,7 @@ Return ONLY JSON:
         messages: [
           {
             role: "system",
-            content: `Rewrite the draft so it is at most ${ceilingWords} words. Keep the essential points. Drop optional points first. Do not add facts. Do not change a figure, a name, or a date. Return JSON only: {"draftText":"..."}.`,
+            content: `Rewrite the draft so it is at most ${modelLimit} words. Keep the essential points. Drop optional points first. Do not add facts. Do not change a figure, a name, or a date. Return JSON only: {"draftText":"..."}.`,
           },
           { role: "user", content: currentDraftText },
         ],

@@ -48,7 +48,7 @@ describe("B209a house identity in prompts", () => {
     }
   });
 
-  test("a new direct investment uses the shared structure and does not name a firm", () => {
+  test("a new direct investment uses the shared structure and names only the supplied organisation", () => {
     const { basePromptText } = buildBasePrompt({
       outputType: OUTPUT_TYPE.INVESTOR_LETTER,
       visibility: VISIBILITY.COMPLETE,
@@ -61,7 +61,8 @@ describe("B209a house identity in prompts", () => {
     assert.match(basePromptText, /State the deal's status as the facts source states it/);
     assert.doesNotMatch(basePromptText, /Binding constraints/);
     assert.equal(basePromptText.includes(REAL_FIRM), false);
-    assert.equal(basePromptText.includes(CONFIGURED_HOUSE), false);
+    assert.equal(basePromptText.includes(`The authoring organisation is ${CONFIGURED_HOUSE}.`), true);
+    assert.equal(basePromptText.includes(`The words the firm and we mean only ${CONFIGURED_HOUSE}.`), true);
   });
 
   test("with no organisation passed, no firm is named", () => {

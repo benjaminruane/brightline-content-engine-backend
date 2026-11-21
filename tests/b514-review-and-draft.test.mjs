@@ -217,8 +217,8 @@ test("E1 to E3 length ranges, the word-limit line, and commentary-only counting"
     visibility: "public",
     eventType: "SPECIAL_TOPIC",
   });
-  assert.match(basePromptText, /Length: no more than 330 words\./);
-  assert.equal(wordLimitLine(150), "Length: no more than 165 words. Say what the sources support, as briefly as that takes, up to that limit. Do not add a sentence the sources do not support to reach a length. Do not drop an essential point.");
+  assert.match(basePromptText, /Length: no more than 300 words\./);
+  assert.equal(wordLimitLine(150), "Length: no more than 150 words. Say what the sources support, as briefly as that takes, up to that limit. Do not add a sentence the sources do not support to reach a length. Do not drop an essential point.");
   assert.equal(wordLimitLine(150).includes("Methodology"), false);
   const split = splitMethodologyOutput("One two three.\n---METHODOLOGY---\nFour five.");
   assert.equal(countWords(split.commentary), 3);
