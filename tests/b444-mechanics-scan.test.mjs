@@ -117,7 +117,8 @@ describe("B444 mechanics scan", () => {
     assert.equal(commentary.includes("\n- currency_format:"), false);
     assert.equal(commentary.includes("\n- english_variant:"), false);
     assert.equal(commentary.includes("\n- date_format:"), false);
-    assert.match(commentary, /derived_figure:/);
+    assert.equal(commentary.includes("\n- derived_figure:"), false);
+    assert.match(commentary, /names:/);
     assert.match(commentary, /Flag an unintended switch in voice/);
     const release = buildEditorialStyleSystemPrompt({
       outputTypeLabel: getOutputTypeLabel(OUTPUT_TYPE.PRESS_RELEASE),

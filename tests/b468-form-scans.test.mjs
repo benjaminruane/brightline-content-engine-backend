@@ -103,6 +103,7 @@ describe("B468 form scans", () => {
     assert.equal(commentary.includes("\n- currency_format:"), false);
     assert.equal(commentary.includes("\n- english_variant:"), false);
     assert.equal(commentary.includes("\n- date_format:"), false);
-    assert.match(commentary, /derived_figure:/);
+    assert.equal(commentary.includes("\n- derived_figure:"), false);
+    assert.match(commentary, /names:/);
   });
 });
