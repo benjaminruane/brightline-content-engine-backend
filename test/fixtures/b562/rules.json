@@ -1,0 +1,126 @@
+[
+  {
+    "id": "em_dash",
+    "rule": "Do not use an em dash or an en dash. Use a hyphen."
+  },
+  {
+    "id": "percentage_notation",
+    "rule": "Percentages use the % sign, not the word percent or per cent."
+  },
+  {
+    "id": "oxford_comma",
+    "rule": "Use the Oxford comma in a list of three or more items. Two items are not a list. Do not insert a comma into a phrase of two."
+  },
+  {
+    "id": "smart_quotes",
+    "rule": "Use straight quotation marks. The account chooses single or double. Curly quotes are not used."
+  },
+  {
+    "id": "number_spelling",
+    "rule": "A count of things from zero up to the account's ceiling is in words. Always use numerals for a measurement with a unit, a percentage, money, a multiple, a date, a range, and every count above the ceiling. When a small count and a large count of the same thing are compared, both are numerals. A fund number, a series, a product name, a ticker, and a clause number keep their form."
+  },
+  {
+    "id": "currency_format",
+    "rule": "A currency amount uses the ISO code before the amount. Write GBP for a pound sign and EUR for a euro sign. Write USD for a dollar sign unless the sources show another dollar (C$, A$, S$, HK$, or NZ$), in which case use that code. When the sources show more than one of those dollar codes, leave the dollar sign and say so."
+  },
+  {
+    "id": "thousand_separator",
+    "rule": "Use the account's thousands separator in amounts. Do not put a thousands separator in a year. Do not flag a number that has no separator."
+  },
+  {
+    "id": "magnitude",
+    "rule": "An amount of 1,000 million or more is written in billions to one decimal when the account chooses billions. Otherwise it stays in millions."
+  },
+  {
+    "id": "date_format",
+    "rule": "A date in prose uses the account's date form. Do not flag a month and a year with no day."
+  },
+  {
+    "id": "period_form",
+    "rule": "A quarter, a half, and a financial year are spelled out when the account chooses words. Otherwise use the short form. Spell a period only when it does not sit directly before the noun it describes."
+  },
+  {
+    "id": "period_placement",
+    "rule": "Place a period after the noun it describes."
+  },
+  {
+    "id": "derived_figure",
+    "rule": "Link a derived figure explicitly. Do not leave it as a bare apposition or a bracket."
+  },
+  {
+    "id": "year_range",
+    "rule": "A year range uses a hyphen, except after from or between."
+  },
+  {
+    "id": "english_variant",
+    "rule": "Use the account's spelling. A proper noun keeps its own spelling."
+  },
+  {
+    "id": "country_abbreviation",
+    "rule": "Write US and UK. Do not write U.S. or U.K."
+  },
+  {
+    "id": "legal_identifiers",
+    "rule": "After a capitalised name, a legal identifier is omitted or kept, as the account chooses."
+  },
+  {
+    "id": "names",
+    "rule": "Use the official name on first mention, then a shortened name when it is unambiguous. Capitalise a formal strategy or product name the same way throughout."
+  },
+  {
+    "id": "job_titles",
+    "rule": "A job title is lower case when it is generic, and capitalised with a name."
+  },
+  {
+    "id": "defined_term_capitalisation",
+    "rule": "Once a draft defines a term, later uses keep that form. Do not flag a term that was not defined. Lower case the before the defined noun is correct mid-sentence."
+  },
+  {
+    "id": "year_on_year",
+    "rule": "Write year on year, quarter on quarter, and month on month. Hyphenate only before a noun. When it is not clear that a noun follows, do not hyphenate. Do not write over."
+  },
+  {
+    "id": "general_partner",
+    "rule": "Write manager, not general partner."
+  },
+  {
+    "id": "public_market_comparables",
+    "rule": "Write public market comparables, not listed comparables."
+  },
+  {
+    "id": "returns_form",
+    "rule": "State a return as gross or net, then the multiple and the IRR, in that shape."
+  },
+  {
+    "id": "deal_word",
+    "rule": "Do not write deal. Write transaction or investment."
+  },
+  {
+    "id": "voice",
+    "rule": "Reporting commentary is third person. Investor letters and LinkedIn posts use we for the authoring organisation. A press release is third person, and we appears only inside quoted speech."
+  },
+  {
+    "id": "active_voice_preference",
+    "rule": "Prefer the active voice when the actor is known."
+  },
+  {
+    "id": "hyperbole_vs_qualitative",
+    "rule": "Do not use hype or a distinction claim. A measured qualitative word is allowed. Do not swap a hype word for a milder one that still praises."
+  },
+  {
+    "id": "register_consistency",
+    "rule": "Keep one register. Do not mix a formal sentence with slang."
+  },
+  {
+    "id": "sentence_structure_clarity",
+    "rule": "Use short, clear sentences. Avoid a run-on."
+  },
+  {
+    "id": "jargon",
+    "rule": "Use plain words. Explain a specialist term on first use, or leave it out."
+  },
+  {
+    "id": "banned_words",
+    "rule": "Do not use a word on the account's banned list."
+  }
+]
