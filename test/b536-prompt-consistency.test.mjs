@@ -24,8 +24,8 @@ function brief(eventType, outputType, visibility, maxWords) {
 }
 
 describe("B536 assembled prompts", () => {
-  test("all 80 briefs agree with themselves, and each has one length line", () => {
-    assert.equal(TEXT_TYPES.length * OUTPUT_TYPES.length * VERSIONS.length, 80);
+  test("all 88 briefs agree with themselves, and each has one length line", () => {
+    assert.equal(TEXT_TYPES.length * OUTPUT_TYPES.length * VERSIONS.length, 88);
     for (const eventType of TEXT_TYPES) {
       for (const outputType of OUTPUT_TYPES) {
         for (const visibility of VERSIONS) {
