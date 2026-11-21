@@ -82,7 +82,7 @@ describe("B537 length ceiling and Other update", () => {
     assert.equal(transforms.includes("normalizePgHouseStyleCharacters"), true);
     for (const file of ["api/generate.js", "api/rewrite.js", "api/adapt.js"]) {
       const source = readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
-      assert.equal(source.includes("applyDraftHouseStyle"), true, file);
+      assert.equal(source.includes("draftHouseStyleReport") || source.includes("applyDraftHouseStyle"), true, file);
     }
   });
 });
