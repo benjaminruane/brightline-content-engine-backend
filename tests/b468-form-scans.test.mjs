@@ -80,7 +80,7 @@ describe("B468 form scans", () => {
     assert.throws(() => scanNumberForm({}), /statement is missing/);
   });
 
-  test("the scanned set grows by these two, and the other four stay in the prompt", () => {
+  test("the scanned set grows by these two, and a scanned or auto-fixed rule stays out of the prompt", () => {
     assert.equal(SCANNED_STYLE_RULE_IDS.has("oxford_comma"), true);
     assert.equal(SCANNED_STYLE_RULE_IDS.has("number_spelling"), true);
     assert.equal(SCANNED_STYLE_RULE_IDS.has("period_placement"), true);
@@ -99,9 +99,10 @@ describe("B468 form scans", () => {
     assert.equal(commentary.includes("\n- oxford_comma:"), false);
     assert.equal(commentary.includes("\n- number_spelling:"), false);
     assert.equal(commentary.includes("\n- period_placement:"), false);
-    assert.match(commentary, /thousand_separator:/);
-    assert.match(commentary, /currency_format:/);
-    assert.match(commentary, /english_variant:/);
-    assert.match(commentary, /date_format:/);
+    assert.equal(commentary.includes("\n- thousand_separator:"), false);
+    assert.equal(commentary.includes("\n- currency_format:"), false);
+    assert.equal(commentary.includes("\n- english_variant:"), false);
+    assert.equal(commentary.includes("\n- date_format:"), false);
+    assert.match(commentary, /derived_figure:/);
   });
 });
