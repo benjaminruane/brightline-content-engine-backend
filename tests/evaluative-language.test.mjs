@@ -27,18 +27,15 @@ const REQUIRED = [
 ];
 
 describe("evaluative language contract", () => {
-  test("marketing_language_excess and hyperbole_vs_qualitative share the delete-or-keep instruction", () => {
+  test("hyperbole_vs_qualitative keeps the delete-or-keep instruction", () => {
     const marketing = editorialRules.find((r) => r.id === "marketing_language_excess");
     const hyperbole = STYLE_GUIDE_LAYER_1.find((r) => r.id === "hyperbole_vs_qualitative");
-    assert.ok(marketing);
+    assert.equal(marketing, undefined);
     assert.ok(hyperbole);
-    assert.equal(marketing.description.includes(EVALUATIVE_LANGUAGE_INSTRUCTION), true);
     assert.equal(hyperbole.description.includes(EVALUATIVE_LANGUAGE_INSTRUCTION), true);
-    assert.equal(marketing.fixDirection, EVALUATIVE_LANGUAGE_FIX_DIRECTION);
     assert.equal(hyperbole.fixDirection, EVALUATIVE_LANGUAGE_FIX_DIRECTION);
     for (const phrase of REQUIRED) {
       const re = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-      assert.match(marketing.description, re);
       assert.match(hyperbole.description, re);
     }
     assert.match(EVALUATIVE_LANGUAGE_FIX_DIRECTION, /^Apply the remaining-clause test/);

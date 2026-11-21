@@ -12,7 +12,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import editorialRules from "../../../lib/rulebook/editorialRules.js";
-import styleGuideLegacy from "../../../lib/rulebook/styleGuide.js";
 import complianceRules from "../../../lib/rulebook/complianceRules.js";
 import {
   STYLE_GUIDE_LAYER_1,
@@ -229,8 +228,7 @@ p(`  press_release       (${liveStylePr.length}): ${ids(liveStylePr).join(", ")}
 p(`  linkedin_post       (${liveStyleLi.length}): ${ids(liveStyleLi).join(", ")}`);
 p(`  first_person_plural applies_to: reporting_commentary only`);
 p("");
-p(`Style rules LEGACY v3: lib/rulebook/styleGuide.js (${styleGuideLegacy.length}) — not in the v4 combined prompt`);
-p(`  ids: ${ids(styleGuideLegacy).join(", ")}`);
+p("Style rules: lib/style-guide/guide.mjs. The unused curated list was removed in B555.");
 p("");
 p(`Compliance rules: ${complianceRules.length}  file: lib/rulebook/complianceRules.js`);
 p(`  ids: ${ids(complianceRules).join(", ")}`);
@@ -242,7 +240,7 @@ p("    editorial half: editorialRules.js filtered by output type");
 p("    style half:     resolveStyleGuide() from style-guide.mjs");
 p("  v4 Compliance:     SEPARATE call  runComplianceReview");
 p("    prompt: buildComplianceSystemPrompt; rules from complianceRules.js");
-p("  v3 (not production): runEditorialReview + runStyleGuideReview (styleGuide.js) + runComplianceReview");
+p("  v3 (not production): runEditorialReview + runStyleGuideReview (removed curated list) + runComplianceReview");
 
 const allLiveIds = [
   ...editorialRules.map((r) => ({ id: r.id, book: "editorial", category: "editorial" })),

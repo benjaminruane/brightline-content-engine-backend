@@ -1,7 +1,8 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
-import { dismissFeedbackBanner, feedbackNotice, findAccount, normaliseWritingFor, updateHouseStyle, updateWritingFor } from "../lib/db/accounts.mjs";
+import { dismissFeedbackBanner, feedbackNotice, findAccount, normaliseWritingFor, updateHouseStyle, updateStyleChoices, updateWritingFor } from "../lib/db/accounts.mjs";
 import { houseStyleForRow, normaliseHouseStyle } from "../lib/house-style-choice.mjs";
+import { choicesFromAccountRow, normaliseBannedWords, renderHouseRulesView } from "../lib/style-guide/render.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import { resetsOnIso, resolveAllowanceUsd, usedFraction } from "../lib/spend/allowance.mjs";
 import { spentThisMonthUsd } from "../lib/spend/ledger.mjs";
@@ -26,6 +27,8 @@ async function publicAccount(sql, row, fallback) {
   const spent = fallback?.accountId ? await spentThisMonthUsd(sql, fallback.accountId) : 0;
   const allowance = admin ? null : resolveAllowanceUsd(row?.monthly_allowance_usd, process.env.ALLOWANCE_USD_PER_MONTH);
   const houseStyle = houseStyleForRow(row, admin);
+  const choices = choicesFromAccountRow({ ...(row || {}), ...houseStyle });
+  const guide = renderHouseRulesView(choices);
   let notice = null;
   if (admin && sql && fallback?.accountId) {
     notice = await feedbackNotice(sql, row?.feedback_banner_closed_at ?? null);
@@ -36,6 +39,9 @@ async function publicAccount(sql, row, fallback) {
     writingFor: row?.writing_for ?? null,
     spelling: houseStyle.spelling,
     thousands: houseStyle.thousands,
+    bannedWords: choices.bannedWords,
+    styleChoices: choices,
+    styleGuide: guide,
     feedbackNotice: notice,
     isAdmin: admin,
     allowanceUsd: allowance,
@@ -93,6 +99,16 @@ export default async function handler(req, res) {
         }
         if (!choice) return res.status(400).json({ error: "invalid_house_style" });
         saved = await updateHouseStyle(sql, { id: account.accountId, spelling: choice.spelling, thousands: choice.thousands });
+      }
+      if (Array.isArray(body.bannedWords) || (body.styleChoices && typeof body.styleChoices === "object")) {
+        const current = saved || await findAccount(sql, account.accountId);
+        const existing = choicesFromAccountRow(current || {});
+        const nextChoices = {
+          ...existing,
+          ...(body.styleChoices && typeof body.styleChoices === "object" ? body.styleChoices : {}),
+        };
+        if (Array.isArray(body.bannedWords)) nextChoices.bannedWords = normaliseBannedWords(body.bannedWords);
+        saved = await updateStyleChoices(sql, { id: account.accountId, styleChoices: nextChoices });
       }
       if (!saved) return res.status(404).json({ error: "not_found" });
       return res.status(200).json(await publicAccount(sql, saved, account));

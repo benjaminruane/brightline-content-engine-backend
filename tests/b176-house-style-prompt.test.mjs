@@ -4,9 +4,8 @@
 import assert from "node:assert/strict";
 import { describe, test } from "vitest";
 import editorialRules from "../lib/rulebook/editorialRules.js";
-import styleGuideRules from "../lib/rulebook/styleGuide.js";
 import { OUTPUT_TYPE, VISIBILITY, getOutputTypeLabel } from "../lib/output-intent.js";
-import { resolveStyleGuide } from "../lib/qc/style-guide.mjs";
+import { STYLE_GUIDE_LAYER_2_CLIENT, resolveStyleGuide } from "../lib/qc/style-guide.mjs";
 import {
   buildEditorialStyleSystemPrompt,
   buildEditorialStyleUserPayload,
@@ -45,7 +44,7 @@ function combinedSystemPrompt() {
 function splitSystemPrompt() {
   return buildStyleSystemPrompt(
     OUTPUT_LABEL,
-    styleGuideRules,
+    STYLE_GUIDE_LAYER_2_CLIENT,
     OUTPUT_SLUG,
     OUTPUT_TYPE_VALUE,
     HOUSE_NAME

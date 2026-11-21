@@ -1026,9 +1026,9 @@ describe("buildRevisionPrompt", () => {
 
     assert.match(prompt, /Investor letter/i);
     assert.match(prompt, /INVESTOR_LETTER/);
-    assert.match(prompt, /Public/i);
-    assert.match(prompt, /PUBLIC/);
-    assert.match(prompt, /publicly safe wording/i);
+    assert.match(prompt, /Complete/i);
+    assert.match(prompt, /COMPLETE/);
+    assert.equal(prompt.includes("PUBLIC"), false);
     assert.match(prompt, /suggestedDirection=Add hedging such as 'may' or 'could'\./);
   });
 

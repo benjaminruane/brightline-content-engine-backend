@@ -15,7 +15,7 @@ import { isAdditiveMigration, splitSqlStatements } from "../lib/db/sql-statement
 import healthHandler from "../api/health.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const OPTIONAL = ["spelling", "thousands", "feedback_banner_closed_at"];
+const OPTIONAL = ["spelling", "thousands", "feedback_banner_closed_at", "style_choices"];
 
 function missingColumnError(name) {
   const err = new Error(`column "${name}" of relation "accounts" does not exist`);
@@ -95,7 +95,7 @@ describe("B546 schema check", () => {
   test("migrations 001 to 007 are additive and a missing 007 column is reported", () => {
     const dir = path.join(ROOT, "db/migrations");
     const files = readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
-    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007"]);
+    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008"]);
     for (const name of files) {
       const text = readFileSync(path.join(dir, name), "utf8");
       assert.equal(isAdditiveMigration(text), true, name);
@@ -143,6 +143,7 @@ describe("B546 schema check", () => {
       ["feedback", "draft_snapshot"],
       ["feedback", "created_at"],
       ["feedback", "read_at"],
+      ["accounts", "style_choices"],
     ].map(([table_name, column_name]) => ({ table_name, column_name }));
     const status = statusFromColumnRows(present);
     assert.equal(status.state, "missing");

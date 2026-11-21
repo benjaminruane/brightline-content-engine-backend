@@ -34,7 +34,7 @@ describe("B551 commas and drafting voice", () => {
   test("two-item phrases stay unchanged, and a three-item list gains its comma", () => {
     unchanged("The transaction values Harbourline, a UK and Irish chilled prepared foods producer, at an enterprise value of GBP 420 million.");
     unchanged("Operationally, medical and aerospace demand remains solid and in line with the original investment case.");
-    unchanged("This commentary was created from the Q3 2026 Fund IV report, extracting and synthesizing only supported facts.");
+    unchanged("This commentary was created from the September 2026 Fund IV report, extracting and synthesizing only supported facts.");
     unchanged("While logo churn is typical for SMB-focused models, cohort behavior and rising ARPU support attractive unit economics.");
     const both = "We view intrinsic value as stemming from an asset's earning power, both current and potential.";
     assert.equal(applyListCommas(both), both);
@@ -53,7 +53,7 @@ describe("B551 commas and drafting voice", () => {
     );
     assert.equal(
       applyDraftHouseStyle('"We will keep the plant," the chief executive said.', { outputType: "press_release", houseStyle: NEW_ACCOUNT_HOUSE_STYLE }),
-      '"We will keep the plant," the chief executive said.'
+      "'We will keep the plant,' the chief executive said."
     );
 
     const three = "The fund owns ships, trains and planes.";

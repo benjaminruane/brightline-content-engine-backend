@@ -31,8 +31,9 @@ import {
 } from "../lib/event-type.js";
 import { buildBasePrompt, detectRewriteClash } from "../lib/prompt-library/index.js";
 import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
+import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
-import { appendContextSourceLine, bannedWordsLine } from "../lib/prompt-library/compose.mjs";
+import { appendContextSourceLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 
@@ -138,17 +139,6 @@ async function populateSourceUsageSummaries(req, rows, draftText) {
   });
 
   await Promise.allSettled(tasks);
-}
-
-function normalizeBannedWords(input) {
-  if (!Array.isArray(input)) return [];
-  return Array.from(
-    new Set(
-      input
-        .map((word) => (typeof word === "string" ? word.trim().toLowerCase() : ""))
-        .filter(Boolean)
-    )
-  );
 }
 
 // X3.1: Deterministic metrics for rewrite report
@@ -606,6 +596,7 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+    const houseStyle = await styleForRequest(account, body);
     const text = typeof body.text === "string" ? body.text : "";
     
     // Accept legacy frontend payloads:
@@ -622,8 +613,7 @@ export default async function handler(req, res) {
 
     const modelId =
       typeof body.modelId === "string" && body.modelId.trim() ? body.modelId.trim() : modelConfig.model;
-    const bannedWords = normalizeBannedWords(body.bannedWords);
-    const bannedWordsInstruction = bannedWordsLine(bannedWords);
+    const bannedWordsInstruction = "";
     const publicSearch = Boolean(body.publicSearch);
     const preparedSources = await sourcesForDraftPrompt(Array.isArray(body.sources) ? body.sources : []);
     if (preparedSources.error) return res.status(400).json({ ok: false, error: preparedSources.error });
@@ -680,7 +670,8 @@ export default async function handler(req, res) {
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation),
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
       maxWords: effectiveMaxWords,
-      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
+      houseStyle,
+      styleChoices: houseStyle,
     });
     const systemPrompt = [basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
 
@@ -814,7 +805,7 @@ Return ONLY valid JSON with no markdown or extra text:
     const houseOpts = {
       outputType,
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation) || "",
-      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
+      houseStyle,
     };
     finalDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
     const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);

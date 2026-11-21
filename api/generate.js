@@ -32,11 +32,11 @@ import {
 import { buildBasePrompt } from "../lib/prompt-library/index.js";
 import { lengthAllowanceWords, lengthFloorWords, outputTypeWordCeiling, sourcesCannotSupportLength } from "../lib/prompt-library/outputTypeGuidance.js";
 import { omitDatelineWhenSourceHasBoth } from "../lib/press-dateline.mjs";
-import { applyDraftHouseStyle } from "../lib/qc/draft-house-style.mjs";
+import { draftHouseStyleReport } from "../lib/qc/draft-house-style.mjs";
+import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { fitToWordCeiling } from "../lib/qc/word-ceiling.mjs";
 import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.mjs";
 import { countWords } from "../lib/qc/token-estimate.mjs";
-import { bannedWordsLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard } from "../lib/prompt-library/placeholder-guard.mjs";
 import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -49,18 +49,7 @@ import { draftErrorFromProvider, sourcesForDraftPrompt } from "../lib/draft-sour
 
 // ------------------------------------------------------------------
 
-export const STYLE_GUIDE_INSTRUCTIONS = `
-You are part of an internal writing tool called "Content Engine".
-You produce crisp, professional, investment-grade writing.
-
-General style:
-- Write in clear, concise English.
-- Prefer short sentences.
-- Avoid hype.
-- Avoid unnecessary adjectives.
-- Use standard English commas (no weird formatting).
-- Avoid thousand separators for years.
-`.trim();
+export const STYLE_GUIDE_INSTRUCTIONS = "";
 
 function safeJsonParse(text) {
   try {
@@ -73,17 +62,6 @@ function safeJsonParse(text) {
 function clampMaxWords(maxWords) {
   if (typeof maxWords !== "number" || !Number.isFinite(maxWords) || maxWords <= 0) return null;
   return Math.floor(maxWords);
-}
-
-function normalizeBannedWords(input) {
-  if (!Array.isArray(input)) return [];
-  return Array.from(
-    new Set(
-      input
-        .map((word) => (typeof word === "string" ? word.trim().toLowerCase() : ""))
-        .filter(Boolean)
-    )
-  );
 }
 
 function stripSourcesUsedBlock(text) {
@@ -580,6 +558,7 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+    const houseStyle = await styleForRequest(account, body);
     const {
       title,
       notes,
@@ -592,7 +571,6 @@ export default async function handler(req, res) {
       model,
       publicSearch,
       sources,
-      bannedWords: rawBannedWords,
       authoringOrganisation,
     } = body;
 
@@ -633,8 +611,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, error: preparedSources.error });
     }
     const safeSources = preparedSources.sources;
-    const bannedWords = normalizeBannedWords(rawBannedWords);
-    const bannedWordsInstruction = bannedWordsLine(bannedWords);
 
     let webResultsForPrompt = "";
     let webReferences = [];
@@ -670,13 +646,14 @@ export default async function handler(req, res) {
       dealStatus: typeof body.dealStatus === "string" ? body.dealStatus : "",
       maxWords: typedMaxWords,
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
-      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
+      houseStyle,
+      styleChoices: houseStyle,
     });
     const modelLimit = effectiveMaxWords;
     const ceilingLine = modelLimit
       ? `Hard length ceiling: ${modelLimit} words. A draft longer than that is wrong. Cover the essential points inside that number and leave out the optional ones.`
       : "";
-    const systemContent = [ceilingLine, STYLE_GUIDE_INSTRUCTIONS, basePromptText, bannedWordsInstruction].filter(Boolean).join("\n\n");
+    const systemContent = [ceilingLine, basePromptText].filter(Boolean).join("\n\n");
 
     const userPrompt = `
 You are generating a draft. Follow the style guide.
@@ -772,10 +749,15 @@ Return ONLY JSON:
     const houseOpts = {
       outputType,
       authoringOrganisation: typeof authoringOrganisation === "string" ? authoringOrganisation : "",
-      houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
+      houseStyle,
     };
-    let currentDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
-    const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);
+    const styleFixes = [];
+    const drafted = draftHouseStyleReport(splitDraft.commentary, houseOpts);
+    let currentDraftText = drafted.text;
+    styleFixes.push(...drafted.fired);
+    const noted = draftHouseStyleReport(splitDraft.methodologyNote, houseOpts);
+    const methodologyNote = noted.text;
+    styleFixes.push(...noted.fired);
     const ceilingWords = lengthAllowanceWords(effectiveMaxWords);
     if (ceilingWords && countWords(currentDraftText) > ceilingWords) {
       const shorten = await callLLM({
@@ -795,7 +777,9 @@ Return ONLY JSON:
       });
       const shortened = safeJsonParse(shorten?.text || "");
       if (shortened && typeof shortened.draftText === "string" && shortened.draftText.trim()) {
-        currentDraftText = applyDraftHouseStyle(shortened.draftText, houseOpts);
+        const shortenedStyle = draftHouseStyleReport(shortened.draftText, houseOpts);
+        currentDraftText = shortenedStyle.text;
+        styleFixes.push(...shortenedStyle.fired);
       }
       currentDraftText = fitToWordCeiling(currentDraftText, ceilingWords);
       console.log(JSON.stringify({
@@ -878,6 +862,7 @@ Return ONLY JSON:
       ok: true,
       draftText: currentDraftText,
       methodologyNote,
+      styleFixes: [...new Set(styleFixes)],
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,

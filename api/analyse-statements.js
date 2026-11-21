@@ -7,6 +7,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
@@ -159,6 +160,7 @@ export default async function handler(req, res) {
     resetLlmSpend();
     const traceId = createTraceId();
     const body = typeof req?.body === "string" ? JSON.parse(req.body) : (req?.body || {});
+    const houseStyle = await styleForRequest(account, body);
     const draftText = typeof body?.draftText === "string" ? body.draftText : "";
     const candidateSources = Array.isArray(body?.uploadedSources)
       ? body.uploadedSources
@@ -235,7 +237,8 @@ export default async function handler(req, res) {
       ? body.eventType.trim()
       : (typeof body?.scenario === "string" ? body.scenario.trim() : "");
     if (eventType) pipelineOptions.eventType = eventType;
-    if (body?.houseStyle && typeof body.houseStyle === "object") pipelineOptions.houseStyle = body.houseStyle;
+    pipelineOptions.houseStyle = houseStyle;
+    pipelineOptions.styleChoices = houseStyle;
     if (body?.dealStatus != null && body.dealStatus !== "") pipelineOptions.dealStatus = body.dealStatus;
     const runStartedAt = new Date().toISOString();
     const draftMetadata = {

@@ -65,10 +65,7 @@ describe("B468 form scans", () => {
     assert.match(eight[0].suggestedDirection, /eight/);
     assert.doesNotMatch(eight[0].suggestedDirection, /seven|change the value|7\.2/);
     const pair = scanNumberForm({ statement: "We anticipate 10 to 12 platform investments." });
-    assert.equal(pair.length, 1);
-    assert.equal(pair[0].span.length, 2);
-    assert.match(pair[0].note, /ten/);
-    assert.match(pair[0].note, /twelve/);
+    assert.equal(pair.length, 0);
     assert.equal(scanNumberForm({ statement: "Paid channels account for 10-15% of sign-ups." }).length, 0);
     assert.equal(scanNumberForm({ statement: "Installation is targeted for Q3 2026." }).length, 0);
     assert.equal(scanNumberForm({ statement: "A B2B SaaS platform." }).length, 0);

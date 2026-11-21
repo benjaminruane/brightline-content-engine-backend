@@ -6,6 +6,8 @@
 // No invention of facts.
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
+import { renderDraftingInstructions } from "../lib/style-guide/render.mjs";
+import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import {
@@ -141,6 +143,7 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? safeJsonParse(req.body) : req.body || {};
+    const houseStyle = await styleForRequest(account, body);
     const baseDraftId = typeof body.baseDraftId === "string" ? body.baseDraftId.trim() : null;
     const baseDraftText = typeof body.baseDraftText === "string" ? body.baseDraftText : "";
     const sources = Array.isArray(body.sources) ? body.sources : [];
@@ -200,8 +203,18 @@ export default async function handler(req, res) {
 
     const sourcesForPrompt = await prepareSourcesForAdaptPrompt(sources);
 
+    const writing = renderDraftingInstructions({
+      outputType: targetOutputType,
+      eventType: body?.eventType,
+      houseStyle,
+      styleChoices: houseStyle,
+      sources,
+      visibility: targetVisibility,
+    });
     const prompt = `
 You are adapting an existing draft to a new output format and visibility. Use the SAME facts and source material; do not invent new facts.
+
+${writing}
 
 FROM: ${fromOutputType} (${fromVisibility})
 TO: ${targetOutputType} (${targetVisibility})
@@ -248,7 +261,7 @@ Return ONLY JSON:
       typeof parsed.draftText === "string" ? parsed.draftText.trim() : "",
       {
         outputType: targetOutputType,
-        houseStyle: body?.houseStyle && typeof body.houseStyle === "object" ? body.houseStyle : null,
+        houseStyle,
       }
     );
 
