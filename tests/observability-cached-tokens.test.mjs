@@ -74,14 +74,13 @@ describe("cached input tokens are billed at the cached rate", () => {
     assert.equal(cost, (1000 * 0.125) / 1_000_000);
   });
 
-  test("a model with no cached rate bills cache reads at the full input rate", () => {
-    // Anthropic sends no cache_control, so its entries publish no cached rate.
+  test("an Anthropic cache read is a tenth of the input rate", () => {
     const cost = calculateLlmCostUsd("anthropic", "claude-sonnet-4-6", {
       inputTokens: 1_000_000,
       cachedInputTokens: 1_000_000,
       outputTokens: 0,
     });
-    assert.equal(cost, 3.0);
+    assert.equal(cost, 0.3);
   });
 
   test("an unlisted model is priced at the highest published rates", () => {
