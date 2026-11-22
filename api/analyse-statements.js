@@ -458,8 +458,7 @@ export default async function handler(req, res) {
     const stopped = err?.code === "review_run_deadline" || err?.code === "match_call_timeout";
     const safeInternalErrorPayload = {
       ok: false,
-      error: stopped ? REVIEW_STOPPED_MESSAGE : REVIEW_DID_NOT_RUN,
-      ...(stopped ? { message: REVIEW_STOPPED_MESSAGE } : {}),
+      error: REVIEW_DID_NOT_RUN,
       statements: [],
       references: [],
       meta: {
@@ -475,6 +474,10 @@ export default async function handler(req, res) {
         llmSpend: getLlmSpend(),
       },
     };
+    if (stopped) {
+      safeInternalErrorPayload.error = REVIEW_STOPPED_MESSAGE;
+      safeInternalErrorPayload.message = REVIEW_STOPPED_MESSAGE;
+    }
     sendReviewJson(req, res, 200, safeInternalErrorPayload);
     return;
   } finally {
