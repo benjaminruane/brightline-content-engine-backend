@@ -36,6 +36,14 @@ import { splitMethodologyOutput } from "../lib/prompt-library/methodology-note.m
 import { appendContextSourceLine } from "../lib/prompt-library/compose.mjs";
 import { applyPlaceholderGuard } from "../lib/prompt-library/placeholder-guard.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
+import {
+  countRewriteWords,
+  lengthGapLine,
+  lengthIsOff,
+  lengthMissLine,
+  lengthPromptLine,
+  lengthTargetFromInstruction,
+} from "../lib/rewrite-length-target.mjs";
 
 
 function safeJsonParse(s) {
@@ -625,10 +633,12 @@ export default async function handler(req, res) {
     const eventType = normalizeEventType(rawEventType);
     const eventTypeLabel = getEventTypeLabel(eventType);
     // X3.2.3: Rewrite authority — value flow: body.maxWords → effectiveMaxWords → meta.outputIntent.maxWords.
-    const effectiveMaxWords =
+    const documentMaxWords =
       typeof body.maxWords === "number" && Number.isFinite(body.maxWords) && body.maxWords >= 1
         ? Math.min(2000, Math.max(1, Math.floor(body.maxWords)))
         : null;
+    const lengthTarget = lengthTargetFromInstruction(rewriteInstructions, countRewriteWords(text));
+    const effectiveMaxWords = lengthTarget ?? documentMaxWords;
 
     const hasInstructions = typeof rewriteInstructions === "string" && rewriteInstructions.length > 0;
     const hasTarget = Number.isFinite(effectiveMaxWords);
@@ -711,6 +721,7 @@ Follow the base guidance in the system message.
 
 INSTRUCTIONS:
 ${rewriteInstructions}
+${lengthTarget != null ? lengthPromptLine(lengthTarget) : ""}
 
 DRAFT:
 ${text}
@@ -769,47 +780,68 @@ Return ONLY valid JSON with no markdown or extra text:
 `.trim();
 
     const prompt = appendContextSourceLine(promptBody, sources);
-
-    const completion = await callLLM({
-      provider: modelConfig.provider,
-      model: modelId,
-      temperature: 0.2,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: prompt },
-      ],
-      traceName: "writing-rewrite",
-      spanName: "writing-rewrite",
-      metadata: { route: "rewrite" },
-    });
-
-    if (diagVerbose) {
-      const rid = req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null;
-      const usage = completion?.usage;
-      if (usage != null) {
-        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: usage.inputTokens ?? null, completion_tokens: usage.outputTokens ?? null, total_tokens: (Number(usage.inputTokens) || 0) + (Number(usage.outputTokens) || 0) });
-      } else {
-        console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: null, completion_tokens: null, total_tokens: null, usageMissing: true });
-      }
-    }
-
-    let raw = completion?.text || "";
-    // Strip optional markdown code fence so JSON parse succeeds
-    const codeFence = /^```(?:json)?\s*\n?([\s\S]*?)\n?```\s*$/;
-    const match = raw.match(codeFence);
-    if (match) raw = match[1].trim();
-    const parsed = safeJsonParse(raw) || {};
-    let finalDraftText = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
-    const sourcesUsedRows = extractSourcesUsedRows(finalDraftText, sources);
-    const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(finalDraftText));
     const houseOpts = {
       outputType,
       authoringOrganisation: resolveAuthoringOrganisationName(body?.authoringOrganisation) || "",
       houseStyle,
       sources,
     };
-    finalDraftText = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
-    const methodologyNote = applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts);
+
+    async function draftFromPrompt(userPrompt) {
+      const completion = await callLLM({
+        provider: modelConfig.provider,
+        model: modelId,
+        temperature: 0.2,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        traceName: "writing-rewrite",
+        spanName: "writing-rewrite",
+        metadata: { route: "rewrite" },
+      });
+
+      if (diagVerbose) {
+        const rid = req?.body?.rid ?? req?.headers?.["x-request-id"] ?? null;
+        const usage = completion?.usage;
+        if (usage != null) {
+          console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: usage.inputTokens ?? null, completion_tokens: usage.outputTokens ?? null, total_tokens: (Number(usage.inputTokens) || 0) + (Number(usage.outputTokens) || 0) });
+        } else {
+          console.log("[DIAG][OPENAI_USAGE]", { rid, route: "rewrite", model: completion?.model ?? null, prompt_tokens: null, completion_tokens: null, total_tokens: null, usageMissing: true });
+        }
+      }
+
+      let raw = completion?.text || "";
+      const codeFence = /^```(?:json)?\s*\n?([\s\S]*?)\n?```\s*$/;
+      const match = raw.match(codeFence);
+      if (match) raw = match[1].trim();
+      const parsed = safeJsonParse(raw) || {};
+      let draft = typeof parsed.draftText === "string" ? parsed.draftText.trim() : "";
+      const used = extractSourcesUsedRows(draft, sources);
+      const splitDraft = splitMethodologyOutput(stripSourcesUsedBlock(draft));
+      draft = applyDraftHouseStyle(splitDraft.commentary, houseOpts);
+      return {
+        finalDraftText: draft,
+        methodologyNote: applyDraftHouseStyle(splitDraft.methodologyNote, houseOpts),
+        sourcesUsedRows: used,
+        parsed,
+      };
+    }
+
+    let produced = await draftFromPrompt(prompt);
+    if (
+      lengthTarget != null &&
+      produced.finalDraftText &&
+      lengthIsOff(countRewriteWords(produced.finalDraftText), lengthTarget)
+    ) {
+      const gap = `${prompt}\n\n${lengthGapLine(countRewriteWords(produced.finalDraftText), lengthTarget)}`;
+      const second = await draftFromPrompt(gap);
+      if (second.finalDraftText) produced = second;
+    }
+    let finalDraftText = produced.finalDraftText;
+    const sourcesUsedRows = produced.sourcesUsedRows;
+    const methodologyNote = produced.methodologyNote;
+    const parsed = produced.parsed;
     await populateSourceUsageSummaries(req, sourcesUsedRows, finalDraftText);
 
     if (!finalDraftText || typeof finalDraftText !== "string") {
@@ -828,6 +860,9 @@ Return ONLY valid JSON with no markdown or extra text:
     // X3.1: Deterministic metrics (authoritative) — use final draft text
     const wordsBefore = countWords(text);
     const wordsAfter = countWords(finalDraftText);
+    const lengthNotice = lengthTarget != null && lengthIsOff(wordsAfter, lengthTarget)
+      ? lengthMissLine(wordsAfter, lengthTarget)
+      : null;
     const charsBefore = countChars(text);
     const charsAfter = countChars(finalDraftText);
     const targetMaxWords = effectiveMaxWords;
@@ -957,6 +992,7 @@ Return ONLY valid JSON with no markdown or extra text:
       ok: true,
       draftText: finalDraftText,
       methodologyNote,
+      lengthNotice,
       sourcesUsedRows,
       meta: {
         outputIntent: metaOutputIntent,

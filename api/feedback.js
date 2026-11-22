@@ -88,6 +88,12 @@ export default async function handler(req, res) {
         await dismissFeedbackBanner(sql, account.accountId);
         return res.status(200).json({ ok: true });
       }
+      if (body.readAll === true) {
+        const rows = await sql.query(
+          `update feedback set read_at = now() where read_at is null returning id`
+        );
+        return res.status(200).json({ ok: true, marked: Array.isArray(rows) ? rows.length : 0 });
+      }
       const id = body.id;
       if (id == null || body.read !== true) return res.status(400).json({ error: "invalid_feedback" });
       const rows = await sql.query(

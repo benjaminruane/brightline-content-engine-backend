@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "instruction": "shorten by 30%",
+  "wordsBefore": 234,
+  "wordTarget": 164,
+  "wordsAfter": 188,
+  "calls": 1,
+  "costUsd": 0.00277125,
+  "model": "gpt-5.1-2025-11-13",
+  "provider": "openai",
+  "spend": {
+    "calls": 1,
+    "inputTokens": 361,
+    "cachedInputTokens": 0,
+    "outputTokens": 232,
+    "costUsd": 0.00277125,
+    "unpricedCalls": 0,
+    "unpricedModels": [],
+    "byModel": {
+      "openai/gpt-5.1-2025-11-13": {
+        "calls": 1,
+        "inputTokens": 361,
+        "cachedInputTokens": 0,
+        "outputTokens": 232,
+        "costUsd": 0.00277125,
+        "unpricedCalls": 0
+      }
+    }
+  },
+  "draftText": "GP Industries makes batteries for warehouse trucks and backup power. In the year to March 2025 the battery division lifted gross margin to 25%, from 22%, helped by a cheaper cathode mix and higher utilisation at the Penang plant. Volumes rose in Europe, where two forklift makers signed longer supply agreements, and were flat in North America. The industrial tools division lagged, with margin slipping as steel costs stayed high and a delayed product launch left the factory underused. Management kept the full year outlook unchanged and said the battery order book covers the next two quarters. Cash from operations funded the Penang expansion without new borrowing, and net debt ended the year lower. The board held the dividend flat and said any special dividend must wait until the new line reaches its planned rate. Customers in backup power sought longer warranties, and the firm agreed where data supported a five year term. One European forklift group made up over 10% of battery revenue. Research spending was unchanged and focused on cooler running cells for enclosed warehouses. The company repeated that it does not sell into passenger cars."
+}
