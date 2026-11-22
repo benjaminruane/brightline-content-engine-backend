@@ -8,7 +8,7 @@ Style guide:
 - Use a comma as the thousands separator, as in 5,500. Do not put a thousands separator in a year. Correct: 5,500
 - Write 1,000 million or more in billions to one decimal, as in GBP 5.0 billion. Correct: GBP 5.0 billion
 - Dates in prose use 30 September 2026. Flag any other form, including an ISO date, a slash date, and an abbreviated month. Do not flag a month and a year with no day. Correct: 30 September 2026
-- Spell a quarter, a half, and a financial year when it does not sit directly before the noun it describes, as in in the third quarter of 2026, the first half of 2026, and financial year 2025. Where the period sits directly before that noun, leave the text unchanged. Correct: in the third quarter of 2026
+- Spell a quarter, a half, and a financial year, as in the third quarter of 2026, the first half of 2026, and financial year 2025. Do not write Q3, H1, or FY. When the period names the following noun, put the period after that noun and spell it. Correct: in the third quarter of 2026
 - Place a period after the noun it describes. Correct: revenue for the first quarter of 2026 results for the third quarter of 2026
 - Link a derived figure explicitly. Do not leave it as a bare apposition or a bracket. Correct: EUR 9 million of EBITDA, equating to a 14% margin
 - A year range uses a hyphen, except after from or between. Correct: 2016-2019 from 2016 to 2019 between 2016 and 2019

@@ -5,7 +5,7 @@ import { runEditorialComplianceReview } from "../lib/qc/editorial-compliance-rev
 import { assembleCard } from "../lib/qc/assemble-card.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 
-const STATEMENT = "The company generated EUR 92 million of revenue in FY2024.";
+const STATEMENT = "The company generated EUR 92 million of revenue in the year.";
 
 const REVIEWS_ON = {
   evidenceEnabled: true,
