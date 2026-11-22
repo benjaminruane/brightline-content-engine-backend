@@ -9,6 +9,7 @@ import {
   validateOwnerKey,
   validateReviewId,
 } from "../lib/db/review-state.mjs";
+import { stateWithStoredSourceText } from "../lib/persist-source-text.mjs";
 
 function readJsonBody(req) {
   if (req.body && typeof req.body === "object") return req.body;
@@ -95,10 +96,11 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
+      const state = await stateWithStoredSourceText(body.state);
       const result = await saveReviewState(sql, {
         reviewId,
         ownerKey,
-        state: body.state,
+        state,
         accountId: scopedAccountId,
       });
       if (result.ok === false && result.reason === "too_large") {

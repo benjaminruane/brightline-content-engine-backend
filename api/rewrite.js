@@ -43,6 +43,8 @@ import {
   lengthMissLine,
   lengthPromptLine,
   lengthTargetFromInstruction,
+  rewriteTextUnchanged,
+  UNCHANGED_RETRY_LINE,
 } from "../lib/rewrite-length-target.mjs";
 
 
@@ -829,13 +831,15 @@ Return ONLY valid JSON with no markdown or extra text:
     }
 
     let produced = await draftFromPrompt(prompt);
-    if (
-      lengthTarget != null &&
-      produced.finalDraftText &&
-      lengthIsOff(countRewriteWords(produced.finalDraftText), lengthTarget)
-    ) {
-      const gap = `${prompt}\n\n${lengthGapLine(countRewriteWords(produced.finalDraftText), lengthTarget)}`;
-      const second = await draftFromPrompt(gap);
+    const firstUnchanged = rewriteTextUnchanged(produced.finalDraftText, text);
+    const firstOff = lengthTarget != null
+      && produced.finalDraftText
+      && lengthIsOff(countRewriteWords(produced.finalDraftText), lengthTarget);
+    if (produced.finalDraftText && (firstUnchanged || firstOff)) {
+      const extra = [];
+      if (firstUnchanged) extra.push(UNCHANGED_RETRY_LINE);
+      if (firstOff) extra.push(lengthGapLine(countRewriteWords(produced.finalDraftText), lengthTarget));
+      const second = await draftFromPrompt(`${prompt}\n\n${extra.join("\n\n")}`);
       if (second.finalDraftText) produced = second;
     }
     let finalDraftText = produced.finalDraftText;
@@ -991,6 +995,7 @@ Return ONLY valid JSON with no markdown or extra text:
     return res.status(200).json({
       ok: true,
       draftText: finalDraftText,
+      unchanged: rewriteTextUnchanged(finalDraftText, text),
       methodologyNote,
       lengthNotice,
       sourcesUsedRows,

@@ -70,7 +70,7 @@ describe("B546 account reads degrade", () => {
     assert.equal(loaded.feedback_banner_closed_at, null);
     assert.deepEqual(houseStyleForRow(loaded, false), NEW_ACCOUNT_HOUSE_STYLE);
     assert.equal(errors.some((line) => line.includes("optional column missing") && line.includes("spelling")), true);
-    assert.equal(seen.some((text) => text.startsWith("select id, email, name, writing_for, monthly_allowance_usd")), true);
+    assert.equal(seen.some((text) => text.startsWith("select id, email, name, writing_for, created_environment, monthly_allowance_usd")), true);
 
     resetMissingAccountColumnsForTests();
     const created = await rememberSeenAccount(sql, {
@@ -95,7 +95,7 @@ describe("B546 schema check", () => {
   test("migrations 001 to 007 are additive and a missing 007 column is reported", () => {
     const dir = path.join(ROOT, "db/migrations");
     const files = readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
-    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008"]);
+    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008", "009"]);
     for (const name of files) {
       const text = readFileSync(path.join(dir, name), "utf8");
       assert.equal(isAdditiveMigration(text), true, name);
@@ -144,6 +144,7 @@ describe("B546 schema check", () => {
       ["feedback", "created_at"],
       ["feedback", "read_at"],
       ["accounts", "style_choices"],
+      ["accounts", "created_environment"],
     ].map(([table_name, column_name]) => ({ table_name, column_name }));
     const status = statusFromColumnRows(present);
     assert.equal(status.state, "missing");

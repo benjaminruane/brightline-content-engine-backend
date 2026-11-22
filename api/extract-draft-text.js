@@ -38,7 +38,10 @@ export default async function handler(req, res) {
     const row = Array.isArray(prepared?.sources) ? prepared.sources[0] : null;
     const extractedText = typeof row?.text === "string" ? row.text : "";
     const status = row?.meta?.extraction?.status ?? null;
-    return res.status(200).json({ ok: true, text: extractedText || "", status });
+    const furnitureLineIndexes = Array.isArray(row?.meta?.extraction?.furnitureLineIndexes)
+      ? row.meta.extraction.furnitureLineIndexes
+      : [];
+    return res.status(200).json({ ok: true, text: extractedText || "", status, furnitureLineIndexes });
   } catch (err) {
     return res.status(200).json({ ok: false, text: "", status: null, error: err?.message || "Could not extract draft text" });
   }
