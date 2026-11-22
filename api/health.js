@@ -6,6 +6,7 @@ import { getSql, isSqlOverrideActive, readDatabaseStatus } from "../lib/db/clien
 import { applyMissingAdditive, readSchemaStatus } from "../lib/db/schema-status.mjs";
 import { authMode } from "../lib/auth/require-account.mjs";
 import { readBuildIdentity, readEnvironmentSummary, withDatabaseStatus } from "./_lib/env-flags.js";
+import { readReleaseVersion } from "../lib/release-version.mjs";
 
 
 function emptySchema() {
@@ -79,6 +80,7 @@ export default async function handler(req, res) {
     environment,
     database: { ...database, schema },
     build,
+    version: readReleaseVersion(),
     authMode: authMode(),
   });
 }
