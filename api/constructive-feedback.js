@@ -6,6 +6,7 @@ import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
   constructiveFeedbackSystemPrompt,
+  constructiveFeedbackFailure,
   buildConstructiveFeedbackV2,
   normalizeConstructiveFeedbackPlainText,
   prependReadiness,
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
     model: modelConfig.model,
   });
   if (!hasProviderApiKey(modelConfig.provider)) {
-    return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
+    return res.status(200).json(constructiveFeedbackFailure(false));
   }
 
   const body = req.body && typeof req.body === "object" ? req.body : {};
@@ -38,7 +39,7 @@ export default async function handler(req, res) {
     built = buildConstructiveFeedbackV2(body);
   } catch (err) {
     console.warn("[constructive-feedback]", err?.message || err);
-    return res.status(200).json({ ok: false, feedbackText: "", isReady: false });
+    return res.status(200).json(constructiveFeedbackFailure(false));
   }
 
   const traceId = randomUUID();
@@ -59,7 +60,7 @@ export default async function handler(req, res) {
     const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
     const feedbackText = prependReadiness(built.readiness, normalizeConstructiveFeedbackPlainText(raw));
     if (!feedbackText) {
-      return res.status(200).json({ ok: false, feedbackText: "", isReady: built.readiness === "Ready" });
+      return res.status(200).json(constructiveFeedbackFailure(built.readiness === "Ready"));
     }
     return res.status(200).json({
       ok: true,
@@ -68,7 +69,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.warn("[constructive-feedback]", err?.message || err);
-    return res.status(200).json({ ok: false, feedbackText: "", isReady: built.readiness === "Ready" });
+    return res.status(200).json(constructiveFeedbackFailure(built.readiness === "Ready"));
   } finally {
     await endBillableRequest({ account, route: "constructive-feedback", req, spend: getLlmSpend() });
     await flushObservability();
