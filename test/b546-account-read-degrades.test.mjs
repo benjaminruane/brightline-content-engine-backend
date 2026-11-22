@@ -95,7 +95,7 @@ describe("B546 schema check", () => {
   test("migrations 001 to 007 are additive and a missing 007 column is reported", () => {
     const dir = path.join(ROOT, "db/migrations");
     const files = readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
-    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008", "009"]);
+    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010"]);
     for (const name of files) {
       const text = readFileSync(path.join(dir, name), "utf8");
       assert.equal(isAdditiveMigration(text), true, name);
@@ -145,6 +145,7 @@ describe("B546 schema check", () => {
       ["feedback", "read_at"],
       ["accounts", "style_choices"],
       ["accounts", "created_environment"],
+      ["accounts", "profile_refreshed_at"],
     ].map(([table_name, column_name]) => ({ table_name, column_name }));
     const status = statusFromColumnRows(present);
     assert.equal(status.state, "missing");

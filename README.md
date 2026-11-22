@@ -50,14 +50,15 @@ BRIGHTLINE_EDITORIAL_REVIEW=1
 Neon Postgres 18 (Frankfurt). Two connection strings, both set in the Vercel backend project. Never log either value.
 
 - `DATABASE_URL`: pooled (`-pooler` hostname). Used by `api/review-state.js`.
-- `DATABASE_URL_UNPOOLED`: direct connection. Used only by `npm run db:migrate`.
+- `DATABASE_URL_UNPOOLED`: direct connection to production. Used by `npm run db:migrate`.
+- `PREVIEW_DATABASE_URL_UNPOOLED`: direct connection to the preview branch. `npm run db:migrate` applies the same files there after production.
 
 ```bash
 npx vercel env pull .env.local
 npm run db:migrate
 ```
 
-`npm run db:migrate` is `node --env-file-if-exists=.env.local scripts/db/migrate.mjs`, so `DATABASE_URL_UNPOOLED` can come from `.env.local` or the ambient shell. `.env.local` is gitignored. The script reads every `db/migrations/*.sql` file in filename order and executes each against `DATABASE_URL_UNPOOLED`. Migrations are idempotent (`IF NOT EXISTS`); re-running is safe. No dotenv package: local Node must be 20.18+ or 22+.
+`npm run db:migrate` is `node --env-file-if-exists=.env.local scripts/db/migrate.mjs`. `.env.local` is gitignored and wins over the ambient shell. The script reads every `db/migrations/*.sql` file in filename order and executes each against `DATABASE_URL_UNPOOLED`, then against `PREVIEW_DATABASE_URL_UNPOOLED`. If the preview variable is missing, it prints one warning and does not fail the production run. Migrations are idempotent (`IF NOT EXISTS`); re-running is safe. No dotenv package: local Node must be 20.18+ or 22+.
 
 **Rehearsal rule:** migration `001` ran against the empty production database. From migration `002` onward, create a Neon branch first, run the migration there, then run it on production. Neon's free plan retains only 6 hours of restore history; a branch is the safety net, not that window.
 

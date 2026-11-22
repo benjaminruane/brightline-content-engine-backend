@@ -37,7 +37,13 @@ In the Vercel project, open Deployments, find the previous Production deployment
 
 ## Database
 
-Preview and production share one database. Migrations stay add-only. A migration that renames, drops, or rewrites a column would break whichever lane is still on the old code. Health applies a missing additive migration on production. It does not apply a migration that is not additive.
+Previews use their own database branch, `preview/main`, copied from production. They do not share the production database.
+
+`npm run db:migrate` applies the migration files to production (`DATABASE_URL_UNPOOLED`) and then to the preview branch (`PREVIEW_DATABASE_URL_UNPOOLED`). Both values are read from `.env.local`. If the preview variable is missing, the script prints one warning and does not fail the production run.
+
+Migrations stay add-only. A migration that renames, drops, or rewrites a column would break whichever lane is still on the old code. Health applies a missing additive migration on production. It does not apply a migration that is not additive.
+
+If the preview branch is ever badly out of step, reset `preview/main` from its parent in Neon.
 
 ## Vercel settings the product owner sets
 

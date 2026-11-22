@@ -8,6 +8,7 @@ One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
+| 2026-11-22 | Subject hint, grey left-out sources, Clerk name refresh (`b572`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Source relevance on server-extracted text (`b570`). PDF, pasted text, and an unreadable file. Generate is mocked. No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Friend-readiness bundle (`b569`). Sources survive refresh, Generate details, source relevance, unchanged rewrite, ordinals, layout, preview accounts. No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Click-through polish, Rewrite honours a length instruction, style notes name the words, saved sources re-run (`b568`). One Rewrite of a 234 word GP Industries draft, instruction "shorten by 30%". | 0.00277125 | 0.00277125 | 1 | 0 | none | `scripts/diagnostic/b568/rewrite-length.json`. gpt-5.1-2025-11-13. 361 input tokens, 0 cached, 232 output tokens. | Estimate well under USD 0.25. Not crossed. Cap USD 0.25. Cached input was 0, so list and discounted are the same. Words before 234, target 164, words after 188. |
