@@ -5,7 +5,8 @@
  */
 
 import { countWords, estimateStatementCount } from "../../../lib/qc/token-estimate.mjs";
-import { estimateReviewCostUsd } from "../../../lib/qc/review-cost-warning.mjs";
+import { estimateReviewCostUsd, tokensSentForReview } from "../../../lib/qc/review-cost-warning.mjs";
+import { setSpendListener } from "../../../lib/observability.js";
 
 export const DIAGNOSTIC_COST_CAP_USD = 3;
 export const REVIEW_SOURCE_WORD_CAP = 6000;
@@ -113,9 +114,11 @@ export async function guardDiagnosticRequest({
     statementCount,
     sourceWords: words,
   });
-  const costUsd = estimateReviewCostUsd({ sourceWords: words, statementCount: statements });
+  const chars = resolveChars(list);
+  const sent = tokensSentForReview({ sourceChars: chars, statementCount: statements });
+  const costUsd = estimateReviewCostUsd({ sourceChars: chars, statementCount: statements });
   const statementWord = statements === 1 ? "statement" : "statements";
-  const line = `Estimated cost USD ${costUsd.toFixed(2)} (${Math.round(words).toLocaleString("en-GB")} words, ${statements} ${statementWord}).`;
+  const line = `Estimated cost USD ${costUsd.toFixed(2)} (${sent.tokensSent.toLocaleString("en-GB")} tokens sent, ${statements} ${statementWord}).`;
   console.log(line);
   if (resolvedKind === "review") assertReviewSourcesAllowed(list, argv);
   if (resolvedKind === "review" && list.length === 1 && words > REVIEW_SOURCE_WORD_CAP && !hasFlag(argv, "--allow-long-source")) {
@@ -127,5 +130,36 @@ export async function guardDiagnosticRequest({
   if (costUsd > DIAGNOSTIC_COST_CAP_USD && !hasFlag(argv, "--allow-over-cap")) {
     throw new Error(`${line} That is above the USD ${DIAGNOSTIC_COST_CAP_USD} cap. Not running. Pass --allow-over-cap to run it.`);
   }
-  return { costUsd, sourceWords: words, statementCount: statements };
+  return { costUsd, sourceWords: words, sourceChars: chars, tokensSent: sent.tokensSent, statementCount: statements };
+}
+
+function resolveChars(list) {
+  let sum = 0;
+  for (const source of list) {
+    if (typeof source?.text !== "string") {
+      throw new Error(`cost guard: source word count is missing for ${sourceLabel(source) || "unnamed source"}`);
+    }
+    sum += source.text.length;
+  }
+  return sum;
+}
+
+/**
+ * Abort the run as soon as real spend passes the cap. The call that crossed
+ * the cap is already in the accumulator. The next paid call does not start.
+ */
+export function armSpendCap(capUsd) {
+  if (!Number.isFinite(capUsd) || capUsd <= 0) throw new Error("cost guard: the cap is missing");
+  setSpendListener((spend) => {
+    const cost = Number(spend?.costUsd) || 0;
+    if (cost <= capUsd) return;
+    const err = new Error(`cost guard: spend USD ${cost.toFixed(2)} passed the cap of USD ${capUsd.toFixed(2)}`);
+    err.code = "cost_cap";
+    err.spend = spend;
+    throw err;
+  });
+}
+
+export function disarmSpendCap() {
+  setSpendListener(null);
 }

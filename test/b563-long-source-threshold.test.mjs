@@ -4,18 +4,18 @@
  */
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { LONG_SOURCE_WORDS, reviewCostWarning } from "../lib/qc/review-cost-warning.mjs";
+import { LONG_SOURCE_TOKENS, reviewCostWarning } from "../lib/qc/review-cost-warning.mjs";
 import {
   DIAGNOSTIC_COST_CAP_USD,
   REVIEW_SOURCE_WORD_CAP,
   guardDiagnosticRequest,
 } from "../scripts/diagnostic/lib/cost-guard.mjs";
 
-test("the shared threshold is 15,000 words", () => {
-  assert.equal(LONG_SOURCE_WORDS, 15000);
-  assert.equal(reviewCostWarning({ sourceWords: 15000, statementCount: 4 }), null);
-  const warning = reviewCostWarning({ sourceWords: 15001, statementCount: 4 });
-  assert.match(warning.message, /15,001 words of source/);
+test("the shared threshold is 20,000 tokens of source", () => {
+  assert.equal(LONG_SOURCE_TOKENS, 20000);
+  assert.equal(reviewCostWarning({ sourceChars: 80000, statementCount: 4 }), null);
+  const warning = reviewCostWarning({ sourceChars: 80004, statementCount: 4 });
+  assert.match(warning.message, /20,001 tokens of source/);
 });
 
 test("a diagnostic run prints the estimate and refuses a cost over USD 3", async () => {

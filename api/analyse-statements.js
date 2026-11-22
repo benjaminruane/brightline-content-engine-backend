@@ -44,7 +44,10 @@ import {
   buildIncompleteReviewResponse,
   causeClassFromHandlerError,
   isReviewDeadlineError,
+  REVIEW_RUN_DEADLINE_MS,
+  REVIEW_STOPPED_MESSAGE,
   reviewOutcomeFromPipeline,
+  reviewWasStopped,
 } from "../lib/qc/review-deadline.mjs";
 import { INCOMPLETE_CAUSES } from "../lib/qc/not-reviewed-reason.mjs";
 import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
@@ -52,6 +55,11 @@ import { readBuildIdentity } from "../lib/qc/build-identity.mjs";
 /** R3.3: soft observability threshold only — no truncation or rejection. */
 const LONG_SOURCE_SOFT_CHAR_WARN = 60_000;
 
+
+export function sendReviewJson(req, res, status, body) {
+  applyCors(req, res, { methods: "POST,OPTIONS" });
+  res.status(status).json(body);
+}
 
 const ROUTE = "analyse-statements";
 const OUTPUT_TYPES = new Set([
@@ -262,6 +270,7 @@ export default async function handler(req, res) {
     beginRequestBudget({
       startedAt: requestStartedAt,
       maxDurationMs: FUNCTION_MAX_DURATION_MS,
+      reviewRunDeadlineMs: REVIEW_RUN_DEADLINE_MS,
       model: STAGE_MODELS["editorial-review"]?.model,
     });
 
@@ -387,8 +396,10 @@ export default async function handler(req, res) {
     const sourceIngestionWarning = ingestionMeta.sourceIngestionWarning;
     const totalTextLowWarning = ingestionMeta.totalTextLowWarning;
 
+    const reviewStopped = reviewWasStopped();
     return res.status(200).json({
       ok: true,
+      ...(reviewStopped ? { message: REVIEW_STOPPED_MESSAGE } : {}),
       statements,
       references: [],
       // R7.B46: aligned reviewed sources + separately listed excluded (empty-text) sources
@@ -416,6 +427,7 @@ export default async function handler(req, res) {
         ...(pipelineResult?.draftCoverage ? { draftCoverage: pipelineResult.draftCoverage } : {}),
         ...(pipelineResult?.evidenceReviewSkipped === true ? { evidenceReviewSkipped: true } : {}),
         ...(nothingReviewed ? { nothingReviewed: true } : {}),
+        ...(reviewStopped ? { reviewStopped: true } : {}),
       },
       bannedWordHits,
       provenanceFlags,
@@ -440,12 +452,14 @@ export default async function handler(req, res) {
           reviewDidNotRun: cause !== INCOMPLETE_CAUSES.DEADLINE,
         },
       });
-      res.status(200).json(body);
+      sendReviewJson(req, res, 200, body);
       return;
     }
+    const stopped = err?.code === "review_run_deadline" || err?.code === "match_call_timeout";
     const safeInternalErrorPayload = {
       ok: false,
-      error: REVIEW_DID_NOT_RUN,
+      error: stopped ? REVIEW_STOPPED_MESSAGE : REVIEW_DID_NOT_RUN,
+      ...(stopped ? { message: REVIEW_STOPPED_MESSAGE } : {}),
       statements: [],
       references: [],
       meta: {
@@ -458,9 +472,10 @@ export default async function handler(req, res) {
         providerRefusal: providerRefusalSnapshot(),
         reviewDidNotRun: true,
         build: readBuildIdentity(),
+        llmSpend: getLlmSpend(),
       },
     };
-    res.status(200).json(safeInternalErrorPayload);
+    sendReviewJson(req, res, 200, safeInternalErrorPayload);
     return;
   } finally {
     await endBillableRequest({ account, route: "analyse-statements", req, spend: getLlmSpend() });

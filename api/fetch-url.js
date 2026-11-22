@@ -5,7 +5,8 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
-import { clipKeepingFurniture, htmlToReadableText, markPageFurniture } from "../lib/extract-boilerplate.mjs";
+import { markPageFurniture } from "../lib/extract-boilerplate.mjs";
+import { extractArticleFromHtml } from "../lib/html-article-extract.mjs";
 
 // --- CORS helper --------------------------------------------------
 
@@ -55,30 +56,24 @@ export default async function handler(req, res) {
 
     const html = await response.text();
 
-    // Very simple title extraction
     const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
     const title = titleMatch ? titleMatch[1].trim() : url;
 
-    // Keep newlines. Block closers become line breaks, then spaces collapse
-    // inside a line. Collapsing every whitespace run first turned the page
-    // into one line, so a furniture flag could not see a line to mark.
-    const text = htmlToReadableText(html);
-
-    if (!text) {
+    let text;
+    try {
+      text = extractArticleFromHtml(html);
+    } catch (err) {
+      console.error("Could not extract an article from URL:", url, err);
       return res.status(500).json({
         error: "Could not extract readable text from URL",
       });
     }
 
-    // 20,000 characters of non-furniture text. A furniture line inside that
-    // span stays, so the saved line numbers still match the fetch.
-    const maxChars = 20000;
-    const clipped = clipKeepingFurniture(text, maxChars);
-    const { furnitureLineIndexes } = markPageFurniture(clipped);
+    const { furnitureLineIndexes } = markPageFurniture(text);
 
     return res.status(200).json({
       title,
-      text: clipped,
+      text,
       sourceUrl: url,
       furnitureLineIndexes,
     });
