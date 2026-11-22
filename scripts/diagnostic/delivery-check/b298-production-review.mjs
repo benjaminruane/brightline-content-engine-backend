@@ -53,6 +53,8 @@ const reviewBody = {
 };
 
 const url = `${PRODUCTION_URL.replace(/\/$/, "")}/api/analyse-statements`;
+const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+await guardDiagnosticRequest({ kind: "review", body: reviewBody, argv: process.argv });
 console.log(`POST ${url}`);
 const t0 = Date.now();
 const res = await fetch(url, {

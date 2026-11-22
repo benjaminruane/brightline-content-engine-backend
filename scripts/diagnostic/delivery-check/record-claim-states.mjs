@@ -77,6 +77,8 @@ function wordCount(text) {
 }
 
 async function postAnalyse(name, payload) {
+  const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+  await guardDiagnosticRequest({ kind: "review", body: payload, argv: process.argv });
   const started = Date.now();
   console.log(`\n${name} POST ${URL}/api/analyse-statements words=${wordCount(payload.draftText)}`);
   const res = await fetch(`${URL.replace(/\/$/, "")}/api/analyse-statements`, {

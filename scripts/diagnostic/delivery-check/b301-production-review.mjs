@@ -66,6 +66,8 @@ function evidenceFindingFromCard(card) {
 }
 
 const analyseUrl = `${PRODUCTION_URL.replace(/\/$/, "")}/api/analyse-statements`;
+const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+await guardDiagnosticRequest({ kind: "review", body: reviewBody, argv: process.argv });
 console.log(`POST ${analyseUrl}`);
 const t0 = Date.now();
 const analyseRes = await fetch(analyseUrl, {

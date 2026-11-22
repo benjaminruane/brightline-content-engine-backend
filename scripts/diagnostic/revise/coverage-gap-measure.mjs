@@ -48,6 +48,14 @@ const RUNS = 3;
 const modelConfig = STAGE_MODELS["writing-rewrite"];
 
 async function postJson(urlPath, body) {
+  if (String(urlPath).includes("analyse-statements") || String(urlPath).includes("/api/generate")) {
+    const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+    await guardDiagnosticRequest({
+      kind: String(urlPath).includes("generate") ? "generate" : "review",
+      body,
+      argv: process.argv,
+    });
+  }
   const url = `${PRODUCTION_URL.replace(/\/$/, "")}${urlPath}`;
   const t0 = Date.now();
   const res = await fetch(url, {

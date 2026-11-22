@@ -52,6 +52,8 @@ function countVerdict(cards, field, value) {
   return cards.filter((c) => c?.[field] === value).length;
 }
 
+const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+await guardDiagnosticRequest({ kind: "review", body: reviewBody, argv: process.argv });
 console.log(`POST ${PRODUCTION_URL}/api/analyse-statements id=${id}`);
 console.log(
   `draftWords=${fixture.draftWordCount} draftChars=${draftText.length} ` +

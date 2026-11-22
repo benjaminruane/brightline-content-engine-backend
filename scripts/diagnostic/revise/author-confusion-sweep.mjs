@@ -348,6 +348,14 @@ const REVIEW_COST_ESTIMATE_USD = 0.5;
 const COST_CEILING_USD = 2;
 
 async function postJson(pathname, body) {
+  if (String(pathname).includes("analyse-statements") || String(pathname).includes("/api/generate")) {
+    const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+    await guardDiagnosticRequest({
+      kind: String(pathname).includes("generate") ? "generate" : "review",
+      body,
+      argv: process.argv,
+    });
+  }
   const url = `${PRODUCTION_URL}${pathname}`;
   const t0 = Date.now();
   const res = await fetch(url, {

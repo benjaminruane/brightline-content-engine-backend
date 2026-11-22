@@ -24,6 +24,7 @@ import { scanDraftForAiProvenance } from "../lib/provenance-scan.mjs";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
+import { enforceCardConsistency } from "../lib/qc/card-consistency.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 import { resolveReviewOptionsFromBody } from "../lib/qc/review-options.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
@@ -370,6 +371,7 @@ export default async function handler(req, res) {
     for (const stmt of statements) {
       if (stmt?.qcCard && typeof stmt.qcCard === "object") {
         stmt.qcCard.summaryClass = classifyCard(stmt.qcCard, effectiveReviewOptions);
+        enforceCardConsistency(stmt.qcCard);
       }
     }
     const summaryCards = statements

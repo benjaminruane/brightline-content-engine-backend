@@ -20,6 +20,7 @@ import {
 } from "../accuracy/run-evidence.mjs";
 import { padFixtureId } from "../accuracy/lib.mjs";
 import { buildEstimate } from "../b437/estimate.mjs";
+import { guardDiagnosticRequest } from "./cost-guard.mjs";
 
 function clip(value, max = 2000) {
   const text = typeof value === "string" ? value : value == null ? "" : String(value);
@@ -433,6 +434,13 @@ export async function runPaidPass({ dir, label, ceilingUsd = 40, full = false, i
     const t0 = Date.now();
     const draft = typeof fixture.data.draft === "string" ? fixture.data.draft : "";
     const sources = await loadPipelineSources(fixture.data.sources || []);
+    await guardDiagnosticRequest({
+      kind: "review",
+      sources,
+      draftText: draft,
+      statementCount: freeze.length || undefined,
+      argv: process.argv,
+    });
     const cfg = fixture.data.config && typeof fixture.data.config === "object" ? fixture.data.config : {};
     const outputType = typeof cfg.outputType === "string" ? cfg.outputType : "";
     if (!outputType) throw new Error(`F${id}: output type is missing`);

@@ -46,6 +46,14 @@ function estimateEncodedSize(n) {
 }
 
 async function postJson(pathname, body, timeoutMs) {
+  if (String(pathname).includes("analyse-statements") || String(pathname).includes("/api/generate")) {
+    const { guardDiagnosticRequest } = await import("../../lib/cost-guard.mjs");
+    await guardDiagnosticRequest({
+      kind: String(pathname).includes("generate") ? "generate" : "review",
+      body,
+      argv: process.argv,
+    });
+  }
   const payload = JSON.stringify(body);
   const t0 = Date.now();
   const controller = new AbortController();

@@ -127,6 +127,14 @@ async function logFileSize(filePath) {
 }
 
 async function fetchJson(url, body, timeoutMs) {
+  if (String(url).includes("analyse-statements") || String(url).includes("/api/generate")) {
+    const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+    await guardDiagnosticRequest({
+      kind: String(url).includes("generate") ? "generate" : "review",
+      body,
+      argv: process.argv,
+    });
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {

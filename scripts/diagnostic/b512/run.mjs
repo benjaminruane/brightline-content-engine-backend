@@ -10,6 +10,7 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { guardDiagnosticRequest } from "../lib/cost-guard.mjs";
 import { loadLocalEnvFiles } from "../lib/env.mjs";
 import { SOURCES_DIR } from "../lib/paths.mjs";
 
@@ -539,6 +540,7 @@ async function main() {
       }
 
       const generated = resStub();
+      await guardDiagnosticRequest({ kind: "generate", sources: promptSources, argv: process.argv });
       await generate(
         {
           method: "POST",
@@ -573,6 +575,7 @@ async function main() {
       }
 
       const reviewed = resStub();
+      await guardDiagnosticRequest({ kind: "review", sources: promptSources, draftText: draft, argv: process.argv });
       await analyse(
         {
           method: "POST",

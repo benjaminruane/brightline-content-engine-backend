@@ -302,6 +302,8 @@ async function reviewDraft(draftText) {
     await readFile(path.join(FIXTURE_DIR, "meridian_production_request.json"), "utf8")
   );
   const body = { ...captured, draftText };
+  const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+  await guardDiagnosticRequest({ kind: "review", body, argv: process.argv });
   const res = await fetch(`${REVIEW_URL.replace(/\/$/, "")}/api/analyse-statements`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

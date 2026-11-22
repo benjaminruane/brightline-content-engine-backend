@@ -430,6 +430,13 @@ async function runOne(spec) {
     });
   }
 
+  const { guardDiagnosticRequest } = await import("./diagnostic/lib/cost-guard.mjs");
+  await guardDiagnosticRequest({
+    kind: "review",
+    sources: Array.isArray(requestBody.sources) ? requestBody.sources : [],
+    draftText: typeof requestBody.draftText === "string" ? requestBody.draftText : "",
+    argv: process.argv,
+  });
   const res = await fetch(RUN_QC_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

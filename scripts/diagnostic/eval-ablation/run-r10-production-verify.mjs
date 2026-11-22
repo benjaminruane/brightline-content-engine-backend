@@ -140,6 +140,8 @@ async function main() {
     ],
   };
 
+  const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+  await guardDiagnosticRequest({ kind: "review", body, argv: process.argv });
   const res = await fetch(`${PRODUCTION_URL.replace(/\/$/, "")}/api/analyse-statements`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

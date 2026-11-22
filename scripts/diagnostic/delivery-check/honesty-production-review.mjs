@@ -43,6 +43,8 @@ const reviewBody = {
   sources,
 };
 
+const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+await guardDiagnosticRequest({ kind: "review", body: reviewBody, argv: process.argv });
 console.log(`POST ${PRODUCTION_URL}/api/analyse-statements`);
 console.log(`draftChars=${draftText.length} sources=${sources.length} sourceChars=${sources[0]?.text?.length ?? 0}`);
 const t0 = Date.now();

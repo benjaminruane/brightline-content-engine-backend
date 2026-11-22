@@ -79,6 +79,14 @@ function resStub() {
 
 async function capture(handler, body) {
   const before = calls.length;
+  if (Array.isArray(body?.sources)) {
+    const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+    await guardDiagnosticRequest({
+      kind: typeof body.draftText === "string" ? "review" : "generate",
+      body,
+      argv: process.argv,
+    });
+  }
   const res = resStub();
   const log = console.log;
   console.log = () => {};

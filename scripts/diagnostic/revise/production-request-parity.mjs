@@ -109,6 +109,8 @@ function fieldDiff(captured, previous) {
  * ------------------------------------------------------------------ */
 
 async function postReview(body) {
+  const { guardDiagnosticRequest } = await import("../lib/cost-guard.mjs");
+  await guardDiagnosticRequest({ kind: "review", body, argv: process.argv });
   const url = `${PRODUCTION_URL.replace(/\/$/, "")}/api/analyse-statements`;
   const t0 = Date.now();
   const res = await fetch(url, {
