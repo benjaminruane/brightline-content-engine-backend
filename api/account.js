@@ -1,7 +1,7 @@
 import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
-import { dismissFeedbackBanner, feedbackNotice, findAccount, normaliseWritingFor, updateHouseStyle, updateStyleChoices, updateWritingFor } from "../lib/db/accounts.mjs";
+import { dismissFeedbackBanner, feedbackNotice, findAccount, normaliseWritingFor, problemNotice, updateHouseStyle, updateStyleChoices, updateWritingFor } from "../lib/db/accounts.mjs";
 import { houseStyleForRow, normaliseHouseStyle } from "../lib/house-style-choice.mjs";
 import { choicesFromAccountRow, normaliseBannedWords, renderHouseRulesView } from "../lib/style-guide/render.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
@@ -31,8 +31,11 @@ async function publicAccount(sql, row, fallback) {
   const choices = choicesFromAccountRow({ ...(row || {}), ...houseStyle });
   const guide = renderHouseRulesView(choices);
   let notice = null;
+  let problems = null;
   if (admin && sql && fallback?.accountId) {
-    notice = await feedbackNotice(sql, row?.feedback_banner_closed_at ?? null);
+    const closedAt = row?.feedback_banner_closed_at ?? null;
+    notice = await feedbackNotice(sql, closedAt);
+    problems = await problemNotice(sql, closedAt);
   }
   return {
     name,
@@ -44,6 +47,7 @@ async function publicAccount(sql, row, fallback) {
     styleChoices: choices,
     styleGuide: guide,
     feedbackNotice: notice,
+    problemNotice: problems,
     isAdmin: admin,
     allowanceUsd: allowance,
     spentThisMonthUsd: spent,

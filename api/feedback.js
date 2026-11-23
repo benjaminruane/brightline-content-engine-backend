@@ -27,6 +27,7 @@ function present(row) {
     diagnostics: row.diagnostics ?? null,
     createdAt: row.created_at,
     readAt: row.read_at ?? null,
+    emailSkip: row.email_skip ?? null,
     senderName: row.sender_name ?? null,
     senderEmail: row.sender_email ?? null,
   };
@@ -74,12 +75,16 @@ async function handler(req, res) {
       const saved = rows[0];
       try {
         const sender = await findAccount(sql, account.accountId);
-        await sendFeedbackEmail({
+        const sent = await sendFeedbackEmail({
           senderName: sender?.name || account.name || "",
           senderEmail: sender?.email || account.email || "",
           comment,
           detailsLine: typeof meta?.detailsLine === "string" ? meta.detailsLine : "",
         });
+        if (sent?.reason === "not_configured") {
+          await sql.query(`update feedback set email_skip = $2 where id = $1`, [saved.id, "settings"]);
+          saved.email_skip = "settings";
+        }
       } catch (err) {
         console.warn("[feedback] email not sent:", err?.message || err);
       }
@@ -110,7 +115,7 @@ async function handler(req, res) {
     }
 
     const rows = await sql.query(
-      `select f.id, f.account_id, f.comment, f.meta, f.draft_snapshot, f.diagnostics, f.created_at, f.read_at,
+      `select f.id, f.account_id, f.comment, f.meta, f.draft_snapshot, f.diagnostics, f.created_at, f.read_at, f.email_skip,
               a.name as sender_name, a.email as sender_email
        from feedback f
        left join accounts a on a.id = f.account_id

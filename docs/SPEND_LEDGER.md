@@ -8,6 +8,7 @@ One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
+| 2026-11-23 | Client problem reports accepted, unread problems in the banner, skipped emails labelled (`b576`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-23 | Diagnostics capture the review and failures, CORS on every response, unreadable files (`b575`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-23 | Feedback diagnostics and self-reported problems (`b573`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Subject hint, grey left-out sources, Clerk name refresh (`b572`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |

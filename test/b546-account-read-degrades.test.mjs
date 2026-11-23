@@ -95,7 +95,7 @@ describe("B546 schema check", () => {
   test("migrations 001 to 007 are additive and a missing 007 column is reported", () => {
     const dir = path.join(ROOT, "db/migrations");
     const files = readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
-    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011"]);
+    assert.deepEqual(files.map((name) => name.slice(0, 3)), ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011", "012"]);
     for (const name of files) {
       const text = readFileSync(path.join(dir, name), "utf8");
       assert.equal(isAdditiveMigration(text), true, name);
@@ -144,6 +144,7 @@ describe("B546 schema check", () => {
       ["feedback", "created_at"],
       ["feedback", "read_at"],
       ["feedback", "diagnostics"],
+      ["feedback", "email_skip"],
       ["problem_events", "id"],
       ["problem_events", "account_id"],
       ["problem_events", "route"],
@@ -158,6 +159,8 @@ describe("B546 schema check", () => {
       ["problem_events", "component_stack"],
       ["problem_events", "emailed_at"],
       ["problem_events", "created_at"],
+      ["problem_events", "read_at"],
+      ["problem_events", "email_skip"],
       ["accounts", "style_choices"],
       ["accounts", "created_environment"],
       ["accounts", "profile_refreshed_at"],
