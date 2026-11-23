@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // A8.2: Short LLM summary of rewrite instructions (fire-and-forget from client; non-blocking for save).
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
@@ -11,7 +12,7 @@ function stripTrailingPunctuation(s) {
   return typeof s === "string" ? s.replace(/[.!?,;:]+$/g, "").trim() : "";
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -66,3 +67,5 @@ ${instruction}`,
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

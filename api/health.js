@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/health.js
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
@@ -63,7 +64,7 @@ function buildHouseWordLimits() {
   return houseWordLimits;
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
@@ -84,3 +85,5 @@ export default async function handler(req, res) {
     authMode: authMode(),
   });
 }
+
+export default withCors(handler, {});

@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 /**
  * Per-finding action list. Off unless REVISE_ACTION_LIST is on.
  * POST { statements, draftText?, authoringOrganisation?, sourceRulings? }
@@ -25,7 +26,7 @@ function safeJsonParse(s) {
   }
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -75,3 +76,5 @@ export default async function handler(req, res) {
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

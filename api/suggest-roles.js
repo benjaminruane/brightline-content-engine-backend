@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 /**
  * B513. One role suggestion for the whole run, from names and descriptions only.
  * One document is facts, with no model call.
@@ -25,7 +26,7 @@ function documentRows(body) {
   }));
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -89,3 +90,5 @@ export default async function handler(req, res) {
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

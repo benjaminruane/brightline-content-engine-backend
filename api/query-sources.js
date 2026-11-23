@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/query-sources.js
 //
 // Sources Q&A endpoint.
@@ -28,7 +29,7 @@ function clamp01(n) {
   return n;
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -187,3 +188,5 @@ ${hasUnattributedEnrichment ? `\n\nATTRIBUTION FLAG: This draft version contains
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

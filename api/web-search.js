@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/web-search.js
 //
 // Lightweight web search endpoint using Tavily.
@@ -11,7 +12,7 @@ import { tavilySearch } from "../lib/web.js";
 // --- CORS helper --------------------------------------------------
 // ------------------------------------------------------------------
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -39,3 +40,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
+export default withCors(handler, {});

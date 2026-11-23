@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
@@ -13,7 +14,7 @@ function named(source) {
  * B570. Classify sources against the investment or fund name using the text
  * the server extracts. No model call. A source that cannot be read is unread.
  */
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -64,3 +65,5 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ ok: true, ...report });
 }
+
+export default withCors(handler, {});

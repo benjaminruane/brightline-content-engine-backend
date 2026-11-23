@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 /**
  * B410. Re-check the statements whose text changed. One note call each.
  * Fact matching is deterministic. Other statements are returned as sent.
@@ -9,7 +10,7 @@ import { flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/obser
 import { recheckStatements } from "../lib/qc/reading-review.mjs";
 
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -48,3 +49,5 @@ export default async function handler(req, res) {
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

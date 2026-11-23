@@ -1,10 +1,12 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { reportRouteFailure } from "../lib/problem-events.mjs";
+import { unreadableFileMessage } from "../lib/unreadable-source.mjs";
 
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -18,8 +20,19 @@ export default async function handler(req, res) {
   const contentBase64 = typeof body.contentBase64 === "string" ? body.contentBase64 : "";
   const isText = mimeType === "text/plain" || /\.txt$/i.test(name);
 
-  if (isText) {
+  if (isText && text.trim()) {
     return res.status(200).json({ ok: true, text });
+  }
+  if (isText) {
+    const message = unreadableFileMessage(name);
+    await reportRouteFailure({
+      account,
+      route: "extract-draft-text",
+      req,
+      status: 200,
+      error: message,
+    });
+    return res.status(200).json({ ok: false, text: "", unreadable: true, message });
   }
 
   const routeStartedAt = Date.now();
@@ -43,7 +56,19 @@ export default async function handler(req, res) {
     const furnitureLineIndexes = Array.isArray(row?.meta?.extraction?.furnitureLineIndexes)
       ? row.meta.extraction.furnitureLineIndexes
       : [];
-    return res.status(200).json({ ok: true, text: extractedText || "", status, furnitureLineIndexes });
+    if (!extractedText.trim()) {
+      const message = unreadableFileMessage(name);
+      await reportRouteFailure({
+        account,
+        route: "extract-draft-text",
+        req,
+        status: 200,
+        error: message,
+        startedAt: routeStartedAt,
+      });
+      return res.status(200).json({ ok: false, text: "", unreadable: true, message, status });
+    }
+    return res.status(200).json({ ok: true, text: extractedText, status, furnitureLineIndexes });
   } catch (err) {
     await reportRouteFailure({
       account,
@@ -56,3 +81,5 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: false, text: "", status: null, error: err?.message || "Could not extract draft text" });
   }
 }
+
+export default withCors(handler, {});

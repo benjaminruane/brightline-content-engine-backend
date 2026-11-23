@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
@@ -11,7 +12,7 @@ function readJsonBody(req) {
   return {};
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   res.setHeader("Cache-Control", "private, no-store");
   if (req.method === "OPTIONS") return res.status(204).end();
@@ -40,9 +41,19 @@ export default async function handler(req, res) {
       const message = typeof body.message === "string" && body.message.trim()
         ? body.message.trim()
         : "frontend crash";
+      const clientRoutes = new Set([
+        "frontend",
+        "generate",
+        "analyse-statements",
+        "rewrite",
+        "adapt",
+        "constructive-feedback",
+        "upload",
+      ]);
+      const route = clientRoutes.has(body.route) ? body.route : "frontend";
       const result = await reportRouteFailure({
         account,
-        route: "frontend",
+        route,
         req,
         status: Number.isFinite(Number(body.status)) ? Number(body.status) : 0,
         error: message,
@@ -72,3 +83,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "problem_failed" });
   }
 }
+
+export default withCors(handler, {});

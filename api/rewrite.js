@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/rewrite.js
 //
 // Rewrites an existing draft.
@@ -579,7 +580,7 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
   return { unattributedEnrichment: false, notes: null, indicators: [] };
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const header = req?.headers?.["x-brightline-diag"] || null;
   const gateAllowsHeader = process.env.BRIGHTLINE_ALLOW_DIAG_HEADER === "1" || process.env.VERCEL_ENV !== "production";
@@ -1062,3 +1063,5 @@ Return ONLY valid JSON with no markdown or extra text:
     await flushObservability();
   }
 }
+
+export default withCors(handler, { problemRoute: "rewrite" });

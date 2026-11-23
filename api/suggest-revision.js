@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 /**
  * Pr9 — Suggest revised draft (generation-side).
  * POST { draftText, statements, outputType?, requiredVersion?, sources? }
@@ -98,7 +99,7 @@ function logDeterministicRemovals(traceId, removalEvents) {
   console.info(`[revise-removal] trace=${trace} removals=${removals.length}`);
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -292,3 +293,5 @@ function sourceTextForValidation(sources) {
   }
   return parts.join("\n\n");
 }
+
+export default withCors(handler, {});

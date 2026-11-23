@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/query.js
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
@@ -24,7 +25,7 @@ function resultsAreGeneric(results = [], entity = "") {
   );
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
   let account = null;
   try {
@@ -163,3 +164,5 @@ ${references.map(r => `[${r.id}] ${r.title}`).join("\n")}
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

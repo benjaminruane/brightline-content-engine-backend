@@ -1,10 +1,11 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/import-web-helper-test.js
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { deriveQueryFromAsk } from "../lib/web.js";
 
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -17,3 +18,5 @@ export default async function handler(req, res) {
 
   res.status(200).json({ ok: true, derived: q });
 }
+
+export default withCors(handler, {});

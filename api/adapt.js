@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/adapt.js
 // Adapt is parked as of R4.1. Endpoint and code retained for future reactivation. Not wired to any UI.
 //
@@ -123,7 +124,7 @@ function buildAdaptOptionalGuidance(targetOutputType, quoteAttribution, linkedIn
   return lines.length ? `${lines.join("\n")}\n` : "";
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -334,3 +335,5 @@ Return ONLY JSON:
     await flushObservability();
   }
 }
+
+export default withCors(handler, { problemRoute: "adapt" });

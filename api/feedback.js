@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { dismissFeedbackBanner, findAccount } from "../lib/db/accounts.mjs";
@@ -31,7 +32,7 @@ function present(row) {
   };
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,PUT,OPTIONS" })) return;
   res.setHeader("Cache-Control", "private, no-store");
   if (req.method === "OPTIONS") return res.status(204).end();
@@ -122,3 +123,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "feedback_failed" });
   }
 }
+
+export default withCors(handler, {});

@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/analyse-statements.js
 //
 // A3.7.6: Thin CORS-safe wrapper for analyse-statements.
@@ -14,6 +15,7 @@ import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
 import { createTraceId, flushObservability, getLlmSpend, resetLlmSpend, startTrace, updateTraceMetadata, REVIEW_DID_NOT_RUN } from "../lib/observability.js";
 import { getDraftHashPrefix } from "../lib/draft-hash.js";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
+import { NONE_READABLE } from "../lib/unreadable-source.mjs";
 import { normalizePublicationState } from "../lib/source-publication-state.mjs";
 import {
   buildExcludedSources,
@@ -150,7 +152,7 @@ function mimeTypeForDropLog(original) {
   return m || "(none)";
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const rid = (req.headers && req.headers["x-brightline-rid"]) || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   req._brightlineRid = rid;
   console.log("[A3.14.5][HANDLER_ENTER]", { rid, route: ROUTE });
@@ -199,6 +201,17 @@ export default async function handler(req, res) {
       preparedSources,
       candidateSources
     );
+    if (candidateSources.length > 0 && keptSources.length === 0) {
+      await reportRouteFailure({
+        account,
+        route: "analyse-statements",
+        req,
+        status: 200,
+        error: NONE_READABLE,
+        startedAt: routeStartedAt,
+      });
+      return sendReviewJson(req, res, 200, { ok: false, error: NONE_READABLE });
+    }
     {
       let dropIdx = 0;
       for (let i = 0; i < preparedSources.length; i++) {
@@ -495,3 +508,5 @@ export default async function handler(req, res) {
     await flushObservability();
   }
 }
+
+export default withCors(handler, { problemRoute: "analyse-statements" });

@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
@@ -60,7 +61,7 @@ export async function deleteClerkUserByApi(userId) {
   }
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
   res.setHeader("Cache-Control", "private, no-store");
   if (req.method === "OPTIONS") return res.status(204).end();
@@ -94,3 +95,5 @@ export default async function handler(req, res) {
   }
   return res.status(200).json({ ok: true });
 }
+
+export default withCors(handler, {});

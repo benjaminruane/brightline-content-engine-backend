@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // /api/fetch-url.js
 //
 // Fetches a public URL and returns a readable text blob + a sensible title.
@@ -11,7 +12,7 @@ import { reportRouteFailure } from "../lib/problem-events.mjs";
 
 // --- CORS helper --------------------------------------------------
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -119,3 +120,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
+export default withCors(handler, {});

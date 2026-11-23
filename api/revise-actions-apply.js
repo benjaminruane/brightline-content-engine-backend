@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 /**
  * Apply accepted action-list decisions onto the analysed draft.
  * Off unless REVISE_ACTION_LIST is on. Does not call a model.
@@ -17,7 +18,7 @@ function safeJsonParse(s) {
   }
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -58,3 +59,5 @@ export default async function handler(req, res) {
     writtenStatementIds: Array.isArray(result.writtenStatementIds) ? result.writtenStatementIds : [],
   });
 }
+
+export default withCors(handler, {});

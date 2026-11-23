@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
@@ -17,7 +18,7 @@ const SYNTHESIZE_REVIEW_SYSTEM_PROMPT = [
 ].join("\n\n");
 
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -146,3 +147,5 @@ export default async function handler(req, res) {
     await flushObservability();
   }
 }
+
+export default withCors(handler, {});

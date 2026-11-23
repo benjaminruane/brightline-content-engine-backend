@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import PDFDocument from "pdfkit";
@@ -404,7 +405,7 @@ function buildDocx(payload) {
   return Packer.toBuffer(doc);
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "POST,OPTIONS" })) return;
   const account = await requireAccount(req, res);
   if (!account) return;
@@ -458,3 +459,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: err?.message || "Export failed" });
   }
 }
+
+export default withCors(handler, {});

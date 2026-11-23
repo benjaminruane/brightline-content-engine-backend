@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { authMode, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
@@ -54,7 +55,7 @@ function toPublicRow(row) {
   };
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   res.setHeader("Cache-Control", "private, no-store");
   console.log(
@@ -125,3 +126,5 @@ export default async function handler(req, res) {
     throw err;
   }
 }
+
+export default withCors(handler, {});

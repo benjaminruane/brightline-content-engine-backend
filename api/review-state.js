@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { authMode, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
@@ -40,7 +41,7 @@ function headerOwnerKey(req) {
   return typeof raw === "string" ? raw : "";
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (applyCors(req, res, { methods: "GET,POST,DELETE,OPTIONS", headers: ["x-brightline-diag"] })) return;
   res.setHeader("Cache-Control", "private, no-store");
   console.log(
@@ -81,7 +82,9 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const result = await loadReviewState(sql, { reviewId, ownerKey, accountId: scopedAccountId });
-      if (!result) return res.status(404).json({ error: "not_found" });
+      if (!result) {
+        return res.status(200).json({ reviewId, state: null, updatedAt: null });
+      }
       if (result.ok === false && result.reason === "not_found") {
         return res.status(404).json({ error: "not_found" });
       }
@@ -135,3 +138,5 @@ export default async function handler(req, res) {
     throw err;
   }
 }
+
+export default withCors(handler, {});

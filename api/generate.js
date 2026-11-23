@@ -1,3 +1,4 @@
+import { withCors } from "../lib/http/with-cors.mjs";
 // api/generate.js
 //
 // Generates a new draft.
@@ -14,6 +15,7 @@ console.log("[A3.14.3][IMPORT_OK] api/generate.js loaded");
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { reportRouteFailure } from "../lib/problem-events.mjs";
+import { refuseIfUnreadable } from "../lib/unreadable-source.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import {
   tavilySearch,
@@ -531,7 +533,7 @@ function detectUnattributedEnrichment(draftText, webEnabled, usedReferenceIds, u
   return { unattributedEnrichment: false, notes: null, indicators: [] };
 }
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   console.log("[A3.14.3][HANDLER_ENTER] generate");
   if (applyCors(req, res, { methods: "GET,POST,OPTIONS", headers: ["x-brightline-diag"] })) return;
   const header = req?.headers?.["x-brightline-diag"] || null;
@@ -622,6 +624,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, error: preparedSources.error });
     }
     const safeSources = preparedSources.sources;
+    if (Array.isArray(sources) && sources.length > 0) {
+      const refusal = await refuseIfUnreadable({
+        sources: safeSources,
+        account,
+        req,
+        route: "generate",
+        startedAt: routeStartedAt,
+      });
+      if (refusal) return res.status(200).json(refusal);
+    }
 
     let webResultsForPrompt = "";
     let webReferences = [];
@@ -968,3 +980,5 @@ Return ONLY JSON:
     await flushObservability();
   }
 }
+
+export default withCors(handler, { problemRoute: "generate" });
