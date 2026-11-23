@@ -82,11 +82,12 @@ test("card text uses US and leaves a quotation alone", () => {
   assert.doesNotMatch(reason, /\bU\.S\./);
 });
 
-test("a short reason is kept only for the real disputed values", () => {
+test("the full explanation is shown, and the short form is not", () => {
   const gem = fixture("gemspring-dirty");
   const s5 = cardReason(card(gem, 4), { sourceText: sourceText(gem) });
-  assert.match(s5, /largest/);
-  assert.match(s5, /second-largest/);
+  assert.doesNotMatch(s5, /; the draft says /);
+  assert.doesNotMatch(s5, /a different value/);
+  assert.match(s5, /Gemspring/);
   const marks = fixture("marks-dirty");
   const s2 = cardReason(card(marks, 1), { sourceText: sourceText(marks) });
   assert.match(s2, /Howard Marks/);
