@@ -17,7 +17,7 @@ describe("B304 check name list", () => {
     assert.equal(joinCheckNames(["A", "B"]), "A and B");
     assert.equal(joinCheckNames(["A", "B", "C"]), "A, B and C");
     assert.equal(joinCheckNames(["A", "B", "C", "D"]), "A, B, C and D");
-    assert.equal(joinCheckNames(CHECK_LIST_ORDER), "Evidence, Editorial, Compliance, Source recency and Framing");
+    assert.equal(joinCheckNames(CHECK_LIST_ORDER), "Evidence, Editorial, Caution, Source recency and Framing");
   });
 
   test("turned-off line: one, two and three off, fixed order, singular and plural", () => {
@@ -27,19 +27,19 @@ describe("B304 check name list", () => {
     );
     assert.equal(
       turnedOffLineFromClass({ evidence: "confirmed", editorial: null, compliance: null }),
-      "Turned off for this run: Editorial and Compliance reviews."
+      "Turned off for this run: Editorial and Caution reviews."
     );
     assert.equal(
       turnedOffLineFromClass({ evidence: null, editorial: null, compliance: null }),
-      "Turned off for this run: Evidence, Editorial and Compliance reviews."
+      "Turned off for this run: Evidence, Editorial and Caution reviews."
     );
     assert.equal(
       turnedOffLineFromClass({ evidence: null, editorial: "clean", compliance: "clean" }),
       "Turned off for this run: Evidence review."
     );
     assert.equal(
-      turnedOffLineFromNames(["Editorial", "Compliance"]),
-      "Turned off for this run: Editorial and Compliance reviews."
+      turnedOffLineFromNames(["Editorial", "Caution"]),
+      "Turned off for this run: Editorial and Caution reviews."
     );
   });
 
@@ -54,8 +54,8 @@ describe("B304 check name list", () => {
       "Clean: Editorial, Source recency and Framing."
     );
     assert.equal(
-      cleanLineFromNames(["Editorial", "Compliance", "Source recency", "Framing"]),
-      "Clean: Editorial, Compliance, Source recency and Framing."
+      cleanLineFromNames(["Editorial", "Caution", "Source recency", "Framing"]),
+      "Clean: Editorial, Caution, Source recency and Framing."
     );
     assert.equal(cleanLineFromNames(["Editorial"]).includes("review"), false);
   });

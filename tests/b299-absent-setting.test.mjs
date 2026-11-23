@@ -34,7 +34,7 @@ describe("B299 absent setting is not requested", () => {
     assert.equal(cls.cardTone, "neutral");
     assert.equal(
       cls.turnedOffLine,
-      "Turned off for this run: Evidence, Editorial and Compliance reviews."
+      "Turned off for this run: Evidence, Editorial and Caution reviews."
     );
   });
 
@@ -44,7 +44,7 @@ describe("B299 absent setting is not requested", () => {
     assert.equal(cls.editorial, null);
     assert.equal(cls.compliance, null);
     assert.equal(cls.cardTone, "green");
-    assert.equal(cls.turnedOffLine, "Turned off for this run: Editorial and Compliance reviews.");
+    assert.equal(cls.turnedOffLine, "Turned off for this run: Editorial and Caution reviews.");
   });
 
   test("the writer logs and stamps false when a key is absent", () => {

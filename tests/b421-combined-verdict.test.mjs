@@ -33,7 +33,7 @@ test("states follow the strongest reviewer and leave the statement verdict alone
   assert.equal(compliance.state, "compliance_risk");
   assert.equal(compliance.tier, "demands");
   assert.equal(compliance.tone, "red");
-  assert.equal(compliance.label, "Compliance risk");
+  assert.equal(compliance.label, "Caution");
   assert.equal(compliance.setBy.source, "compliance");
 
   const wording = combinedVerdict({

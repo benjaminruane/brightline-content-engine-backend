@@ -45,7 +45,7 @@ test("export counts each card once, by combined state", () => {
   assert.deepEqual(lines.map((line) => line.text), [
     "1 conflicts with the source",
     "1 is not in the source",
-    "1 compliance risk",
+    "1 caution",
     "2 go beyond the source",
     "1 needs a look",
     "1 has craft or compliance notes",

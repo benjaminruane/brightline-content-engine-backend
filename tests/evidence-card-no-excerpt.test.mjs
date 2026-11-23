@@ -94,7 +94,7 @@ function screenView(card, reviewOptions = REVIEWS_ON) {
     : 0;
   const cleanSecondary = [
     cls.editorial === "clean" ? "Editorial" : null,
-    cls.compliance === "clean" ? "Compliance" : null,
+    cls.compliance === "clean" ? "Caution" : null,
     sourceRecencyRan && sourceRecencyCount === 0 ? "Source recency" : null,
     framingFidelityRan && framingFidelityCount === 0 ? "Framing" : null,
   ].filter(Boolean);
