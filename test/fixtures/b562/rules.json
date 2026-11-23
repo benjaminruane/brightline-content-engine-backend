@@ -40,6 +40,10 @@
     "rule": "A quarter, a half, and a financial year are spelled out when the account chooses words. Otherwise use the short form. Spell a period only when it does not sit directly before the noun it describes."
   },
   {
+    "id": "pence_form",
+    "rule": "Pence stays pence. Write 862.5 pence, or 862.5p when that form is chosen. Do not convert pence to pounds."
+  },
+  {
     "id": "period_placement",
     "rule": "Place a period after the noun it describes."
   },

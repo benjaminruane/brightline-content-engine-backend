@@ -47,6 +47,7 @@ test("a choice outside the guide is refused, and a valid save stays on that acco
     "thousands",
     "magnitude",
     "periods",
+    "pence",
     "quotes",
     "legalIdentifiers",
   ]);

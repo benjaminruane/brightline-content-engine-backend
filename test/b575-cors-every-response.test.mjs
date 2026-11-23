@@ -2,7 +2,7 @@
  * B575. Every API route sends CORS headers on a forced 404 and a forced 500.
  */
 import assert from "node:assert/strict";
-import { readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { test } from "vitest";
@@ -72,6 +72,32 @@ for (const file of files) {
       assert.equal(res.headers["Access-Control-Allow-Origin"], ORIGIN);
       assert.match(String(res.headers["Access-Control-Allow-Methods"] || ""), /OPTIONS/);
       assert.match(String(res.headers["Access-Control-Allow-Headers"] || ""), /Authorization/);
+    }
+  });
+}
+
+function declaredMethods(file) {
+  const text = readFileSync(file, "utf8");
+  const found = [...text.matchAll(/methods:\s*"([^"]+)"/g)];
+  if (!found.length) return "";
+  return found[found.length - 1][1];
+}
+
+for (const file of files) {
+  const methods = declaredMethods(file);
+  if (!methods) continue;
+  const label = path.relative(fileURLToPath(API_DIR), file);
+  test(`preflight allows ${methods} on ${label}`, async () => {
+    const mod = await import(pathToFileURL(file).href);
+    const res = createRes();
+    await mod.default({
+      method: "OPTIONS",
+      headers: { origin: ORIGIN },
+    }, res);
+    assert.equal(res.statusCode, 204);
+    const allowed = String(res.headers["Access-Control-Allow-Methods"] || "");
+    for (const method of methods.split(",").map((part) => part.trim()).filter(Boolean)) {
+      assert.match(allowed, new RegExp(`\\b${method}\\b`));
     }
   });
 }

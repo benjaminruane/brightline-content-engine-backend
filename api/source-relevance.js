@@ -25,7 +25,7 @@ async function handler(req, res) {
   const body = req.body && typeof req.body === "object" ? req.body : {};
   const name = typeof body.name === "string" ? body.name : "";
   const requested = Array.isArray(body.sources) ? body.sources : [];
-  if (!subjectForms(name).length) {
+  if (!subjectForms(name).length || requested.length < 2) {
     return res.status(200).json({ ok: true, skipped: true, missing: [], unread: [], message: "" });
   }
 
