@@ -19,6 +19,10 @@ gone_feedback as (
   delete from feedback where account_id = $1
   returning id
 ),
+gone_problems as (
+  delete from problem_events where account_id = $1
+  returning id
+),
 nulled_spend as (
   update spend_events set account_id = null where account_id = $1
   returning id

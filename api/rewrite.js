@@ -7,6 +7,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
@@ -594,13 +595,22 @@ export default async function handler(req, res) {
   enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  const routeStartedAt = Date.now();
   const modelConfig = STAGE_MODELS["writing-rewrite"];
   beginRequestBudget({
-    startedAt: Date.now(),
+    startedAt: routeStartedAt,
     maxDurationMs: FUNCTION_MAX_DURATION_MS,
     model: modelConfig.model,
   });
   if (!hasProviderApiKey(modelConfig.provider)) {
+    await reportRouteFailure({
+      account,
+      route: "rewrite",
+      req,
+      status: 500,
+      error: "Server is missing provider API key for writing-rewrite",
+      startedAt: routeStartedAt,
+    });
     return res.status(500).json({ ok: false, error: "Server is missing provider API key for writing-rewrite" });
   }
 
@@ -849,11 +859,27 @@ Return ONLY valid JSON with no markdown or extra text:
     await populateSourceUsageSummaries(req, sourcesUsedRows, finalDraftText);
 
     if (!finalDraftText || typeof finalDraftText !== "string") {
+      await reportRouteFailure({
+        account,
+        route: "rewrite",
+        req,
+        status: 500,
+        error: "Rewrite produced empty draftText",
+        startedAt: routeStartedAt,
+      });
       return res.status(500).json({ ok: false, error: "Rewrite produced empty draftText" });
     }
 
     const guarded = applyPlaceholderGuard(finalDraftText, text, "Rewrite");
     if (!guarded.accepted) {
+      await reportRouteFailure({
+        account,
+        route: "rewrite",
+        req,
+        status: 422,
+        error: guarded.message,
+        startedAt: routeStartedAt,
+      });
       return res.status(422).json({
         ok: false,
         error: guarded.message,
@@ -1019,8 +1045,18 @@ Return ONLY valid JSON with no markdown or extra text:
     });
   } catch (err) {
     const plain = draftErrorFromProvider(err);
+    const status = plain ? 400 : 500;
+    const message = plain || err?.message || "Rewrite failed";
+    await reportRouteFailure({
+      account,
+      route: "rewrite",
+      req,
+      status,
+      error: message,
+      startedAt: routeStartedAt,
+    });
     if (plain) return res.status(400).json({ ok: false, error: plain });
-    return res.status(500).json({ ok: false, error: err?.message || "Rewrite failed" });
+    return res.status(500).json({ ok: false, error: message });
   } finally {
     await endBillableRequest({ account, route: "rewrite", req, spend: getLlmSpend() });
     await flushObservability();

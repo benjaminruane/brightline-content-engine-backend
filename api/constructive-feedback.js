@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { callLLM, flushObservability, getLlmSpend, hasProviderApiKey } from "../lib/observability.js";
 import { STAGE_MODELS } from "../lib/qc/model-config.mjs";
 import {
+  CONSTRUCTIVE_FEEDBACK_FAILED,
   constructiveFeedbackSystemPrompt,
   constructiveFeedbackFailure,
   buildConstructiveFeedbackV2,
@@ -12,6 +13,7 @@ import {
   prependReadiness,
 } from "../lib/qc/constructive-feedback-v2.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 
 
 export default async function handler(req, res) {
@@ -23,13 +25,22 @@ export default async function handler(req, res) {
   enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Method not allowed" });
 
+  const routeStartedAt = Date.now();
   const modelConfig = STAGE_MODELS["constructive-feedback"];
   beginRequestBudget({
-    startedAt: Date.now(),
+    startedAt: routeStartedAt,
     maxDurationMs: FUNCTION_MAX_DURATION_MS,
     model: modelConfig.model,
   });
   if (!hasProviderApiKey(modelConfig.provider)) {
+    await reportRouteFailure({
+      account,
+      route: "constructive-feedback",
+      req,
+      status: 200,
+      error: CONSTRUCTIVE_FEEDBACK_FAILED,
+      startedAt: routeStartedAt,
+    });
     return res.status(200).json(constructiveFeedbackFailure(false));
   }
 
@@ -39,6 +50,14 @@ export default async function handler(req, res) {
     built = buildConstructiveFeedbackV2(body);
   } catch (err) {
     console.warn("[constructive-feedback]", err?.message || err);
+    await reportRouteFailure({
+      account,
+      route: "constructive-feedback",
+      req,
+      status: 200,
+      error: err,
+      startedAt: routeStartedAt,
+    });
     return res.status(200).json(constructiveFeedbackFailure(false));
   }
 
@@ -60,6 +79,14 @@ export default async function handler(req, res) {
     const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
     const feedbackText = prependReadiness(built.readiness, normalizeConstructiveFeedbackPlainText(raw));
     if (!feedbackText) {
+      await reportRouteFailure({
+        account,
+        route: "constructive-feedback",
+        req,
+        status: 200,
+        error: CONSTRUCTIVE_FEEDBACK_FAILED,
+        startedAt: routeStartedAt,
+      });
       return res.status(200).json(constructiveFeedbackFailure(built.readiness === "Ready"));
     }
     return res.status(200).json({
@@ -69,6 +96,14 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.warn("[constructive-feedback]", err?.message || err);
+    await reportRouteFailure({
+      account,
+      route: "constructive-feedback",
+      req,
+      status: 200,
+      error: err,
+      startedAt: routeStartedAt,
+    });
     return res.status(200).json(constructiveFeedbackFailure(built.readiness === "Ready"));
   } finally {
     await endBillableRequest({ account, route: "constructive-feedback", req, spend: getLlmSpend() });

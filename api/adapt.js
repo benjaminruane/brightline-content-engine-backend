@@ -9,6 +9,7 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { renderDraftingInstructions } from "../lib/style-guide/render.mjs";
 import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import {
   tavilySearch,
@@ -131,13 +132,22 @@ export default async function handler(req, res) {
   enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  const routeStartedAt = Date.now();
   const modelConfig = STAGE_MODELS.adapt;
   beginRequestBudget({
-    startedAt: Date.now(),
+    startedAt: routeStartedAt,
     maxDurationMs: FUNCTION_MAX_DURATION_MS,
     model: modelConfig.model,
   });
   if (!hasProviderApiKey(modelConfig.provider)) {
+    await reportRouteFailure({
+      account,
+      route: "adapt",
+      req,
+      status: 500,
+      error: "Server is missing provider API key for adapt",
+      startedAt: routeStartedAt,
+    });
     return res.status(500).json({ ok: false, error: "Server is missing provider API key for adapt" });
   }
 
@@ -307,6 +317,14 @@ Return ONLY JSON:
       },
     });
   } catch (err) {
+    await reportRouteFailure({
+      account,
+      route: "adapt",
+      req,
+      status: 500,
+      error: err?.message || "Adapt failed",
+      startedAt: routeStartedAt,
+    });
     return res.status(500).json({
       ok: false,
       error: err?.message || "Adapt failed",

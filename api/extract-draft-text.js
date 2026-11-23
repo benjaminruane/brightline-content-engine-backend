@@ -1,6 +1,7 @@
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 
 
 export default async function handler(req, res) {
@@ -21,6 +22,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, text });
   }
 
+  const routeStartedAt = Date.now();
   try {
     // B322. Ordinary requests cannot select a PDF engine. Env PDF_ENGINE stays the switch.
     const prepared = await prepareUploadedSourcesForPipeline(
@@ -43,6 +45,14 @@ export default async function handler(req, res) {
       : [];
     return res.status(200).json({ ok: true, text: extractedText || "", status, furnitureLineIndexes });
   } catch (err) {
+    await reportRouteFailure({
+      account,
+      route: "extract-draft-text",
+      req,
+      status: 200,
+      error: err?.message || "Could not extract draft text",
+      startedAt: routeStartedAt,
+    });
     return res.status(200).json({ ok: false, text: "", status: null, error: err?.message || "Could not extract draft text" });
   }
 }

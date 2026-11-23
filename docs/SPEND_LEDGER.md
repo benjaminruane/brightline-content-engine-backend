@@ -8,6 +8,7 @@ One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
+| 2026-11-23 | Feedback diagnostics and self-reported problems (`b573`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Subject hint, grey left-out sources, Clerk name refresh (`b572`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Source relevance on server-extracted text (`b570`). PDF, pasted text, and an unreadable file. Generate is mocked. No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-22 | Friend-readiness bundle (`b569`). Sources survive refresh, Generate details, source relevance, unchanged rewrite, ordinals, layout, preview accounts. No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |

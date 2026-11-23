@@ -7,6 +7,7 @@
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 import { styleForRequest } from "../lib/style-guide/request-style.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import { runPipelineV4 } from "../lib/qc/pipeline-v4/index.mjs";
@@ -165,6 +166,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "method_not_allowed" });
   }
 
+  const routeStartedAt = Date.now();
   try {
     resetLlmSpend();
     const traceId = createTraceId();
@@ -434,6 +436,14 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("[QC_V3_HANDLER_ERROR]", err?.message || String(err));
+    await reportRouteFailure({
+      account,
+      route: "analyse-statements",
+      req,
+      status: 200,
+      error: err,
+      startedAt: routeStartedAt,
+    });
     const cause = causeClassFromHandlerError(err);
     if (isReviewDeadlineError(err) || isRateLimitBoundError(err) || err?.name === "ReviewDidNotStartError") {
       const body = buildIncompleteReviewResponse({

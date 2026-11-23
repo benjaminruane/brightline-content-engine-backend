@@ -2,6 +2,7 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { dismissFeedbackBanner, findAccount } from "../lib/db/accounts.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
+import { prepareDiagnostics } from "../lib/feedback-diagnostics.mjs";
 import { sendFeedbackEmail } from "../lib/feedback-email.mjs";
 
 const COMMENT_MAX = 5000;
@@ -22,6 +23,7 @@ function present(row) {
     comment: row.comment,
     meta: row.meta ?? null,
     draftSnapshot: row.draft_snapshot ?? null,
+    diagnostics: row.diagnostics ?? null,
     createdAt: row.created_at,
     readAt: row.read_at ?? null,
     senderName: row.sender_name ?? null,
@@ -61,11 +63,12 @@ export default async function handler(req, res) {
       const draft = typeof body.draftSnapshot === "string" ? body.draftSnapshot : "";
       if (draft.length > DRAFT_MAX) return res.status(400).json({ error: "draft_too_long" });
       const meta = body.meta && typeof body.meta === "object" ? body.meta : null;
+      const diagnostics = prepareDiagnostics(body.diagnostics);
       const rows = await sql.query(
-        `insert into feedback (account_id, comment, meta, draft_snapshot)
-         values ($1, $2, $3, $4)
-         returning id, account_id, comment, meta, draft_snapshot, created_at, read_at`,
-        [account.accountId, comment, meta, draft || null]
+        `insert into feedback (account_id, comment, meta, draft_snapshot, diagnostics)
+         values ($1, $2, $3, $4, $5)
+         returning id, account_id, comment, meta, draft_snapshot, diagnostics, created_at, read_at`,
+        [account.accountId, comment, meta, draft || null, diagnostics]
       );
       const saved = rows[0];
       try {
@@ -106,7 +109,7 @@ export default async function handler(req, res) {
     }
 
     const rows = await sql.query(
-      `select f.id, f.account_id, f.comment, f.meta, f.draft_snapshot, f.created_at, f.read_at,
+      `select f.id, f.account_id, f.comment, f.meta, f.draft_snapshot, f.diagnostics, f.created_at, f.read_at,
               a.name as sender_name, a.email as sender_email
        from feedback f
        left join accounts a on a.id = f.account_id

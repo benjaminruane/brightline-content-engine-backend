@@ -7,6 +7,7 @@ import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { markPageFurniture } from "../lib/extract-boilerplate.mjs";
 import { extractArticleFromHtml } from "../lib/html-article-extract.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 
 // --- CORS helper --------------------------------------------------
 
@@ -20,6 +21,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const routeStartedAt = Date.now();
   try {
     const { url } = req.body || {};
 
@@ -35,6 +37,14 @@ export default async function handler(req, res) {
       });
     } catch (err) {
       console.error("Error fetching remote URL:", url, err);
+      await reportRouteFailure({
+        account,
+        route: "fetch-url",
+        req,
+        status: 502,
+        error: "Failed to fetch remote URL",
+        startedAt: routeStartedAt,
+      });
       return res
         .status(502)
         .json({ error: "Failed to fetch remote URL", details: String(err) });
@@ -48,6 +58,14 @@ export default async function handler(req, res) {
         response.status,
         text.slice(0, 500)
       );
+      await reportRouteFailure({
+        account,
+        route: "fetch-url",
+        req,
+        status: 502,
+        error: "Remote URL returned an error status",
+        startedAt: routeStartedAt,
+      });
       return res.status(502).json({
         error: "Remote URL returned an error status",
         status: response.status,
@@ -64,6 +82,14 @@ export default async function handler(req, res) {
       text = extractArticleFromHtml(html);
     } catch (err) {
       console.error("Could not extract an article from URL:", url, err);
+      await reportRouteFailure({
+        account,
+        route: "fetch-url",
+        req,
+        status: 500,
+        error: "Could not extract readable text from URL",
+        startedAt: routeStartedAt,
+      });
       return res.status(500).json({
         error: "Could not extract readable text from URL",
       });
@@ -79,6 +105,14 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("Error in /api/fetch-url:", err);
+    await reportRouteFailure({
+      account,
+      route: "fetch-url",
+      req,
+      status: 500,
+      error: err?.message || "Failed to process URL",
+      startedAt: routeStartedAt,
+    });
     return res.status(500).json({
       error: "Failed to process URL",
       details: err.message || String(err),

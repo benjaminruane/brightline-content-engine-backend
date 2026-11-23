@@ -13,6 +13,7 @@ console.log("[A3.14.3][IMPORT_OK] api/generate.js loaded");
 
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
+import { reportRouteFailure } from "../lib/problem-events.mjs";
 import { beginBillableRequest, endBillableRequest, enterRequestSpend } from "../lib/spend/ledger.mjs";
 import {
   tavilySearch,
@@ -547,13 +548,22 @@ export default async function handler(req, res) {
   enterRequestSpend();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
+  const routeStartedAt = Date.now();
   const modelConfig = STAGE_MODELS["writing-generate"];
   beginRequestBudget({
-    startedAt: Date.now(),
+    startedAt: routeStartedAt,
     maxDurationMs: FUNCTION_MAX_DURATION_MS,
     model: modelConfig.model,
   });
   if (!hasProviderApiKey(modelConfig.provider)) {
+    await reportRouteFailure({
+      account,
+      route: "generate",
+      req,
+      status: 500,
+      error: "Server is missing provider API key for writing-generate",
+      startedAt: routeStartedAt,
+    });
     return res.status(500).json({ ok: false, error: "Server is missing provider API key for writing-generate" });
   }
 
@@ -858,6 +868,14 @@ Return ONLY JSON:
     await populateSourceUsageSummaries(req, sourcesUsedRows, currentDraftText);
 
     if (!currentDraftText.trim()) {
+      await reportRouteFailure({
+        account,
+        route: "generate",
+        req,
+        status: 500,
+        error: "Draft could not be generated. Please try again, or provide more notes and/or sources.",
+        startedAt: routeStartedAt,
+      });
       return res.status(500).json({
         ok: false,
         error: "Draft could not be generated. Please try again, or provide more notes and/or sources.",
@@ -930,10 +948,20 @@ Return ONLY JSON:
     });
   } catch (err) {
     const plain = draftErrorFromProvider(err);
+    const status = plain ? 400 : 500;
+    const message = plain || err?.message || "Unknown error";
+    await reportRouteFailure({
+      account,
+      route: "generate",
+      req,
+      status,
+      error: message,
+      startedAt: routeStartedAt,
+    });
     if (plain) return res.status(400).json({ ok: false, error: plain });
     return res.status(500).json({
       ok: false,
-      error: err?.message || "Unknown error",
+      error: message,
     });
   } finally {
     await endBillableRequest({ account, route: "generate", req, spend: getLlmSpend() });
