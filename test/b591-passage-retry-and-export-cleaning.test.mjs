@@ -189,3 +189,31 @@ test("the export no longer refuses a table-row or bulleted passage", () => {
   assert.doesNotMatch(passageText, /[·•]/);
   assert.match(passageText, /862\.5p/);
 });
+
+import { readFileSync } from "node:fs";
+import { validatePassageAgainstSource, verbatimPiecesPassage } from "../lib/qc/pipeline-v4/stage2-match-sources.mjs";
+
+const cut = JSON.parse(readFileSync(new URL("./fixtures/b591/patria-cut-lines.json", import.meta.url), "utf8"));
+
+test("B591c: on a source with lines cut off at the edge, the retry keeps only the words that are in the source", () => {
+  for (const reply of cut.replies) {
+    const passage = locateRetryPassage({ passage: reply }, cut.source);
+    assert.ok(passage.length > 0, reply.slice(0, 60));
+    assert.equal(validatePassageAgainstSource(passage, cut.source).accepted, true);
+  }
+  const nav = locateRetryPassage({ passage: cut.replies[0] }, cut.source);
+  assert.match(nav, /PPET delivered a NAV total return of 3\.1% \(31/);
+  assert.doesNotMatch(nav, /Hormuz/);
+  assert.doesNotMatch(nav, /5\.9%\) and a share price/);
+  const navPerShare = locateRetryPassage({ passage: cut.replies[1] }, cut.source);
+  assert.match(navPerShare, /845\.5 pence\), reflecting continued earnings growth/);
+  assert.doesNotMatch(navPerShare, /862\.5 pence/);
+});
+
+test("B591c: a stock phrase found in several places is not used as a piece", () => {
+  assert.equal(verbatimPiecesPassage("During the six months to 31 March 2026, something else entirely.", cut.source), "");
+});
+
+test("B591c: a reply with nothing from the source gives no passage", () => {
+  assert.equal(verbatimPiecesPassage("Returns were strong across every region in the period under review here.", cut.source), "");
+});
