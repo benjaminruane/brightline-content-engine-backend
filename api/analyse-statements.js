@@ -29,6 +29,8 @@ import { buildModelConfigRecord } from "../lib/qc/model-fingerprints.mjs";
 import { reportModelDrift } from "../lib/qc/model-drift-reporter.mjs";
 import { enforceCardConsistency } from "../lib/qc/card-consistency.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
+import { recordIncompleteEvidenceProblem } from "../lib/qc/shown-verdict.mjs";
+import { stampReviewReference } from "../lib/export/review-reference.mjs";
 import { resolveReviewOptionsFromBody } from "../lib/qc/review-options.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
@@ -411,6 +413,15 @@ async function handler(req, res) {
     const sourceIngestionWarning = ingestionMeta.sourceIngestionWarning;
     const totalTextLowWarning = ingestionMeta.totalTextLowWarning;
 
+    await recordIncompleteEvidenceProblem(summaryCards, (problem) => reportRouteFailure({
+      account,
+      route: problem.route,
+      req,
+      status: 200,
+      error: problem.message,
+      startedAt: routeStartedAt,
+    }));
+
     const reviewStopped = reviewWasStopped();
     return res.status(200).json({
       ok: true,
@@ -423,7 +434,7 @@ async function handler(req, res) {
       recencySummary: Array.isArray(pipelineResult?.recencySummary) ? pipelineResult.recencySummary : [],
       ...(Array.isArray(pipelineResult?.draftMarks) ? { draftMarks: pipelineResult.draftMarks } : {}),
       excludedSources,
-      meta: {
+      meta: stampReviewReference({
         pipelineVersion: "v4",
         stagesComplete: pipelineResult?._stagesComplete ?? null,
         traceId,
@@ -443,7 +454,7 @@ async function handler(req, res) {
         ...(pipelineResult?.evidenceReviewSkipped === true ? { evidenceReviewSkipped: true } : {}),
         ...(nothingReviewed ? { nothingReviewed: true } : {}),
         ...(reviewStopped ? { reviewStopped: true } : {}),
-      },
+      }, traceId),
       bannedWordHits,
       provenanceFlags,
     });

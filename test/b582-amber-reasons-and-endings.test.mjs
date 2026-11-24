@@ -21,8 +21,8 @@ function reason(doc, index, text = "") {
 
 test("amber cards name the point in question and do not end in agreement", () => {
   const gem1 = reason(gem, 0);
-  assert.match(gem1, /speed of the raise/);
-  assert.match(gem1, /does not state that the market has become more selective/);
+  assert.match(gem1, /does not explicitly state that the market has become more selective/);
+  assert.doesNotMatch(gem1, /speed of the raise/);
   assert.doesNotMatch(gem1, AGREEMENT);
 
   const gem4 = reason(gem, 3);
@@ -37,8 +37,8 @@ test("amber cards name the point in question and do not end in agreement", () =>
   assert.doesNotMatch(pat1, AGREEMENT);
 
   const pat4 = reason(pat, 3, source);
-  assert.match(pat4, /£125\.6 million/);
-  assert.match(pat4, /does not state that these figures reflect 'continued but slower M&A activity'/);
+  assert.match(pat4, /does not explicitly state that these figures reflect 'continued but slower M&A activity'/);
+  assert.doesNotMatch(pat4, /£125\.6 million/);
   assert.doesNotMatch(pat4, AGREEMENT);
 });
 

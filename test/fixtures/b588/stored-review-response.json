@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "meta": {
+    "pipelineVersion": "v4",
+    "traceId": "trace-b588-stored",
+    "analysisRunId": "trace-b588-stored",
+    "reviewReference": "R-A895"
+  },
+  "statements": [
+    {
+      "text": "The fund closed in three months.",
+      "qcCard": {
+        "statement": "The fund closed in three months.",
+        "statementVerdict": {
+          "state": "nothing_raised"
+        },
+        "combinedVerdict": {
+          "state": "nothing_raised",
+          "tone": "green"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "statement": "In the six months to March 2026, Patria Private Equity Trust (PPET) delivered a NAV total return of 3.1% and a share price total return of 5.5%, despite volatile markets driven by Middle East tensions, higher energy prices, and weaker public software valuations.",
+  "unmatchedElements": [
+    {
+      "kind": "name",
+      "surface": "Middle East"
+    }
+  ],
+  "matchExplanations": [
+    {
+      "sourceIndex": 0,
+      "sourceLabel": "Extract from Half-year-Financial-Report-07_00_07-29-Jun-2026-PPET.pdf",
+      "role": "facts",
+      "classification": "not_reviewed",
+      "explanation": "The source confirms the NAV total return of 3.1% and the share price total return of 5.5% for the six months to March 2026. It also mentions the volatile market conditions due to geopolitical tensions and other factors, aligning with the statement.",
+      "writtenFor": "confirmed"
+    }
+  ],
+  "evidenceNotReviewedReason": "empty_confirmation_refused",
+  "statementVerdict": {
+    "state": "nothing_raised",
+    "tier": "quiet",
+    "setBy": {
+      "branch": "readerSupportedCheckIncomplete"
+    }
+  },
+  "combinedVerdict": {
+    "state": "nothing_raised",
+    "tone": "none",
+    "tier": "quiet",
+    "label": "Nothing raised",
+    "setBy": null
+  },
+  "readingNote": {
+    "bucket": "none",
+    "text": "The half-year report states NAV total return of 3.1% and share price total return of 5.5% for the six months to 31 March 2026, and describes Middle East tensions (Iran, Strait closure), sharply higher energy prices, and declines in public software stocks weighing on valuations, in line with the statement.",
+    "disputedIndices": [],
+    "disputedElements": [],
+    "completion": "none",
+    "documentValues": [
+      {
+        "document": "Half-year Financial Report 29 June 2026",
+        "value": "NAV TR 3.1%, share price TR 5.5% for six months to 31 March 2026; Middle East escalation, higher energy prices, and software valuation declines cited"
+      }
+    ]
+  },
+  "displayVerdict": "not reviewed",
+  "supportState": "skipped",
+  "sentenceState": "nothing_raised",
+  "evidenceSummary": "The half-year report states NAV total return of 3.1% and share price total return of 5.5% for the six months to 31 March 2026, and describes Middle East tensions (Iran, Strait closure), sharply higher energy prices, and declines in public software stocks weighing on valuations, in line with the statement.",
+  "evidenceLine": "The half-year report states NAV total return of 3.1% and share price total return of 5.5% for the six months to 31 March 2026, and describes Middle East tensions (Iran, Strait closure), sharply higher energy prices, and declines in public software stocks weighing on valuations, in line with the statement.",
+  "reasoningParagraph": "The half-year report states NAV total return of 3.1% and share price total return of 5.5% for the six months to 31 March 2026, and describes Middle East tensions (Iran, Strait closure), sharply higher energy prices, and declines in public software stocks weighing on valuations, in line with the statement."
+}
