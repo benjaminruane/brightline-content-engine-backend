@@ -48,7 +48,7 @@ test("health reports the release version and the build", async () => {
   const res = createRes();
   await healthHandler({ method: "GET", headers: {} }, res);
   assert.equal(res.statusCode, 200);
-  assert.equal(res.body.version, "0.9.6");
+  assert.equal(res.body.version, "0.9.7");
   assert.equal(res.body.version, readReleaseVersion());
   assert.equal(res.body.build.commit, "ad1afd4");
   assert.equal(res.body.build.ref, "main");

@@ -55,7 +55,7 @@ test("patria-clean count drops terms, ordinary openers, and a split ampersand", 
 test("reasons stay inside the passage, and an unmatched name is named", () => {
   const s1 = card(patria, 0);
   const reason1 = cardReason(s1);
-  assert.match(reason1, /The source says/);
+  assert.match(reason1, /The source reports/);
   assert.doesNotMatch(reason1, /confirms/i);
   assert.match(reason1, /'Middle East' does not appear in the source\./);
   assert.doesNotMatch(reason1, /volatile markets/);
@@ -86,8 +86,9 @@ test("gemspring conflict reasons keep their findings", () => {
   assert.match(s3, /less than three months, not under two months/);
   assert.match(s3, /does not specify June 2026/);
   assert.doesNotMatch(s3, /confirms/i);
-  assert.equal(s3, raw3.replace("The source confirms", "The source says"));
+  assert.equal(s3, raw3.replace("The source confirms the", "The source reports the"));
 
   const s5 = cardReason(card(gem, 2));
-  assert.equal(s5, card(gem, 2).matchExplanations[0].explanation);
+  assert.equal(s5, card(gem, 2).matchExplanations[0].explanation.replace(/\bis confirmed\b/g, "is in the source"));
+  assert.doesNotMatch(s5, /confirm/i);
 });

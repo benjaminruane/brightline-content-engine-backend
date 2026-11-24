@@ -8,6 +8,7 @@ One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
+| 2026-11-24 | Passages from what Review relied on first, natural reasons, the closest sentence when a point is not stated, version 0.9.7 (`b580`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-24 | Passages from the lines where figures were found, honest fact counts, amber reasons, house style in the assessment group, version 0.9.6 (`b579`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-23 | Magnifier no longer filters, prediction flags follow the document date, concerns collapse, passage matches its reason, one Caution name (`b578`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-23 | Card reasons are the model's explanation, source name on hover, Risk and Draft order (`b577`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
