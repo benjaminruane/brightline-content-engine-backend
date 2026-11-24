@@ -64,12 +64,13 @@ test("the two mechanical reasons read as sentences", () => {
   const s2 = cardReason(card(patria, 1));
   const s5 = cardReason(card(patria, 4));
   for (const reason of [s2, s5]) {
-    assert.match(reason, /^The source \w+/);
+    assert.match(reason, /^The source states/);
     assert.match(reason, /\.$/);
     assert.doesNotMatch(reason, /confirms/i);
-    assert.doesNotMatch(reason, /as stated/i);
     assert.doesNotMatch(reason, /return's figures/);
   }
+  assert.match(s2, /matching the statement/);
+  assert.match(s5, /as stated/);
   assert.match(s2, /862\.5p/);
   assert.match(s2, /2\.7%/);
   assert.match(s5, /outstanding commitments/);
