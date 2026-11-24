@@ -294,3 +294,24 @@ test("B591g: a tidy sentence the clipped source does not contain cannot displace
   assert.equal(primaryExcerpt.parts.length, 2);
   for (const part of primaryExcerpt.parts) assert.ok(cut.source.includes(part));
 });
+
+import { evidenceFindingsForReader } from "../lib/qc/reading-review.mjs";
+
+test("B591h: one source not covering a sentence is not passed to the reader when another source confirms it", () => {
+  const card = {
+    matchExplanations: [
+      { classification: "confirmed", explanation: "The press release gives the 2020 investment and the family-owned status." },
+      { classification: "no_support", explanation: "The distribution notice does not address the investment year." },
+    ],
+  };
+  assert.equal(evidenceFindingsForReader(card).point, "");
+  const partial = {
+    matchExplanations: [
+      { classification: "confirmed", explanation: "The report gives the date." },
+      { classification: "partially_confirmed", explanation: "The report does not give the location." },
+    ],
+  };
+  assert.match(evidenceFindingsForReader(partial).point, /does not give the location/);
+  const alone = { matchExplanations: [{ classification: "no_support", explanation: "The source does not mention the fund." }] };
+  assert.match(evidenceFindingsForReader(alone).point, /does not mention the fund/);
+});
