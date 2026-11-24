@@ -8,6 +8,7 @@ One row per billed pass. Unpriced calls are an undercount, never silent zero.
 
 | Date | Pass | List USD | Discounted USD | Calls | Unpriced calls | Unpriced models | Source | Notes |
 |------|------|---------:|---------------:|------:|----------------|-----------------|--------|-------|
+| 2026-11-24 | Amber cards name the point in question, and green closings rotate (`b582`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-24 | The reader writes every card reason, one line numbering, passages not repeated (`b581`). No model call. Prompt growth is an estimate from character length, not a billed trace. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-24 | Passages from what Review relied on first, natural reasons, the closest sentence when a point is not stated, version 0.9.7 (`b580`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |
 | 2026-11-24 | Passages from the lines where figures were found, honest fact counts, amber reasons, house style in the assessment group, version 0.9.6 (`b579`). No model call. | 0 | 0 | 0 | 0 | none | No spend file. The pass did not call a model. | Estimate USD 0. Not crossed. |

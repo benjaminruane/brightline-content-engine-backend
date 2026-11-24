@@ -133,7 +133,8 @@ test("every named quiet card has one reason", () => {
 test("an amber card with an unmatched name says so", () => {
   const patria = fixture("patria-clean");
   const reason = cardReason(card(patria, 0), { sourceText: sourceText(patria) });
-  assert.match(reason, /'Middle East' does not appear in the source/);
+  assert.match(reason, /does not use the words 'Middle East'/);
+  assert.match(reason, /military operations against Iran/);
 });
 
 test("a different value is a conflict, including the header label", () => {
