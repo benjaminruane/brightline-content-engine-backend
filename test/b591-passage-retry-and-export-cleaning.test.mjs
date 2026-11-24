@@ -217,3 +217,19 @@ test("B591c: a stock phrase found in several places is not used as a piece", () 
 test("B591c: a reply with nothing from the source gives no passage", () => {
   assert.equal(verbatimPiecesPassage("Returns were strong across every region in the period under review here.", cut.source), "");
 });
+
+import { gateExcerpt } from "../lib/qc/excerpt-locate.mjs";
+import { storedExcerpt } from "../lib/qc/excerpt-sentences.mjs";
+
+test("B591d: retried pieces are the source's own characters, so the card keeps them as its passage", () => {
+  const sources = [{ label: "Patria", sourceLabel: "Patria", text: cut.source }];
+  for (const reply of cut.replies) {
+    const passage = locateRetryPassage({ passage: reply }, cut.source);
+    assert.doesNotMatch(passage, /…/);
+    const stored = storedExcerpt(passage, cut.source, 0);
+    assert.ok(stored, passage.slice(0, 60));
+    assert.ok(stored.lineIds.length > 0);
+    const gated = gateExcerpt({ passage, sourceLabel: "Patria", sources, supportSpans: [], statementIndex: 0 });
+    assert.equal(gated?.passage, passage);
+  }
+});
