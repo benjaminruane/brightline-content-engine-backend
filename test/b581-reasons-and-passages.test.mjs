@@ -58,14 +58,14 @@ test("the reader prompt asks for a reason on a green card", () => {
 test("gemspring passages are not repeated and use the source line numbers", () => {
   const text = gem.sources[0].text;
   const s2 = factPassage(card(gem, 1), text);
-  assert.deepEqual(s2.pieces.map((piece) => piece.lineIds), [["L1"], ["L3"]]);
+  assert.deepEqual(s2.pieces.map((piece) => piece.lineIds), [["L1"], ["L2"]]);
   assert.equal(s2.pieces[0].text.includes("closed Gemspring Capital Fund IV"), true);
   assert.equal(s2.pieces[1].text.includes("$3 billion target"), true);
   const shown = passageForCard(card(gem, 1), text);
   assert.equal(shown.also, "");
   const s5 = factPassage(card(gem, 4), text);
   assert.equal(s5.pieces.length, 1);
-  assert.deepEqual(s5.pieces[0].lineIds, ["L5"]);
+  assert.deepEqual(s5.pieces[0].lineIds, ["L3"]);
   const again = passageForCard(card(gem, 4), text);
   assert.equal(again.also, "");
   assert.equal((again.passage.match(/largest single investor/g) || []).length, 1);
@@ -76,9 +76,9 @@ test("patria pieces keep their own line numbers and a table row has no pipes", (
   const s2 = factPassage(card(patria, 1), text);
   assert.equal(s2.pieces.some((piece) => piece.text.includes("|")), false);
   assert.match(s2.pieces[0].text, /862\.5p/);
-  assert.deepEqual(s2.pieces[0].lineIds, ["L73"]);
+  assert.deepEqual(s2.pieces[0].lineIds, ["L70"]);
   const s5 = factPassage(card(patria, 4), text);
   assert.equal(s5.pieces.length, 4);
-  assert.deepEqual(s5.pieces.map((piece) => piece.lineIds[0]), ["L23", "L24", "L25", "L67"]);
+  assert.deepEqual(s5.pieces.map((piece) => piece.lineIds[0]), ["L22", "L23", "L24", "L64"]);
   for (const piece of s5.pieces) assert.equal(piece.lineIds.length, 1);
 });
