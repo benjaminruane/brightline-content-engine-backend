@@ -233,3 +233,47 @@ test("B591d: retried pieces are the source's own characters, so the card keeps t
     assert.equal(gated?.passage, passage);
   }
 });
+
+import { assembleCard } from "../lib/qc/assemble-card.mjs";
+import { selectExcerpts } from "../lib/qc/pipeline-v4/stage4-select-excerpts.mjs";
+
+const PATRIA_STATEMENTS = [
+  "In the six months to March 2026, Patria Private Equity Trust (PPET) delivered a NAV total return of 3.1% and a share price total return of 5.5%, despite volatile markets driven by Middle East tensions, higher energy prices, and weaker public software valuations.",
+  "NAV per share rose to 862.5 pence, supported by portfolio revenue and earnings growth, with the underlying portfolio generating a 2.7% local-currency return.",
+  "PPET committed to ten new investments and commitments across primary funds, a secondary, new direct investments, a Patria-managed co-investment fund, and a follow-on.",
+  "Realisations and drawdowns reflected continued but slower M&A activity, while outstanding commitments, overcommitment, liquidity, and net gearing all remained within the manager's stated parameters.",
+];
+
+test("B591d: a confirmed card built from retried pieces stays green and shows every piece with its lines", async () => {
+  const label = "Patria";
+  const sources = [{ index: 0, id: "s1", label, text: cut.source, role: "facts" }];
+  for (let i = 0; i < cut.replies.length; i += 1) {
+    const statementText = PATRIA_STATEMENTS[i];
+    const passage = locateRetryPassage({ passage: cut.replies[i] }, cut.source);
+    const sourceMatches = [
+      { sourceIndex: 0, sourceLabel: label, role: "facts", classification: "confirmed", passage, explanation: "The source confirms the statement." },
+    ];
+    const supportSpans = [{ sourceRefId: 0, classification: "confirmed", statementId: String(i), passage: "", start: null, end: null }];
+    const excerptResult = selectExcerpts({ statementMatches: sourceMatches, verdict: "confirmed", hasConflict: false, supportSpans, sources, statementText });
+    const card = await assembleCard(
+      {
+        statementText,
+        startChar: 0,
+        endChar: statementText.length,
+        supportSpans,
+        sourceMatches,
+        verdictResult: { verdict: "confirmed", hasConflict: false, confirmingMatches: [{ sourceIndex: 0, sourceLabel: label }], contributingSourceIndices: [0] },
+        excerptResult,
+        commentaryResult: { commentary: "The source confirms the statement." },
+        editorialResult: { editorialVerdict: "clean", editorialConcerns: [], complianceVerdict: "clean", complianceConcerns: [] },
+      },
+      i,
+      { pipelineRoute: "v4", sources, reviewOptions: { evidenceEnabled: true, editorialEnabled: true, complianceEnabled: true } }
+    );
+    assert.equal(card.displayVerdict, "supported_full", statementText.slice(0, 40));
+    assert.equal(card.evidenceNotReviewedReason, null);
+    assert.ok(Array.isArray(card.primaryExcerptParts) && card.primaryExcerptParts.length > 1);
+    assert.ok(card.primaryExcerptLineIds.length > 1);
+    for (const part of card.primaryExcerptParts) assert.ok(cut.source.includes(part));
+  }
+}, 60000);
