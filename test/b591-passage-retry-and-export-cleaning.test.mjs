@@ -311,7 +311,14 @@ test("B591h: one source not covering a sentence is not passed to the reader when
       { classification: "partially_confirmed", explanation: "The report does not give the location." },
     ],
   };
-  assert.match(evidenceFindingsForReader(partial).point, /does not give the location/);
+  assert.equal(evidenceFindingsForReader(partial).point, "");
+  const conflictAndSilent = {
+    matchExplanations: [
+      { classification: "no_support", explanation: "The notice does not address NAV." },
+      { classification: "conflicting", explanation: "The report gives EUR 678 million, and does not give EUR 652 million." },
+    ],
+  };
+  assert.match(evidenceFindingsForReader(conflictAndSilent).point, /EUR 678 million/);
   const alone = { matchExplanations: [{ classification: "no_support", explanation: "The source does not mention the fund." }] };
   assert.match(evidenceFindingsForReader(alone).point, /does not mention the fund/);
 });
