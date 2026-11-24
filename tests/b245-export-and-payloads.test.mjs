@@ -84,11 +84,12 @@ describe("B245 export golden and prose payloads", () => {
     assert.equal(String(editorial.statement).includes("We recommend approval"), true);
   });
 
-  test("export.js uses the shared builder and does not keep a local copy", () => {
+  test("the live export paints the screen document and does not rebuild verdicts", () => {
     const src = readFileSync(path.join(ROOT, "api/export.js"), "utf8");
-    assert.equal(src.includes('from "../lib/qc/export-review-data.mjs"'), true);
+    assert.equal(src.includes("export-review-data"), false);
+    assert.equal(src.includes("buildReviewData"), false);
+    assert.equal(src.includes("evidenceConcernSuffix"), false);
     assert.equal(/function buildReviewData\(/.test(src), false);
-    assert.equal(src.includes("qcResult?.meta?.reviewOptions"), true);
   });
 });
 
