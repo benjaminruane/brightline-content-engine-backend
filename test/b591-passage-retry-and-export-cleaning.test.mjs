@@ -277,3 +277,20 @@ test("B591d: a confirmed card built from retried pieces stays green and shows ev
     for (const part of card.primaryExcerptParts) assert.ok(cut.source.includes(part));
   }
 }, 60000);
+
+test("B591g: a tidy sentence the clipped source does not contain cannot displace a real quote", () => {
+  const sources = [{ index: 0, label: "Patria", text: cut.source }];
+  const statementText = PATRIA_STATEMENTS[1];
+  const passage = "2025: 845.5 pence), reflecting continued earnings growth across the underlying portfolio ... currency basis, delivered a portfolio return of approximately 2.7% during the period (31";
+  const invented = "NAV per share increased to 862.5 pence (30 September 2025: 845.5 pence), reflecting continued earnings growth across the underlying portfolio, which, on a local currency basis, delivered a portfolio return of approximately 2.7% during the period.";
+  const { primaryExcerpt } = selectExcerpts({
+    statementMatches: [{ sourceIndex: 0, sourceLabel: "Patria", classification: "confirmed", passage }],
+    verdict: "confirmed",
+    hasConflict: false,
+    supportSpans: [{ sourceRefId: 0, classification: "confirmed", passage: invented }],
+    sources,
+    statementText,
+  });
+  assert.equal(primaryExcerpt.parts.length, 2);
+  for (const part of primaryExcerpt.parts) assert.ok(cut.source.includes(part));
+});
