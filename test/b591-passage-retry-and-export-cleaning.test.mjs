@@ -70,7 +70,8 @@ test("a NONE retry keeps the refusal", async () => {
   });
   assert.equal(out.normalized.classification, "not_reviewed");
   assert.equal(out.normalized.emptyConfirmationRefused, true);
-  assert.deepEqual(out.passageRetry, { attempted: true, succeeded: false });
+  assert.equal(out.passageRetry.succeeded, false);
+  assert.equal(out.passageRetry.reply, "NONE");
 });
 
 test("an unlocatable retry keeps the refusal", async () => {
@@ -84,7 +85,8 @@ test("an unlocatable retry keeps the refusal", async () => {
     retry: async () => ({ parsed: { passage: "Returns were strong across every region in the period." } }),
   });
   assert.equal(out.normalized.classification, "not_reviewed");
-  assert.deepEqual(out.passageRetry, { attempted: true, succeeded: false });
+  assert.equal(out.passageRetry.succeeded, false);
+  assert.match(out.passageRetry.reply, /Returns were strong/);
 });
 
 test("a retry that throws keeps the refusal", async () => {
