@@ -8,8 +8,12 @@ import { attentionHeader } from "../../brightline-content-engine-frontend/src/mo
 
 const conflict = {
   statement: "The company was founded in Ottawa.",
-  sentenceState: "not_in_source",
-  sentenceLabel: "Not in the source",
+  // B596: the stamp is the decision the screen reads. Stale "Not in the source"
+  // stamps are no longer re-derived into Conflicts on the frontend.
+  sentenceState: "conflicts",
+  sentenceLabel: "Conflicts with the source",
+  statementVerdict: { state: "conflicts" },
+  combinedVerdict: { state: "conflicts", tone: "red", label: "Conflicts with the source" },
   displayVerdict: "conflict",
   matchExplanations: [{
     classification: "conflicting",
