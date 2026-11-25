@@ -129,7 +129,9 @@ test("a reader's note replaces a stand-in, and a missing date is named", () => {
     note: { bucket: "conflicts", text: "" },
     sourceText: "Kestrel Partners Fund IV will retain a 40% stake.",
   });
-  assert.equal(flagged.displayedEvidenceProse.includes(recorded), true);
+  // B595: user-facing reasons say "the sentence", not "the statement".
+  assert.equal(flagged.displayedEvidenceProse.includes("forward-looking claim without hedging language"), true);
+  assert.equal(flagged.displayedEvidenceProse.includes("the statement"), false);
   assert.equal(flagged.displayedEvidenceProse.includes("reason was not recorded"), false);
 });
 
