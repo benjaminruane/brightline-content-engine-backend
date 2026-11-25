@@ -31,6 +31,7 @@ import { enforceCardConsistency } from "../lib/qc/card-consistency.mjs";
 import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 import { recordIncompleteEvidenceProblem } from "../lib/qc/shown-verdict.mjs";
 import { stampReviewReference } from "../lib/export/review-reference.mjs";
+import { stampSourceDisplayNames } from "../lib/qc/b596-stamp.mjs";
 import { resolveReviewOptionsFromBody } from "../lib/qc/review-options.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
@@ -379,7 +380,7 @@ async function handler(req, res) {
     // Alignment: sources index === sourceIndex === supportSpans.sourceRefId.
     // Inline full text ~20KB/longform PDF; large/many-source cases may later warrant
     // truncation or fetch-on-open — not built here.
-    const sources = buildResponseSources(keptSources);
+    const sources = stampSourceDisplayNames(buildResponseSources(keptSources));
     const excludedSources = buildExcludedSources(droppedForExclude);
 
     // Which serving configuration produced this run. Additive; not surfaced in
