@@ -74,10 +74,12 @@ describe("B457 evidence line", () => {
     );
   });
 
-  test("nothing to report names the file and quotes the passage", () => {
+  test("nothing to report writes a plain source sentence without a file name", () => {
     const line = evidenceLine({ fileName: "shopify-memo", quote: "customers have increased from 5,500" });
-    assert.equal(line, 'shopify-memo states "customers have increased from 5,500".');
+    assert.equal(line, "The source says customers have increased from 5,500.");
     assert.equal(/support/i.test(line), false);
+    assert.doesNotMatch(line, /\bstates\b/);
+    assert.doesNotMatch(line, /shopify-memo/);
   });
 
   test("a discarded note is not explained", () => {
@@ -86,8 +88,9 @@ describe("B457 evidence line", () => {
       quote: "Urban last-mile logistics is supported.",
       noteText: "A note was written for this sentence and could not be shown.",
     });
-    assert.equal(line, 'note states "Urban last-mile logistics is supported."');
+    assert.equal(line, "The source says Urban last-mile logistics is supported.");
     assert.equal(/could not be shown/.test(line), false);
+    assert.doesNotMatch(line, /\bstates\b/);
   });
 
   test("the span prompt is gone", () => {

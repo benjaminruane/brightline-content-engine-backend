@@ -210,7 +210,8 @@ describe("B354 commentary inventory", () => {
       }
     );
     assert.equal(card.commentaryNotReviewed, false);
-    assert.match(card.evidenceSummary, /states "/);
+    assert.match(card.evidenceSummary, /The source says /);
+    assert.doesNotMatch(card.evidenceSummary, /\bstates "/);
     assert.match(card.evidenceSummary, /9%/);
     assert.equal(/matches the source/.test(card.evidenceSummary), false);
     assert.deepEqual(card.commentaryUnaddressed, []);

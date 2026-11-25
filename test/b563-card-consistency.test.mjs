@@ -36,7 +36,8 @@ test("the Royal Sanders card stays Nothing raised and loses the denial", () => {
   assert.equal(card.summaryClass.cardTone, "green");
   assert.equal(card.statementVerdict.state, "nothing_raised");
   assert.equal(/do not mention|do not address|not supported|contradict/i.test(card.reasoningParagraph), false);
-  assert.match(card.reasoningParagraph, /states "/);
+  assert.match(card.reasoningParagraph, /The source says /);
+  assert.doesNotMatch(card.reasoningParagraph, /\bstates "/);
   assert.match(card.reasoningParagraph, /Royal Sanders/);
   assert.equal(card.evidenceSummary, card.reasoningParagraph);
   assert.equal(cases.length, 1);

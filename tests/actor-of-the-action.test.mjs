@@ -131,7 +131,8 @@ describe("B354 actor of the action", () => {
     assert.equal(card.displayVerdict, "conflict");
     assert.equal(card.concernLevel, "high");
     assert.equal(card.displayVerdictReason, "actor_mismatch");
-    assert.match(card.evidenceSummary, /states "/);
+    assert.match(card.evidenceSummary, /The source says /);
+    assert.doesNotMatch(card.evidenceSummary, /\bstates "/);
     assert.match(card.evidenceSummary, /Action completed a capital restructuring/);
     assert.equal(/The reviewer should/.test(card.evidenceSummary), false);
   });

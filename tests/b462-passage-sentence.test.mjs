@@ -24,8 +24,12 @@ function byKey(key) {
 }
 
 function quoted(text) {
-  const match = String(text || "").match(/"([^"]*)"/);
-  return match ? match[1] : "";
+  const body = String(text || "");
+  const match = body.match(/"([^"]*)"/);
+  if (match) return match[1];
+  // B594: fallback reasons are plain "The source says …" without quotes.
+  const plain = body.match(/^The source says\s+(.+)$/i);
+  return plain ? plain[1] : "";
 }
 
 describe("B462 passage sentence", () => {
@@ -43,8 +47,9 @@ describe("B462 passage sentence", () => {
     for (const card of [card2, card4, card6]) {
       const passage = card.sourceQuote || card.primaryExcerpt || "";
       const body = quoted(readerEvidenceAccount(card).text);
-      assert.equal(collapseWhitespace(passage).includes(body), true);
-      assert.equal(bearingSentence(passage, card.statement), body);
+      const stem = body.replace(/[.!?]$/, "");
+      assert.equal(collapseWhitespace(passage).includes(stem), true);
+      assert.equal(bearingSentence(passage, card.statement).replace(/[.!?]$/, ""), stem);
     }
   });
 
@@ -62,6 +67,6 @@ describe("B462 passage sentence", () => {
       quote: "Urban last-mile logistics is supported.",
       statement: "Urban last-mile logistics is supported.",
     });
-    assert.equal(line, 'note states "Urban last-mile logistics is supported."');
+    assert.equal(line, "The source says Urban last-mile logistics is supported.");
   });
 });

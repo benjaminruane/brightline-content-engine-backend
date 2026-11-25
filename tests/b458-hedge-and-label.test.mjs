@@ -67,7 +67,7 @@ describe("B458 equivalence sentences", () => {
       noteText: "The figures match the source.",
       noteBucket: "wording",
     });
-    assert.equal(line, 'memo states "eight operational data centers".');
+    assert.equal(line, "The source says eight operational data centers.");
   });
 
   test("a conflict note that names two figures stays", () => {

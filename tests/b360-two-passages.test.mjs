@@ -168,7 +168,8 @@ describe("B360 two passages on a card", () => {
     const hay = shownHay(s9);
     assert.match(hay, new RegExp(GIC_SLICE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
     assert.equal(s9.displayVerdict, "conflict");
-    assert.match(s9.evidenceSummary, /states "/);
+    assert.match(s9.evidenceSummary, /The source says /);
+    assert.doesNotMatch(s9.evidenceSummary, /\bstates "/);
     assert.match(s9.evidenceSummary, /2\.2% stake in Action/);
     assert.equal(/AGIC/.test(hay), false);
     assert.ok(conflictText(s9).trim());

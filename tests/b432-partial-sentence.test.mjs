@@ -57,7 +57,7 @@ test("the three edit rules, and a missing explanation is not a split", () => {
       statement: "Revenue grew.",
       unsupportedSpans: [{ text: "grew" }],
     }),
-    'Not in the source: "grew". Which part the source covers was not recorded.'
+    'Not in the source: "grew".'
   );
 });
 
