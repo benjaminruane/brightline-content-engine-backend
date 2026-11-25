@@ -37,8 +37,10 @@ test("Harbourline S5 reason is one well-formed sentence, no differ on The", () =
   const card = body.statements[4].qcCard;
   assert.equal(card.sentenceLabel, "Needs a look");
   assert.doesNotMatch(card.shownReason || "", /differ on The/i);
-  assert.match(card.shownReason || "", /^The sentence states/);
+  // B599: later-document completion is named (replaces the older "states" template).
+  assert.match(card.shownReason || "", /^(The sentence (?:states|says)|The source)/);
   assert.match(card.shownReason || "", /\.$/);
+  assert.match(card.shownReason || "", /complet/i);
 });
 
 test("Harbourline S12 stays red with the EUR 678 million proposal", () => {

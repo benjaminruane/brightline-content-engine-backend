@@ -178,7 +178,7 @@ test("the Reviewer's note has no salutation and does not demand blank instructio
   assert.equal(stripSalutation("Colleague, the opening is thin."), "the opening is thin.");
   assert.equal(WRITER_FEEDBACK_PROMPT.includes("Speak as a senior editor talking to a colleague"), false);
   assert.match(WRITER_FEEDBACK_PROMPT, /No salutation and no form of address/);
-  assert.match(WRITER_FEEDBACK_PROMPT, /do not mention a deal team unless the draft does/);
+  assert.match(WRITER_FEEDBACK_PROMPT, /do not invent a team label unless the draft uses one/);
   assert.match(WRITER_FEEDBACK_PROMPT, /When special instructions are blank/);
   const instructions = writerFeedbackInstructions({
     eventType: "SPECIAL_TOPIC",

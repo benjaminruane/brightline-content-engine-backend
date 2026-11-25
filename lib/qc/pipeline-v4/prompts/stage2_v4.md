@@ -24,7 +24,7 @@ Classification values
 
 • "partially_confirmed" — the source supports part of the statement AND the draft asserts an additional checkable claim the source does not cover, OR the draft is genuinely broader in scope, OR there is a frame/period-role mismatch (vintage vs operating year; revenue vs GMV), OR the source confirms some facts and is silent on others.
 
-• "conflicting" — the source states something mutually exclusive with the draft on a like-for-like basis. This includes: a different named entity or ownership/context in the same role; a number that differs from the source's same-metric figure by more than rounding; the same figure stated on a different basis (gross versus net); a status/modality contradiction only when the draft asserts a definite completed action using invested, acquired, completed, sold, exited, returned, realised, or distributed, specific enough to be checkable, that the source directly shows as proposed, recommended, sought, not yet done, marked at, valued at, carried at, or unrealised. Do not fire modality-conflict on "committed", "a new investment", "the fund holds", or other cover / deal-terms wording that names amount and vehicle without asserting that the transaction has already closed. Those follow ordinary support (confirmed or partial).
+• "conflicting" — the source states something mutually exclusive with the draft on a like-for-like basis. This includes: a different named entity or ownership/context in the same role; a number that differs from the source's same-metric figure by more than rounding; the same figure stated on a different basis (gross versus net); a status/modality contradiction only when the draft asserts a definite completed action using invested, acquired, completed, sold, exited, returned, realised, or distributed, specific enough to be checkable, that the source directly shows as proposed, recommended, sought, not yet done, marked at, valued at, carried at, or unrealised. Do not fire modality-conflict on "committed", "a new investment", "the fund holds", or other cover / transaction-terms wording that names amount and vehicle without asserting that the transaction has already closed. Those follow ordinary support (confirmed or partial).
 
 • "no_support" — the source does not address the claim at all. A related, narrower, or broader treatment of the same claim is partially_confirmed, not no_support. A non-factual procedural closer with no checkable claim (for example 'We recommend approval.') is no_support.
 
@@ -115,13 +115,13 @@ Reasoning: 'Have invested' is a definite completed action. The source shows the 
 Statement: 'We are writing to inform you of a new investment in Helvetia Precision Components.'
 Source: 'We seek IC approval to invest in Helvetia Precision Components.'
 Correct classification: confirmed
-Reasoning: The draft names and frames the investment; it does not assert that a specific transaction has already closed. An IC memo recommending the deal supports the topic. Same for 'the fund holds X' or 'this concerns our investment in X' without a completed-action verb.
+Reasoning: The draft names and frames the investment; it does not assert that a specific transaction has already closed. An IC memo recommending the transaction supports the topic. Same for 'the fund holds X' or 'this concerns our investment in X' without a completed-action verb.
 
-9c) Deal terms without a closed-transaction verb — not a modality conflict
+9c) Transaction terms without a closed-transaction verb — not a modality conflict
 Statement: 'We have committed USD 10 million in the Company's Series A at a pre-money valuation of USD 40 million.'
 Source: 'We seek partnership approval for a Series A investment of USD 10mm … at a USD 40mm pre-money valuation.'
 Correct classification: confirmed
-Reasoning: Amounts and valuation match. 'Committed' is deal-terms wording, not invested / acquired / completed / sold / exited. Classify by support, not as a completed-vs-proposed conflict.
+Reasoning: Amounts and valuation match. 'Committed' is transaction-terms wording, not invested / acquired / completed / sold / exited. Classify by support, not as a completed-vs-proposed conflict.
 
 10) Magnitude beyond rounding → conflicting
 Statement: 'Our plan rests on capturing the embedded reversion as approximately 40 percent of leases roll.'

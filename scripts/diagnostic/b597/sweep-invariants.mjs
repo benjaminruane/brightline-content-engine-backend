@@ -409,13 +409,13 @@ for (const [runName, body] of Object.entries(stamped)) {
     if (/differ on [A-Z]/.test(reason)) {
       flag(runName, doc, index, start, "I3", `capital letter after "differ on": ${reason.slice(0, 160)}`, true);
     }
-    if ((reason.match(/\bThe sentence\b/gi) || []).length >= 2) {
+    if ((reason.match(/(?:^|[.!?]\s+)The sentence\b/g) || []).length >= 2) {
       flag(runName, doc, index, start, "I3", `repeated "The sentence": ${reason.slice(0, 160)}`, true);
     }
     if (/\.(pdf|txt|docx|html)\b/i.test(reason) || /\b\d{2}_[a-z0-9_]+\.(txt|pdf)\b/i.test(reason)) {
       flag(runName, doc, index, start, "I3", `source file name in reason: ${reason.slice(0, 160)}`);
     }
-    if (/\bevidence check\b|\bmatcher\b|\breading note\b|\bunmatchedElements\b|\bqcCard\b/i.test(reason)) {
+    if (/\b(?:the )?evidence check\b|\bthe matcher\b|\bmatcher\b|\bthe reader\b|\bthe second check\b|\bthe check\b|\breading note\b|\bunmatchedElements\b|\bqcCard\b/i.test(reason)) {
       flag(runName, doc, index, start, "I3", `internal voice in reason: ${reason.slice(0, 160)}`);
     }
     if (/\{\{|TODO|TBD|\$\{/.test(reason)) {

@@ -32,6 +32,7 @@ import { classifyCard, summariseReview } from "../lib/qc/review-summary.mjs";
 import { recordIncompleteEvidenceProblem } from "../lib/qc/shown-verdict.mjs";
 import { stampReviewReference } from "../lib/export/review-reference.mjs";
 import { stampSourceDisplayNames } from "../lib/qc/b596-stamp.mjs";
+import { applyExitGateToResponse } from "../lib/qc/exit-gate.mjs";
 import { resolveReviewOptionsFromBody } from "../lib/qc/review-options.mjs";
 import { resolveAuthoringOrganisationName } from "../lib/qc/first-person-actor.mjs";
 import { ingestionMetaFromPrep } from "../lib/qc/ingestion-meta.mjs";
@@ -401,10 +402,29 @@ async function handler(req, res) {
         enforceCardConsistency(stmt.qcCard);
       }
     }
+    // B599: one exit gate before the response leaves — name amber/red issues,
+    // strip internal voice, keep figure corrections, align summary counts.
+    const gated = applyExitGateToResponse(
+      {
+        statements,
+        sources,
+        meta: {
+          reviewOptions: effectiveReviewOptions,
+          dealStatus: pipelineOptions.dealStatus ?? body?.dealStatus ?? null,
+        },
+      },
+      {
+        dealStatus: pipelineOptions.dealStatus ?? body?.dealStatus ?? null,
+        reviewOptions: effectiveReviewOptions,
+      },
+    );
+    for (let i = 0; i < statements.length; i += 1) {
+      if (gated.statements[i]?.qcCard) statements[i].qcCard = gated.statements[i].qcCard;
+    }
     const summaryCards = statements
       .map((stmt) => stmt?.qcCard)
       .filter((card) => card && typeof card === "object");
-    const reviewSummary = summariseReview(summaryCards, effectiveReviewOptions);
+    const reviewSummary = gated.meta?.reviewSummary || summariseReview(summaryCards, effectiveReviewOptions);
     if (reviewSummary && typeof reviewSummary === "object") {
       const fromCards = reviewSummary.rateLimitBoundHits;
       reviewSummary.rateLimitBoundHits = fromCards && fromCards.statements > 0 ? fromCards : rateLimitBoundHits;
