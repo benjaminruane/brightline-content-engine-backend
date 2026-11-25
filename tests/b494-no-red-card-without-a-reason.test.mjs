@@ -30,7 +30,9 @@ test("24:6 shape is Needs a look, not Nothing raised", () => {
   assert.equal(shownState(card), "note_withheld");
   assert.equal(shownLabel(card), "Needs a look");
   assert.equal(shownTier(shownState(card)), "light");
-  assert.equal(statementVerdictState(card), "note_withheld");
+  // B596: FE follows the stamped sentenceState. shownTrace still raises this
+  // shape to Needs a look; restamp writes that back onto the stamp.
+  assert.equal(statementVerdictState(card), card.sentenceState);
 });
 
 test("a conflict or a beyond note on the unrecorded line stays raised", () => {
