@@ -63,7 +63,7 @@ test("an agreement note is not the reason, and the stored passage is", () => {
   };
   const account = readerEvidenceAccount(card);
   assert.equal(account.source, "quote");
-  assert.equal(account.text, "The source states \"Occupancy is 96 percent.\"");
+  assert.equal(account.text, "The source says Occupancy is 96 percent.");
   assert.equal(account.text.includes("confirms"), false);
 });
 
@@ -74,7 +74,7 @@ test("a certifying sentence stays withheld", () => {
     sourceQuote: "Revenue was 10.",
   };
   const account = readerEvidenceAccount(card);
-  assert.equal(account.text, "The source states \"Revenue was 10.\"");
+  assert.equal(account.text, "The source says Revenue was 10.");
   assert.equal(account.withheld.length, 1);
   assert.equal(account.withheld[0].phrase, "the draft does not establish");
   assert.equal(account.text.includes("does not establish"), false);
