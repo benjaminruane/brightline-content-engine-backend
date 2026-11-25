@@ -196,7 +196,7 @@ describe("B402 reading contract", () => {
       headers[1].line,
       "Well sourced. Every figure, date and name appears in the source. 1 statement goes a little further than it does."
     );
-    assert.equal(headers[2].line, "Figures all check out, but 1 statement conflicts with the source.");
+    assert.equal(headers[2].line, "Figures all check out, but 1 sentence conflicts with the source.");
     assert.equal(headers[3].line, "1 fact is not in the source.");
     assert.equal(headers[3].numbers.startsWith("1 of 2 facts matched"), true);
     for (const header of headers) {

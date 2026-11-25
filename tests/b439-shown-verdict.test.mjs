@@ -63,7 +63,7 @@ describe("B439 the screen uses the verdict it already holds", () => {
       { sentenceState: "conflicts", facts: [{ status: "matched" }], note: null },
     ]);
     assert.match(header.line, /1 fact is not in the source/);
-    assert.match(header.line, /1 statement conflicts with the source/);
+    assert.match(header.line, /1 sentence conflicts with the source/);
   });
 
   test("beyond is not renamed partial, and nothing raised is not renamed backed", () => {

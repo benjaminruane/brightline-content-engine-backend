@@ -49,7 +49,7 @@ describe("B468 header agrees", () => {
     assert.equal(rows.length, 14);
     assert.equal(
       headerOf(rows),
-      "1 statement conflicts with the source. 1 fact is not in the source, across 1 of your 14 statements. 1 goes beyond the source",
+      "1 sentence conflicts with the source. 1 fact is not in the source, across 1 of your 14 sentences. 1 goes beyond the source",
     );
     const stored = rows.map((card) => card.sentenceLabel);
     assert.equal(stored.filter((label) => label === "Conflicts with the source").length, 0);
@@ -62,7 +62,7 @@ describe("B468 header agrees", () => {
   test("draft 02 still leads with the look", () => {
     const rows = groups().get("02");
     assert.equal(rows.length, 9);
-    assert.equal(headerOf(rows), "1 statement needs a look. 1 goes beyond the source");
+    assert.equal(headerOf(rows), "1 sentence needs a look. 1 goes beyond the source");
   });
 
   test("every header term is a label count", () => {
@@ -81,8 +81,8 @@ describe("B468 header agrees", () => {
         facts += missing;
         if (missing > 0) across += 1;
       }
-      if (countIn(line, /(\d+) statements? conflict/) !== conflicts) mismatches += 1;
-      if (countIn(line, /(\d+) statements? needs? a look/) !== looks) mismatches += 1;
+      if (countIn(line, /(\d+) sentences? conflict/) !== conflicts) mismatches += 1;
+      if (countIn(line, /(\d+) sentences? needs? a look/) !== looks) mismatches += 1;
       if (countIn(line, /(\d+) (?:goes|go) beyond the source/) !== light) mismatches += 1;
       if (line.includes("not in the source") && notInSource.length === 0) mismatches += 1;
       if (countIn(line, /(\d+) facts? (?:is|are) not in the source/) !== facts) mismatches += 1;

@@ -13,7 +13,7 @@ Style guide:
 - Place a period after the noun it describes. Correct: revenue for the first quarter of 2026 results for the third quarter of 2026
 - Link a derived figure explicitly. Do not leave it as a bare apposition or a bracket. Correct: EUR 9 million of EBITDA, equating to a 14% margin
 - A year range uses a hyphen, except after from or between. Correct: 2016-2019 from 2016 to 2019 between 2016 and 2019
-- Use US English spellings: organize, color, behavior, center. Do not flag text that is already US English. A proper noun keeps its own spelling. Correct: organize, color
+- Use US English (Merriam-Webster) spellings: organize, color, behavior, center. Flag UK spellings that should be US English. Do not change quoted source passages. A proper noun keeps its own spelling. Correct: organize, color
 - Write US and UK. Do not write U.S. or U.K. Correct: The US manager and the UK fund.
 - Omit a legal identifier after a capitalised name. The identifiers are Ltd, Limited, Inc, plc, AG, AS, SA, SE, GmbH, BV, NV, SpA, SCSp, SCS, LP, LLP, LLC, s.r.o., ApS, AB, and Oy. Correct: Fjordline Software
 - Use the official name on first mention, then a shortened name when it is unambiguous. Capitalise a formal strategy or product name the same way throughout. Correct: Aldermoor Capital Fund VI, later Aldermoor.

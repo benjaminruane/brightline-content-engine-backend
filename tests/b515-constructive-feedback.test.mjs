@@ -85,7 +85,7 @@ describe("B515 constructive feedback payload", () => {
     const readiness = summariseReview([conflict, clean], REVIEW_ON).readiness;
     assert.equal(built.payload.assessmentChipLabel, readiness);
     assert.equal(built.readiness, readiness);
-    assert.equal(built.payload.assessmentChips.includes("1 statement conflicts with the source"), true);
+    assert.equal(built.payload.assessmentChips.includes("1 sentence conflicts with the source"), true);
   });
 
   test("the word count line matches the Assessment line, with and without a typed limit", () => {

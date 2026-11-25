@@ -50,7 +50,7 @@ describe("B462 summary lines", () => {
       const names = slots(summary);
       assert.equal(backend.length, names.length);
       if (names.includes("editorial or compliance")) {
-        assert.equal(backend.some((line) => /editorial notes|compliance notes/.test(line)), true);
+        assert.equal(backend.some((line) => /editorial notes|cautions/.test(line)), true);
       }
       lengths.push(backend.length);
     }
