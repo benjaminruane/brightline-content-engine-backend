@@ -104,11 +104,10 @@ describe("B517 feedback polish", () => {
       new URL("../../brightline-content-engine-frontend/src/modules/settings/HouseStylePage.jsx", import.meta.url),
       "utf8"
     );
-    const shown = page.match(/export const ACTIVE_STYLE = "([^"]*)";/);
-    assert.ok(shown);
-    assert.equal(HOUSE_SPELLING, shown[1]);
+    assert.equal(page.includes('spellingDisplay("US")') || page.includes("spellingDisplay('US')"), true);
+    assert.equal(HOUSE_SPELLING, "US English (Merriam-Webster)");
     assert.equal(
-      CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT.includes(`Use ${HOUSE_SPELLING} spelling throughout.`),
+      CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT.includes("Use US English spelling (Merriam-Webster) throughout."),
       true
     );
     assert.equal(CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT.includes(EM), false);

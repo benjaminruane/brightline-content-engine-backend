@@ -45,7 +45,7 @@ describe("B543 house style per account", () => {
     assert.equal(constructiveFeedbackSystemPrompt(null), CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT);
     assert.equal(constructiveFeedbackSystemPrompt(BEN_HOUSE_STYLE), CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT);
     const uk = constructiveFeedbackSystemPrompt({ spelling: "UK", thousands: "apostrophe" });
-    assert.equal(uk.includes("UK English"), true);
+    assert.equal(uk.includes("British English spelling (Oxford)"), true);
   });
 
   test("an omitted brief uses the new-account comma, and an apostrophe brief differs", () => {

@@ -41,7 +41,7 @@ function sampleDocument() {
       writingFor: "Writing for Patria",
       reviewed: "Reviewed 24/11/2026, 15:30 GMT+8 · Ref R-7F3A",
       sourceNames: ["Half-year report"],
-      exported: "Exported 24/11/2026, 15:45 GMT+8 by Ada · Content Engine 0.9.7",
+      exported: "Exported 24/11/2026, 15:45 GMT+8 by Ada · Content Engine 0.9.8",
     },
     summary: {
       readiness: "Needs work",
@@ -51,16 +51,16 @@ function sampleDocument() {
       editorial: "Editorial and caution: nothing raised",
     },
     draft: [{ text: "The trust returned 3.1%.", marker: "S1" }],
-    needsAttention: [{
+    cards: [{
       heading: "S1 · Needs a look",
       tone: "amber",
+      attention: true,
       sentence: "The trust returned 3.1%.",
       reason: "The source states a total return of 3.1% and does not state the period in the same words.",
       passages: [{ text: "NAV Total Return for the six months was 3.1%.", lines: "L12" }],
       also: null,
       concerns: [],
-    }],
-    nothingRaised: [{
+    }, {
       heading: "S2 · Nothing raised",
       tone: "green",
       sentence: "The dividend is 18.4 pence.",
@@ -68,6 +68,8 @@ function sampleDocument() {
       passages: [{ text: "Proposed Dividend Per Share 18.4 pence.", lines: "L14" }],
       concerns: [],
     }],
+    needsAttention: [],
+    nothingRaised: [],
     reviewerNote: "The draft is close to the source.",
     sources: [{ name: "Half-year report", publication: "Published externally", fileType: "PDF", description: "The interim report." }],
     disclaimer: "This is one reader's view of the draft against the sources supplied.",
@@ -77,7 +79,7 @@ function sampleDocument() {
       subject: "Reporting commentary review R-7F3A",
       author: "Ada",
       keywords: "Content Engine, R-7F3A, v5",
-      creator: "Content Engine 0.9.7",
+      creator: "Content Engine 0.9.8",
     },
   };
 }
@@ -105,11 +107,11 @@ test("pdf and word print the same sections from the shared style", async () => {
   const lines = exportLines(document, ALL);
   const pdf = pdfText(await renderPdf(document, ALL));
   const word = await docxText(await renderDocx(document, ALL));
-  for (const heading of ["Reporting commentary review", "Review summary", "Needs work", "Draft", "Needs attention", "S1 · Needs a look", "Nothing raised", "S2 · Nothing raised", "Reviewer's note", "Sources", "Half-year report"]) {
+  for (const heading of ["Reporting commentary review", "Review summary", "Needs work", "Draft", "Sentence review", "S1 · Needs a look", "S2 · Nothing raised", "Reviewer's note", "Sources", "Half-year report", "How to read this review"]) {
     assert.equal(pdf.includes(heading), true, heading);
     assert.equal(word.text.includes(heading), true, heading);
   }
-  const order = ["Review summary", "Draft", "Needs attention", "Nothing raised", "Reviewer's note", "Sources"];
+  const order = ["Draft", "Sources", "Review summary", "Reviewer's note", "Sentence review", "How to read this review"];
   let cursor = -1;
   for (const heading of order) {
     const at = lines.indexOf(heading);
@@ -117,8 +119,8 @@ test("pdf and word print the same sections from the shared style", async () => {
     cursor = at;
   }
   const attention = exportLines(document, { ...ALL, attentionOnly: true });
-  assert.equal(attention.includes("Nothing raised"), false);
   assert.equal(attention.includes("S2 · Nothing raised"), false);
+  assert.equal(attention.includes("S1 · Needs a look"), true);
   assert.equal(pdf.includes("evidence concern"), false);
   assert.equal(pdf.includes("|"), false);
   assert.equal(word.core.includes("Reporting commentary review v5"), true);
