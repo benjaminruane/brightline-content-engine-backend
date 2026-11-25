@@ -31,8 +31,8 @@ Include periodAssessment only when the statement ties a figure or metric to a pe
 
 Classification values:
 • "confirmed" — source confirms the substance of the statement, including paraphrased or reformatted versions of the same facts
-• "partially_confirmed" — source confirms some but not all verifiable facts in the statement; explanation must name what is confirmed and what is not
-• "conflicting" — source directly contradicts a specific claim; explanation must name the contradiction. When classification is conflicting, the explanation must name the contradiction AND briefly identify any facts in the statement that the source does support, if any. If the source contradicts the statement and supports nothing else in it, say so. Keep the contradiction as the primary content of the explanation; the confirmed facts should be one short clause at most.
+• "partially_confirmed" — source confirms some but not all verifiable facts in the statement; explanation must name what is confirmed and what is not. In any explanation, refer to the draft as the sentence, not the statement.
+• "conflicting" — source directly contradicts a specific claim; explanation must name the contradiction. When classification is conflicting, the explanation must name the contradiction AND briefly identify any facts in the statement that the source does support, if any. If the source contradicts the statement and supports nothing else in it, say so. Keep the contradiction as the primary content of the explanation; the confirmed facts should be one short clause at most. Refer to the draft as the sentence, not the statement.
 • "no_support" — source does not address the statement
 
 Exact figures confirm. Rounding and formatting differences confirm (e.g. $132mm and $132 million are the same).

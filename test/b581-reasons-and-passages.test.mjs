@@ -47,11 +47,11 @@ test("no shown reason contains an internal label", () => {
 });
 
 test("the reader prompt asks for a reason on a green card", () => {
-  assert.match(READING_NOTE_PROMPT, /which supports the statement/);
-  assert.match(READING_NOTE_PROMPT, /in line with the statement/);
-  assert.match(READING_NOTE_PROMPT, /as the statement says/);
+  assert.match(READING_NOTE_PROMPT, /which supports the sentence/);
+  assert.match(READING_NOTE_PROMPT, /in line with the sentence/);
+  assert.match(READING_NOTE_PROMPT, /as the sentence says/);
   assert.match(READING_NOTE_PROMPT, /Do not write confirms/);
-  assert.match(READING_NOTE_PROMPT, /matching the statement/);
+  assert.match(READING_NOTE_PROMPT, /matching the sentence/);
   assert.doesNotMatch(READING_NOTE_PROMPT, /Only this bucket has an empty note/);
 });
 

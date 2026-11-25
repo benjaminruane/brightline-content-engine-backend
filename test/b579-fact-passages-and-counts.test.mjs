@@ -85,7 +85,7 @@ test("gemspring conflict reasons keep their findings", () => {
   assert.match(s3, /less than three months, not under two months/);
   assert.match(s3, /does not specify June 2026/);
   assert.doesNotMatch(s3, /confirms/i);
-  assert.equal(s3, raw3.replace(/^The source confirms the statement by/, "The source supports the statement by").replace(/^The source confirms/, "The source states"));
+  assert.equal(s3, raw3.replace(/^The source confirms the statement by/, "The source supports the sentence by").replace(/^The source confirms/, "The source states"));
 
   const s5 = cardReason(card(gem, 2));
   assert.match(s5, /largest single investor/);

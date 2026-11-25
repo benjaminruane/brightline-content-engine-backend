@@ -10,7 +10,7 @@ Vercel serverless backend for the Brightline Content Engine. Handles draft gener
 - **LLM:** OpenAI + Anthropic (provider/model selection via `lib/qc/model-config.mjs`)
 - **Local dev:** `npx vercel dev` (not `npm run dev`)
 - **PDF extraction:** `pdf-parse`
-- **Export:** PDFKit (PDF), `docx` library (DOCX)
+- **Export:** PDFKit (PDF)
 
 ---
 

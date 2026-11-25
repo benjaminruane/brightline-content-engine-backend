@@ -91,7 +91,9 @@ test("export block order, card order, headings, line refs, cut ellipsis, house s
   assert.equal(cutLineEllipsis("NAV total return of 3.1% (31"), "NAV total return of 3.1% (31 …");
   assert.equal(cutLineEllipsis("The return was 3.1%."), "The return was 3.1%.");
   assert.equal(lineRefLabel("L15"), "(line 15)");
+  assert.equal(lineRefLabel("L15–L17"), "(lines 15 to 17)");
   assert.equal(sourceDisplayName({ fileName: "half-year.pdf", name: "" }), "half-year.pdf");
+  assert.equal(sourceDisplayName({ name: "Named source", fileName: "half-year.pdf" }), "Named source");
   assert.equal(sourceDisplayName({ name: "half-year.pdf" }), "half-year.pdf");
 
   const document = {

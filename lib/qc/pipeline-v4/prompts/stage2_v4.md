@@ -9,7 +9,7 @@ Return ONLY a JSON object:
   },
   "classification": "<one of the four values below>",
   "passage": "<verbatim excerpt from the source>",
-  "explanation": "<one to two sentences>"
+  "explanation": "<one to two sentences; refer to the draft as the sentence, not the statement>"
 }
 
 Include periodAssessment only when the statement ties a figure or metric to a period, or names a vintage/acquisition/investment year; omit it or set period fields to null otherwise.

@@ -138,8 +138,8 @@ describe("B402 reading contract", () => {
 
   test("the prompt states both note rules", () => {
     assert.match(READING_NOTE_PROMPT, /confirmed, verified, or correct/);
-    assert.match(READING_NOTE_PROMPT, /which supports the statement/);
-    assert.match(READING_NOTE_PROMPT, /does not replace the statement's word/);
+    assert.match(READING_NOTE_PROMPT, /which supports the sentence/);
+    assert.match(READING_NOTE_PROMPT, /does not replace the sentence's word/);
     assert.match(READING_NOTE_PROMPT, /The note names that gap/);
   });
 

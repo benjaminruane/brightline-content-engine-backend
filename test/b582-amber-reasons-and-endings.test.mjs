@@ -9,7 +9,7 @@ const gem = JSON.parse(fs.readFileSync(path.join(dir, "gemspring-dirty-after-b58
 const pat = JSON.parse(fs.readFileSync(path.join(dir, "patria-clean-after-b581.json"), "utf8"));
 const source = pat.sources[0].text;
 
-const AGREEMENT = /supports the statement|in line with the statement|as the statement says|consistent with the statement|matching the statement/i;
+const AGREEMENT = /supports the (?:statement|sentence)|in line with the (?:statement|sentence)|as the (?:statement|sentence) says|consistent with the (?:statement|sentence)|matching the (?:statement|sentence)/i;
 
 function reason(doc, index, text = "") {
   const cards = doc.statements;

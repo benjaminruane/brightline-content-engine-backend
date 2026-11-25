@@ -67,7 +67,7 @@ test("every incomplete evidence check is a review problem, and one finished chec
 
 test("the reader is told to write an evidence point without agreement wording", () => {
   assert.match(READING_NOTE_PROMPT, /When the user message includes an evidence check/);
-  assert.match(READING_NOTE_PROMPT, /Do not use supports, in line with, consistent with, as the statement says/);
+  assert.match(READING_NOTE_PROMPT, /Do not use supports, in line with, consistent with, as the sentence says/);
   const card = gemspring.statements[0].qcCard;
   const evidence = evidenceFindingsForReader(card);
   const user = readingUserPrompt(card.statement, [], evidence);
