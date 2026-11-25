@@ -159,7 +159,7 @@ describe("B513 deal status", () => {
   test("drafting adds the confirmation only when the writer set one", () => {
     assert.equal(dealStatusDraftLine(""), "");
     assert.equal(dealStatusDraftLine("As the source states"), "");
-    assert.match(dealStatusDraftLine("Approved"), /The writer confirms the deal status is: Approved/);
+    assert.match(dealStatusDraftLine("Approved"), /The writer confirms the transaction status is: Approved/);
     assert.throws(() => dealStatusDraftLine("Closed"), /not a known option/);
   });
 

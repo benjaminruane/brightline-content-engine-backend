@@ -9,7 +9,7 @@ import { applyReadingContract } from "../lib/qc/reading-contract.mjs";
 import { shownState } from "../lib/qc/shown-verdict.mjs";
 import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
 
-const REASON = "The source recommends this; confirm the decision was taken.";
+const REASON = "The source recommends this transaction; confirm the decision was taken.";
 
 function review(statement, source, note) {
   return applyReadingContract({

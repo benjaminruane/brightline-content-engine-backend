@@ -169,17 +169,17 @@ test("B1 a covered status is supported in the floor, the demand, and the stage 2
 });
 
 test("C1 an unconfirmed status on a deal text type tells the writer to stay with the source", () => {
-  assert.equal(dealStatusDraftLine("", "NEW_DIRECT_INVESTMENT"), UNCONFIRMED_STATUS_LINE);
-  assert.equal(dealStatusDraftLine("As the source states", "NEW_PRIMARY_COMMITMENT"), UNCONFIRMED_STATUS_LINE);
+  assert.match(dealStatusDraftLine("", "NEW_DIRECT_INVESTMENT"), new RegExp(`^${UNCONFIRMED_STATUS_LINE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
+  assert.match(dealStatusDraftLine("As the source states", "NEW_PRIMARY_COMMITMENT"), /has not confirmed the transaction status/);
   assert.equal(dealStatusDraftLine("", "SPECIAL_TOPIC"), "");
-  assert.match(dealStatusDraftLine("Approved", "NEW_DIRECT_INVESTMENT"), /The writer confirms the deal status is: Approved/);
+  assert.match(dealStatusDraftLine("Approved", "NEW_DIRECT_INVESTMENT"), /The writer confirms the transaction status is: Approved/);
   const { basePromptText } = buildBasePrompt({
     outputType: "investor_letter",
     visibility: "complete",
     eventType: "NEW_SECONDARY_INVESTMENT",
     dealStatus: "As the source states",
   });
-  assert.match(basePromptText, /The writer has not confirmed the deal status/);
+  assert.match(basePromptText, /The writer has not confirmed the transaction status/);
   assert.match(basePromptText, /state the firm's decision as made/);
   assert.match(basePromptText, /Claim completion only when a source says it is done/);
 });

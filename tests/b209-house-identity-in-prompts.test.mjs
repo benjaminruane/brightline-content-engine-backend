@@ -58,7 +58,7 @@ describe("B209a house identity in prompts", () => {
       authoringOrganisation: CONFIGURED_HOUSE,
     });
     assert.match(basePromptText, /Write the new direct investment/);
-    assert.match(basePromptText, /State the deal's status as the facts source states it/);
+    assert.match(basePromptText, /State the transaction's status as the facts source states it/);
     assert.doesNotMatch(basePromptText, /Binding constraints/);
     assert.equal(basePromptText.includes(REAL_FIRM), false);
     assert.equal(basePromptText.includes(`The authoring organisation is ${CONFIGURED_HOUSE}.`), true);

@@ -57,13 +57,13 @@ describe("composed writing prompt", () => {
       eventType: "NEW_DIRECT_INVESTMENT",
       dealStatus: "Signed or agreed",
     });
-    assert.match(confirmed.basePromptText, /The writer confirms the deal status is: Signed or agreed/);
+    assert.match(confirmed.basePromptText, /The writer confirms the transaction status is: Signed or agreed/);
     assert.match(confirmed.basePromptText, /This confirmation counts as a facts source for status only/);
     const untouched = buildBasePrompt({
       outputType: "investor_letter",
       eventType: "NEW_DIRECT_INVESTMENT",
       dealStatus: "As the source states",
     });
-    assert.doesNotMatch(untouched.basePromptText, /The writer confirms the deal status/);
+    assert.doesNotMatch(untouched.basePromptText, /The writer confirms the transaction status/);
   });
 });
