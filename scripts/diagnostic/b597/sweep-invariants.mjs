@@ -7,7 +7,8 @@
  *    and the three Part A preview dumps.
  * 2. Re-stamps legacy runs with b596 restampAnalyseResponse.
  * 3. Runs FE dump-screen-and-export.mjs for I8/I9.
- * 4. Checks I1–I9; writes sweep.csv + summary.md under ~/ce-diagnostics/b597-diag/.
+ * 4. Checks I1–I10; writes sweep.csv + summary.md under ~/ce-diagnostics/b597-diag/.
+ * B598: stricter I2/I5/I6, quieter I3, stamped vs legacy split, I10 table rows.
  */
 import { spawnSync } from "node:child_process";
 import {
@@ -25,6 +26,7 @@ const BE = path.resolve(HERE, "../../..");
 const FE = path.resolve(BE, "../brightline-content-engine-frontend");
 const HOME = process.env.HOME || "";
 const OUT = path.join(HOME, "ce-diagnostics/b597-diag");
+const OUT_B598 = path.join(HOME, "ce-diagnostics/b598-diag");
 const RESTAMPED = path.join(OUT, "restamped");
 const SCREEN = path.join(OUT, "screen-export");
 const B595_INPUTS = path.join(HOME, "ce-diagnostics/b595-diag/inputs");
@@ -34,6 +36,22 @@ const PART_A = path.join(OUT, "inputs");
 const { restampAnalyseResponse } = await import(
   pathToFileURL(path.join(BE, "lib/qc/b596-stamp.mjs")).href
 );
+const {
+  gapAppearsInLines,
+  shownSourceLines,
+  tokenizeForOverlap,
+} = await import(pathToFileURL(path.join(BE, "lib/qc/reason-evidence-check.mjs")).href);
+const { proposalChangesAttribution } = await import(
+  pathToFileURL(path.join(BE, "lib/qc/attribution-safe-proposals.mjs")).href
+);
+const { cutLineEllipsis, passageWithLineRef } = await import(
+  pathToFileURL(path.join(BE, "lib/export/passage-cut.mjs")).href
+);
+const {
+  displayedEditorialConcerns,
+  displayedComplianceConcerns,
+  displayedHouseStyleConcerns,
+} = await import(pathToFileURL(path.join(BE, "lib/qc/review-summary.mjs")).href);
 
 mkdirSync(OUT, { recursive: true });
 mkdirSync(RESTAMPED, { recursive: true });
@@ -256,12 +274,17 @@ function extractClaimedGaps(reason) {
   if (differ) out.push(differ[1]);
   const missing = body.match(/\b(?:missing|does not (?:state|mention|address|give|use)|not in the source|omits?)[:\s]+(.+?)(?:\.|$)/i);
   if (missing) out.push(missing[1]);
-  return out.map(clean).filter(Boolean);
+  return out.map(clean).filter((gap) => {
+    if (!gap) return false;
+    if (/^(this claim|the claim about|the claim)\b/i.test(gap)) return false;
+    return tokenizeForOverlap(gap).length >= 2;
+  });
 }
 
 function specificElement(reason, sentence) {
   const body = clean(reason);
   if (!body) return false;
+  if (/\b(recommend|decision|gross|net|qualifier|table|confirm the decision)\b/i.test(body)) return true;
   if (numbersOf(body).length) return true;
   if (/[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*/.test(body) && body.length > 40) return true;
   const sWords = new Set(normalizeWords(sentence));
@@ -270,52 +293,40 @@ function specificElement(reason, sentence) {
 }
 
 function displayEditorialCount(card) {
-  // Mirror FE: amber/red evidence hides editorial on the card face.
-  const tone = toneOf(card);
-  if (tone === "amber" || tone === "red") return 0;
-  const rows = Array.isArray(card?.editorialConcerns) ? card.editorialConcerns : [];
-  // House-style codes are not "editorial" on the card face when split.
-  const HOUSE = new Set([
-    "percentage_notation", "em_dash", "number_spelling", "currency_format",
-    "first_person_plural", "date_format", "defined_term_capitalisation",
-    "english_variant", "oxford_comma", "smart_quotes", "thousand_separator",
-    "pence_form", "magnitude", "period_form", "legal_identifiers",
-  ]);
-  return rows.filter((c) => {
-    const code = String(c?.concernCode || c?.rule || "");
-    if (HOUSE.has(code)) return false;
-    if (["voice_consistency", "first_person_plural", "materiality"].includes(code)) return false;
-    return true;
-  }).length;
+  return displayedEditorialConcerns(card).length;
 }
 
 function displayComplianceCount(card) {
-  return (Array.isArray(card?.complianceConcerns) ? card.complianceConcerns : []).length;
+  return displayedComplianceConcerns(card).length;
 }
 
 function displayHouseStyleCount(card) {
-  if (Array.isArray(card?.houseStyleConcerns)) return card.houseStyleConcerns.length;
-  const HOUSE = new Set([
-    "percentage_notation", "em_dash", "number_spelling", "currency_format",
-    "first_person_plural", "date_format", "defined_term_capitalisation",
-    "english_variant", "oxford_comma", "smart_quotes", "thousand_separator",
-    "pence_form", "magnitude", "period_form", "legal_identifiers",
-  ]);
-  return (Array.isArray(card?.editorialConcerns) ? card.editorialConcerns : [])
-    .filter((c) => HOUSE.has(String(c?.concernCode || c?.rule || ""))).length;
+  return displayedHouseStyleConcerns(card).length;
+}
+
+function isStampedRun(body) {
+  return body?.meta?.stampAuthority === "b596"
+    || (body?.statements || []).some((row) => row?.qcCard?.stampAuthority === "b596");
 }
 
 function evidenceBucket(card) {
-  const state = card?.combinedVerdict?.state || card?.sentenceState || "";
+  // Match summariseReview: evidence face uses sentenceState (ledger), not craft/caution overlay.
+  const state = card?.sentenceState || card?.statementVerdict?.state || "";
   if (state === "conflicts") return "conflicting";
   if (state === "not_in_source") return "notSupported";
   if (state === "beyond" || state === "partial") return "beyond";
   if (state === "note_withheld") return "needsLook";
   if (state === "nothing_raised" || state === "nothing_to_raise") return "nothingRaised";
+  // Wording/caution overlays are still nothing_raised on the evidence ledger.
+  const combined = card?.combinedVerdict?.state || "";
+  if (combined === "wording" || combined === "caution" || combined === "compliance_risk") {
+    return "nothingRaised";
+  }
   return "";
 }
 
 const rows = [];
+const runStampKind = new Map();
 function flag(run, doc, index, start, invariant, detail, isNew = false) {
   rows.push({
     run,
@@ -325,6 +336,7 @@ function flag(run, doc, index, start, invariant, detail, isNew = false) {
     invariant,
     detail: isNew ? `NEW: ${detail}` : detail,
     isNew: !!isNew,
+    stamped: runStampKind.get(run) !== "legacy",
   });
 }
 
@@ -344,6 +356,7 @@ for (const entry of screenIndex.runs || []) {
 }
 
 for (const [runName, body] of Object.entries(stamped)) {
+  runStampKind.set(runName, isStampedRun(body) ? "stamped" : "legacy");
   const doc = body.meta?.reviewReference || runName;
   const statements = body.statements || [];
   const draftSentences = statements.map((row) => clean(row.text || row.qcCard?.statement || ""));
@@ -379,20 +392,20 @@ for (const [runName, body] of Object.entries(stamped)) {
       if (!specificElement(reason, sentence)) {
         flag(runName, doc, index, start, "I1", `amber/red reason names no specific element: ${reason.slice(0, 160)}`, true);
       }
-      if (/\b(supports?|confirms?|is consistent with)\b/i.test(reason) && !/\b(differ|missing|does not|conflict|beyond|omit|qualifier)\b/i.test(reason)) {
+      if (/\b(supports?|confirms?|is consistent with)\b/i.test(reason)
+        && !/\b(differ|missing|does not|conflict|beyond|omit|qualifier|recommend|but|however|while|instead|expected|was complete|drops?|decision was taken|confirm the decision)\b/i.test(reason)) {
         flag(runName, doc, index, start, "I1", `amber/red reason only supports: ${reason.slice(0, 160)}`, true);
       }
     }
 
-    // I2 Reason vs evidence
+    // I2 Reason vs evidence (B598: gapAppearsInLines, >=2 content words)
     for (const gap of extractClaimedGaps(reason)) {
-      const source = sourceTextOnCard(card);
-      if (source && overlapHit(gap, source)) {
+      if (gapAppearsInLines(gap, shownSourceLines(card))) {
         flag(runName, doc, index, start, "I2", `reason says missing/different "${gap.slice(0, 100)}" but it appears in shown source`, true);
       }
     }
 
-    // I3 Reason wording
+    // I3 Reason wording (B598: do not flag "The draft" as internal voice)
     if (/differ on [A-Z]/.test(reason)) {
       flag(runName, doc, index, start, "I3", `capital letter after "differ on": ${reason.slice(0, 160)}`, true);
     }
@@ -402,7 +415,7 @@ for (const [runName, body] of Object.entries(stamped)) {
     if (/\.(pdf|txt|docx|html)\b/i.test(reason) || /\b\d{2}_[a-z0-9_]+\.(txt|pdf)\b/i.test(reason)) {
       flag(runName, doc, index, start, "I3", `source file name in reason: ${reason.slice(0, 160)}`);
     }
-    if (/\bevidence check\b|\bmatcher\b|\breader\b/i.test(reason)) {
+    if (/\bevidence check\b|\bmatcher\b|\breading note\b|\bunmatchedElements\b|\bqcCard\b/i.test(reason)) {
       flag(runName, doc, index, start, "I3", `internal voice in reason: ${reason.slice(0, 160)}`);
     }
     if (/\{\{|TODO|TBD|\$\{/.test(reason)) {
@@ -415,35 +428,49 @@ for (const [runName, body] of Object.entries(stamped)) {
       flag(runName, doc, index, start, "I3", "empty reason on amber/red", true);
     }
 
-    // I5 Proposal sanity
-    const proposals = [];
+    // I5 Proposal sanity (B598: allow house-style/editorial on green/grey; flag attribution swaps)
+    for (const key of ["editorialConcerns", "houseStyleConcerns"]) {
+      for (const concern of Array.isArray(card[key]) ? card[key] : []) {
+        if (proposalChangesAttribution(sentence, concern)) {
+          flag(runName, doc, index, start, "I5", `attribution change: ${(concern.suggestedDirection || "").slice(0, 120)}`, true);
+        }
+      }
+    }
     for (const key of ["editorialConcerns", "complianceConcerns", "houseStyleConcerns"]) {
       for (const concern of Array.isArray(card[key]) ? card[key] : []) {
         const proposed = clean(concern?.suggestedDirection || concern?.proposedChange || concern?.suggestion);
-        if (proposed) proposals.push(proposed);
-      }
-    }
-    if (clean(card.proposedChange)) proposals.push(clean(card.proposedChange));
-    for (const proposed of proposals) {
-      if (tone === "green" || tone === "grey") {
-        flag(runName, doc, index, start, "I5", `proposal on ${tone || "quiet"} card: ${proposed.slice(0, 120)}`, true);
-      }
-      if (proposed && sentence && proposed === sentence) {
-        flag(runName, doc, index, start, "I5", "proposal identical to sentence");
+        if (proposed && sentence && proposed === sentence) {
+          flag(runName, doc, index, start, "I5", "proposal identical to sentence");
+        }
       }
     }
 
-    // I6 Line references
+    // I6 Line references (B598: gapAppearsInLines-style normalization)
     for (const fact of Array.isArray(card.readingFacts) ? card.readingFacts : []) {
       const lineId = fact?.lineId;
       const extract = clean(fact?.extract);
       if (!lineId) continue;
-      // line must look like L# and extract should be non-empty when status matched
       if (!/^L\d+/i.test(String(lineId))) {
         flag(runName, doc, index, start, "I6", `bad line id ${lineId}`);
       }
-      if (fact.status === "matched" && extract && fact.surface && !overlapHit(fact.surface, extract) && !extract.toLowerCase().includes(String(fact.surface).toLowerCase())) {
-        flag(runName, doc, index, start, "I6", `line ${lineId} extract does not contain surface "${fact.surface}"`, true);
+      if (fact.status === "matched" && extract && fact.surface) {
+        if (!gapAppearsInLines(String(fact.surface), [extract]) && !extract.toLowerCase().includes(String(fact.surface).toLowerCase())) {
+          flag(runName, doc, index, start, "I6", `line ${lineId} extract does not contain surface "${fact.surface}"`, true);
+        }
+      }
+    }
+
+    // I10 Table rows / line refs
+    const excerpt = clean(card.primaryExcerptText || card.primaryExcerpt || "");
+    if (excerpt) {
+      const line = excerpt.split(/\n/).find((part) => /\d/.test(part)) || excerpt;
+      const cut = cutLineEllipsis(line, "Next.");
+      if (/ …$/.test(cut) && /\b(?:nav|key figures|net asset value|irr|moic|aum)\b/i.test(line)) {
+        flag(runName, doc, index, start, "I10", `ellipsis on complete table/figure line: ${cut.slice(0, 100)}`, true);
+      }
+      const withRef = passageWithLineRef(line, card.primaryExcerptLineIds || []);
+      if (withRef && /\S\(line/.test(withRef)) {
+        flag(runName, doc, index, start, "I10", "missing space before (line N)", true);
       }
     }
   });
@@ -483,7 +510,7 @@ for (const [runName, body] of Object.entries(stamped)) {
     if (!row.qcCard) flag(runName, doc, index, draftSentences[index].slice(0, 80), "I7", "statement missing qcCard", true);
   });
 
-  // I8 / I9 from FE dump
+  // I8 / I9 from FE dump (compare card face = combined label/colour, not evidence-only)
   const screen = screenByRun[runName] || screenByRun[`partA-${runName}`];
   if (screen) {
     for (const card of screen.cards || []) {
@@ -492,11 +519,14 @@ for (const [runName, body] of Object.entries(stamped)) {
       const s = card.screen || {};
       const e = card.export || {};
       const same = (a, c) => clean(a) === clean(c);
-      if (!same(b.label, s.label) || !same(b.reason, s.reason) || !same(b.colour, s.colour)) {
-        flag(runName, doc, card.index, start, "I8", `screen!=backend label(${s.label}/${b.label}) colour(${s.colour}/${b.colour}) reason`, true);
+      const bColour = b.colour === "none" ? "green" : b.colour;
+      const sColour = s.colour === "none" ? "green" : s.colour;
+      const eColour = e.colour === "none" ? "green" : e.colour;
+      if (!same(b.label, s.label) || !same(b.reason, s.reason) || !same(bColour, sColour)) {
+        flag(runName, doc, card.index, start, "I8", `screen!=backend label(${s.label}/${b.label}) colour(${sColour}/${bColour}) reason`, true);
       }
-      if (!same(b.label, e.label) || !same(b.reason, e.reason) || (e.colour && !same(b.colour, e.colour))) {
-        flag(runName, doc, card.index, start, "I8", `export!=backend label(${e.label}/${b.label}) colour(${e.colour}/${b.colour})`, true);
+      if (!same(b.label, e.label) || !same(b.reason, e.reason) || (eColour && !same(bColour, eColour))) {
+        flag(runName, doc, card.index, start, "I8", `export!=backend label(${e.label}/${b.label}) colour(${eColour}/${bColour})`, true);
       }
     }
     const draftParas = screen.draftParagraphCount;
@@ -533,76 +563,74 @@ writeFileSync(path.join(OUT, "sweep.csv"), `${csvLines.join("\n")}\n`);
 
 // Summary
 const byInv = {};
+const byInvStamped = {};
+const byInvLegacy = {};
 for (const row of rows) {
   byInv[row.invariant] = (byInv[row.invariant] || 0) + 1;
+  if (row.stamped) byInvStamped[row.invariant] = (byInvStamped[row.invariant] || 0) + 1;
+  else byInvLegacy[row.invariant] = (byInvLegacy[row.invariant] || 0) + 1;
 }
-const partA = existsSync(path.join(OUT, "part-a.json"))
-  ? JSON.parse(readFileSync(path.join(OUT, "part-a.json"), "utf8"))
-  : null;
 
 const top = [...rows]
   .sort((a, b) => Number(b.isNew) - Number(a.isNew) || a.invariant.localeCompare(b.invariant))
   .slice(0, 10);
 
+const stampedFlags = rows.filter((row) => row.stamped);
 const summaryMd = [];
-summaryMd.push("# B597 diagnostic summary");
+summaryMd.push("# B597 / B598 invariant sweep");
 summaryMd.push("");
 summaryMd.push(`Generated: ${new Date().toISOString()}`);
 summaryMd.push(`Runs swept: ${Object.keys(stamped).length}`);
-summaryMd.push(`Flag rows: ${rows.length}`);
+summaryMd.push(`Flag rows: ${rows.length} (stamped ${stampedFlags.length}, legacy ${rows.length - stampedFlags.length})`);
 summaryMd.push("");
-summaryMd.push("## Counts per invariant");
+summaryMd.push("## Counts per invariant (all / stamped / legacy)");
 summaryMd.push("");
-for (const inv of ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9"]) {
-  summaryMd.push(`- ${inv}: ${byInv[inv] || 0}`);
+for (const inv of ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "I10"]) {
+  summaryMd.push(`- ${inv}: ${byInv[inv] || 0} / stamped ${byInvStamped[inv] || 0} / legacy ${byInvLegacy[inv] || 0}`);
+}
+summaryMd.push("");
+summaryMd.push("## Remaining stamped-run flags");
+summaryMd.push("");
+if (!stampedFlags.length) summaryMd.push("_None._");
+else {
+  for (const row of stampedFlags.slice(0, 80)) {
+    summaryMd.push(`- ${row.invariant} · ${row.run} · S${row.sentenceIndex === "" ? "—" : Number(row.sentenceIndex) + 1}: ${clean(row.detail).slice(0, 180)}`);
+  }
 }
 summaryMd.push("");
 summaryMd.push("## Ten most important rows");
 summaryMd.push("");
 top.forEach((row, i) => {
-  summaryMd.push(`${i + 1}. **${row.invariant}** ${row.isNew ? "(NEW) " : ""}· ${row.run} · S${row.sentenceIndex === "" ? "—" : Number(row.sentenceIndex) + 1} · ${clean(row.detail).slice(0, 200)}`);
+  summaryMd.push(`${i + 1}. **${row.invariant}** ${row.stamped ? "stamped" : "legacy"} · ${row.run} · S${row.sentenceIndex === "" ? "—" : Number(row.sentenceIndex) + 1} · ${clean(row.detail).slice(0, 200)}`);
 });
-summaryMd.push("");
-summaryMd.push("## Part A — five answers");
-summaryMd.push("");
-if (partA?.answers) {
-  for (const a of partA.answers) {
-    summaryMd.push(`### ${a.id}. ${a.title}`);
-    summaryMd.push("");
-    if (a.face) {
-      summaryMd.push(`- Branch: \`${a.face.branch || ""}\``);
-      summaryMd.push(`- Matcher: ${(a.face.matcher || []).map((m) => clean(m).slice(0, 100)).join(" | ") || "(none)"}`);
-      summaryMd.push(`- Reader verdict: \`${a.face.readerVerdict || ""}\``);
-      summaryMd.push(`- combinedVerdict: \`${a.face.combinedVerdict?.label || ""}\` / \`${a.face.combinedVerdict?.state || ""}\` / tone \`${a.face.combinedVerdict?.tone || ""}\``);
-      summaryMd.push(`- sentenceLabel: ${a.face.sentenceLabel || ""}`);
-      summaryMd.push(`- shownReason: ${clean(a.face.shownReason).slice(0, 300)}`);
-      summaryMd.push(`- Reason path: ${a.reasonPath || ""}`);
-    }
-    const bullets = a.whyAmber || a.whyNotGreen || a.howGlued || a.whereLost || a.whyHidden || [];
-    for (const line of bullets) summaryMd.push(`- ${line}`);
-    if (a.template) summaryMd.push(`- Template: \`${a.template}\``);
-    summaryMd.push("");
-  }
-  summaryMd.push(`Refs: Harbourline ${partA.refs?.harbourline}, Aldermoor ${partA.refs?.aldermoor}, Patria ${partA.refs?.patria}`);
-  summaryMd.push(`Builds: Harbourline ${partA.builds?.harbourline?.commit}, Aldermoor ${partA.builds?.aldermoor?.commit}, Patria ${partA.builds?.patria?.commit}`);
-} else {
-  summaryMd.push("_part-a.json missing_");
-}
-summaryMd.push("");
-summaryMd.push("## NEW vs F01–F25");
-summaryMd.push("");
-summaryMd.push("Rows marked NEW are not already covered by the B594/B595 F01–F25 exhibit set ( Harbourline NAV proposal, IRR denial drop, file-name fallback, partial unsupported-part naming, PDF paragraph gaps / F11 overlap, etc.). I1 support-only amber, I2 false “differ on” against shown source, I3 capital-after-differ-on, I4 editorial count vs hidden card face, and I9 paragraph fidelity are the NEW classes this sweep surfaces.");
 summaryMd.push("");
 summaryMd.push(`Machine detail: \`~/ce-diagnostics/b597-diag/sweep.csv\` (${rows.length} rows).`);
 summaryMd.push(`Re-run: \`node scripts/diagnostic/b597/sweep-invariants.mjs\``);
 
 writeFileSync(path.join(OUT, "summary.md"), `${summaryMd.join("\n")}\n`);
+mkdirSync(OUT_B598, { recursive: true });
+writeFileSync(path.join(OUT_B598, "sweep-after.json"), `${JSON.stringify({
+  generatedAt: new Date().toISOString(),
+  runs: Object.keys(stamped).length,
+  byInvariant: byInv,
+  byInvStamped,
+  byInvLegacy,
+  stampedFlags: stampedFlags.map((row) => ({
+    invariant: row.invariant,
+    run: row.run,
+    sentenceIndex: row.sentenceIndex,
+    detail: row.detail,
+  })),
+}, null, 2)}\n`);
 
 console.log(JSON.stringify({
   ok: true,
   runs: Object.keys(stamped).length,
   flags: rows.length,
   byInvariant: byInv,
+  byInvStamped,
+  byInvLegacy,
+  stampedFlags: stampedFlags.length,
   summary: path.join(OUT, "summary.md"),
   csv: path.join(OUT, "sweep.csv"),
 }, null, 2));
