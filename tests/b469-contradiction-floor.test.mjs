@@ -51,11 +51,8 @@ describe("B469 contradiction floor", () => {
     for (const row of [one, two, three]) {
       assert.equal(shownLabel(row), "Conflicts with the source");
       assert.equal(shownTier(shownState(row)), "demands");
-      // B596: FE follows the stamped sentenceState. These pre-B596 fixtures still
-      // store Not in the source / Goes beyond; shownTrace raises them. A restamp
-      // writes Conflicts back onto the stamp.
-      const stamped = row.statementVerdict?.state || row.sentenceState || "";
-      assert.equal(statementVerdictState(row), stamped || "conflicts");
+      // Pre-B596 fixtures have no stampAuthority; FE still re-derives with shownTrace.
+      assert.equal(statementVerdictState(row), "conflicts");
       assert.equal(floorState(row), screenFloor(row));
     }
     assert.match(readerEvidenceSentence(one), /Westhaven Capital is the acquirer/);
@@ -94,13 +91,7 @@ describe("B469 contradiction floor", () => {
     let lighter = 0;
     for (const row of pass.cards) {
       const shown = shownLabel(row);
-      // B596: FE follows the stamp; backend shownTrace may still raise a stale stamp.
-      const stamped = row.statementVerdict?.state || row.sentenceState || "";
-      if (stamped) {
-        assert.equal(statementVerdictState(row), stamped, keyOf(row));
-      } else {
-        assert.equal(statementVerdictState(row), shownState(row), keyOf(row));
-      }
+      assert.equal(statementVerdictState(row), shownState(row), keyOf(row));
       assert.equal(floorState(row), screenFloor(row), keyOf(row));
       // Pre-existing on 81f52750 (before B592): frontend readerReason.js still
       // returns the stored unrecorded stand-in while the backend composes the
@@ -109,10 +100,7 @@ describe("B469 contradiction floor", () => {
       const screen = screenSentence(row) || "";
       const backend = readerEvidenceSentence(row) || "";
       const legacyStandIn = /Which part was not recorded/.test(screen) && screen !== backend;
-      // B596: 15:11 is quiet on the stamp; FE readerReason may still compose a
-      // match line while the backend reader sentence is empty. Skip that pair.
-      const quietStampDrift = keyOf(row) === "15:11" && screen !== backend;
-      if (!legacyStandIn && !quietStampDrift) {
+      if (!legacyStandIn) {
         assert.equal(screen, backend, keyOf(row));
       }
       const before = WEIGHT[row.sentenceLabel] || 0;

@@ -30,9 +30,9 @@ test("24:6 shape is Needs a look, not Nothing raised", () => {
   assert.equal(shownState(card), "note_withheld");
   assert.equal(shownLabel(card), "Needs a look");
   assert.equal(shownTier(shownState(card)), "light");
-  // B596: FE follows the stamped sentenceState. shownTrace still raises this
-  // shape to Needs a look; restamp writes that back onto the stamp.
-  assert.equal(statementVerdictState(card), card.sentenceState);
+  // Legacy fixture has no stampAuthority; FE still re-derives to Needs a look.
+  // A B596-stamped card would follow sentenceState after restamp.
+  assert.equal(statementVerdictState(card), "note_withheld");
 });
 
 test("a conflict or a beyond note on the unrecorded line stays raised", () => {
