@@ -14,7 +14,7 @@ test("the prompt carries every document block", () => {
   assert.match(system, /Document: 18a_synth_cross_source_pair_initial/);
   assert.match(system, /Document: 18b_synth_cross_source_pair_update/);
   assert.match(READING_NOTE_PROMPT, /Weigh every document/);
-  assert.match(READING_NOTE_PROMPT, /Do not call that statement a restatement/);
+  assert.match(READING_NOTE_PROMPT, /Do not call that sentence a restatement/);
   assert.match(READING_NOTE_PROMPT, /do not call it the same claim/);
 });
 

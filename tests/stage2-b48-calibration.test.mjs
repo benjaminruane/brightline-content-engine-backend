@@ -637,9 +637,9 @@ describe("B48 prompt anchors", () => {
     // B456 took the reader account out of this prompt. The fixtures 01-20 pass is the gate.
     assert.equal(
       hashPromptContent(prompt),
-      "3d7a3d104c0606e10c92f811295acb75d7f01ef0a97a69078ca964de3a89302c"
+      "8a074eb996ae09b8ebbb697c5ca00938cfa2be39df4d2b9b24178669a3324061"
     );
-    assert.equal(prompt.length, 14249);
+    assert.equal(prompt.length, 14304);
     assert.match(prompt, /Frame and period priority/);
     assert.match(prompt, /Evaluative claims/);
     assert.match(
