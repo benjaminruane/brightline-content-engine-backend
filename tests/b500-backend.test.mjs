@@ -48,7 +48,7 @@ test("export counts each card once, by combined state", () => {
     "1 caution",
     "2 go beyond the source",
     "1 needs a look",
-    "1 has craft or compliance notes",
+    "1 has craft notes or cautions",
   ]);
   const counted = lines.reduce((sum, line) => sum + line.count, 0);
   assert.equal(counted, cards.filter((card) => resolve(card).state !== "nothing_raised").length);

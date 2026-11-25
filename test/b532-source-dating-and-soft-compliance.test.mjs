@@ -94,7 +94,7 @@ test("a soft compliance note that is not gross or net stays grey and visible", (
   });
   assert.equal(combined.state, "wording");
   assert.equal(combined.tone, "grey");
-  assert.equal(combined.label, "Craft or compliance notes");
+  assert.equal(combined.label, "Craft notes or cautions");
   const card = applyReadingContract({
     statement: "Investors will see strong returns.",
     displayVerdict: "supported_full",

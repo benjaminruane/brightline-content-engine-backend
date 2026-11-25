@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "vitest";
 import { cardEvidenceFindings } from "../lib/qc/evidence-findings.mjs";
-import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
+import { PARTIAL_UNRECORDED, isPartialUnrecorded } from "../lib/qc/partial-sentence.mjs";
 import { partialReason, reasonFault, sentenceCount } from "../lib/qc/partial-reason.mjs";
 import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
 import { bothReadingsSupport, shownState } from "../lib/qc/shown-verdict.mjs";
@@ -44,7 +44,7 @@ test("08:10 is two sentences and the difference no longer starts with but", () =
 test("a card that already had a reason keeps that reason", () => {
   const card = cardOf("05:7");
   const stored = clean(card.displayedEvidenceProse);
-  assert.notEqual(stored, PARTIAL_UNRECORDED);
+  assert.equal(isPartialUnrecorded(stored), false);
   assert.equal(readerEvidenceSentence(card), stored);
 });
 
@@ -53,7 +53,7 @@ test("14:3 and 18:9 are a wording paraphrase, so the unrecorded line is not the 
     const card = cardOf(key);
     assert.equal(shownState(card), "partial");
     const notes = cardEvidenceFindings(card, []).filter((row) => row.rule === "partial").map((row) => row.note);
-    assert.equal(notes.includes(PARTIAL_UNRECORDED), false);
+    assert.equal(notes.some((note) => isPartialUnrecorded(note)), false);
     assert.equal(notes.length > 0, true);
   }
 });
@@ -72,28 +72,28 @@ test("on the stored pass only a missing reason changes, and every reason reads",
       assert.equal(reason, "", key);
       continue;
     }
-    if (stored && stored !== PARTIAL_UNRECORDED && assertsAgreement(stored)) {
+    if (stored && !isPartialUnrecorded(stored) && assertsAgreement(stored)) {
       assert.equal(assertsAgreement(reason), false, key);
       assert.notEqual(reason, "");
       withheld.push(key);
-    } else if (stored && stored !== PARTIAL_UNRECORDED && DISAGREEMENT.has(key)) {
+    } else if (stored && !isPartialUnrecorded(stored) && DISAGREEMENT.has(key)) {
       assert.notEqual(reason, stored, key);
       disagreement.push(key);
-    } else if (stored && stored !== PARTIAL_UNRECORDED) assert.equal(reason, stored, key);
+    } else if (stored && !isPartialUnrecorded(stored)) assert.equal(reason, stored, key);
     else if (reason !== stored) {
       changed.push(`${String(card.fixtureId).padStart(2, "0")}:${card.index}`);
     }
-    if (reason === PARTIAL_UNRECORDED) unrecorded += 1;
+    if (isPartialUnrecorded(reason)) unrecorded += 1;
     if (!reason) continue;
     assert.equal(reasonFault(reason), "", `${card.fixtureId}:${card.index}`);
-    if (reason !== PARTIAL_UNRECORDED) {
+    if (!isPartialUnrecorded(reason)) {
       assert.equal(endorsementHit(maskVerbatimQuotes(reason, sourceCorpus(card))), null);
     }
     const findings = cardEvidenceFindings(card, []);
     for (const row of findings) {
       if (row.rule !== "partial") continue;
       assert.notEqual(clean(row.note), reason);
-      assert.notEqual(row.note, PARTIAL_UNRECORDED);
+      assert.equal(isPartialUnrecorded(row.note), false);
     }
     const partial = card.displayVerdict === "supported_partial"
       || card.supportState === "partial"

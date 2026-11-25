@@ -92,5 +92,5 @@ test("the summary uses the card name", () => {
     editorial: { concerns: 0 },
     compliance: { concerns: 0 },
   });
-  assert.equal(bullets[0], "2 statements go beyond the source.");
+  assert.equal(bullets[0], "2 sentences go beyond the source.");
 });

@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "vitest";
-import { PARTIAL_UNRECORDED } from "../lib/qc/partial-sentence.mjs";
+import { isPartialUnrecorded } from "../lib/qc/partial-sentence.mjs";
 import { readerEvidenceSentence } from "../lib/qc/reader-reason.mjs";
 import { shownLabel, shownState, shownTier } from "../lib/qc/shown-verdict.mjs";
 
@@ -35,7 +35,7 @@ test("15:9 keeps the clause that names the missing part", () => {
   const reason = readerEvidenceSentence(row) || "";
   assert.equal(shownLabel(row), "Goes beyond the source");
   assert.equal(shownTier(shownState(row)), "light");
-  assert.equal(reason.includes(PARTIAL_UNRECORDED), false);
+  assert.equal(isPartialUnrecorded(reason), false);
   assert.match(reason, /continued runway to 70%/);
   assert.match(reason, /material gross margin expansion/);
 });

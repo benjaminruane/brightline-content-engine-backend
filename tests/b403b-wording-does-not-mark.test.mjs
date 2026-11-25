@@ -46,7 +46,7 @@ describe("B403B wording does not mark", () => {
       { facts: [fact("matched")], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
     ]);
     assert.equal(mixed.numbers, "3 of 3 facts matched · 1 to look at");
-    assert.match(mixed.line, /1 statement conflicts/);
+    assert.match(mixed.line, /1 sentence conflicts/);
   });
 
   test("the card stores a wording note behind a collapsed line", () => {

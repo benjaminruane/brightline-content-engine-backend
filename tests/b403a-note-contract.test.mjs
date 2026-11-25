@@ -36,7 +36,7 @@ describe("B403A note contract", () => {
     const header = draftHeader([{ facts: [fact("matched")], sentenceState: state }]);
     assert.equal(header.counts.statements.nothing_raised, 0);
     assert.equal(header.counts.statements.note_withheld, 1);
-    assert.equal(header.line, "1 statement needs a look.");
+    assert.equal(header.line, "1 sentence needs a look.");
   });
 
   test("not_found still beats a withheld note", () => {

@@ -84,7 +84,7 @@ describe("B403C benchmark words and tiers", () => {
     ]);
     assert.equal(header.numbers, "6 of 6 facts matched · 1 to look at · 2 worth a glance");
     assert.equal(header.counts.wordingNotes, 3);
-    assert.match(header.line, /1 statement conflicts/);
+    assert.match(header.line, /1 sentence conflicts/);
     const quiet = draftHeader([
       { facts: [{ status: "matched" }], sentenceState: "nothing_to_raise", note: { bucket: "wording" } },
     ]);
@@ -97,7 +97,7 @@ describe("B403C benchmark words and tiers", () => {
     ]);
     assert.equal(
       mixed.line,
-      "Well sourced. Every figure, date and name appears in the source. 1 statement goes a little further than it does."
+      "Well sourced. Every figure, date and name appears in the source. 1 sentence goes a little further than it does."
     );
   });
 
