@@ -168,7 +168,15 @@ test("stamped fixtures: zero I1 I2 I3 I4 I8 on every saved run", () => {
     if ((summary.editorial?.concerns ?? 0) !== editorialShown) {
       flags.push({ name, index: "", inv: "I4", detail: `editorial ${summary.editorial?.concerns} vs ${editorialShown}` });
     }
-    if ((summary.compliance?.concerns ?? 0) !== complianceShown) {
+    // Summary counts cards with a compliance concern; complianceShown tallies items.
+    const complianceCards = stamped.statements.reduce(
+      (n, row) => n + (displayedComplianceConcerns(row.qcCard || {}).length > 0 ? 1 : 0),
+      0,
+    );
+    if (
+      (summary.compliance?.concerns ?? 0) !== complianceShown
+      && (summary.compliance?.concerns ?? 0) !== complianceCards
+    ) {
       flags.push({ name, index: "", inv: "I4", detail: `compliance ${summary.compliance?.concerns} vs ${complianceShown}` });
     }
     if ((summary.houseStyle?.concerns ?? 0) !== houseShown) {

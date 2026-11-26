@@ -1,0 +1,781 @@
+{
+  "ok": true,
+  "meta": {
+    "build": {
+      "ref": "main",
+      "commit": "62878c6",
+      "source": "vercel-env"
+    },
+    "traceId": "19abf78c6e27e5d96f55c1ba6f7ae758",
+    "llmSpend": {
+      "calls": 13,
+      "byModel": {
+        "openai/gpt-4o-2024-08-06": {
+          "calls": 10,
+          "costUsd": 0.0447325,
+          "inputTokens": 26005,
+          "outputTokens": 804,
+          "unpricedCalls": 0,
+          "cachedInputTokens": 22656
+        },
+        "anthropic/claude-opus-4-7": {
+          "calls": 3,
+          "costUsd": 0.053327,
+          "inputTokens": 9458,
+          "outputTokens": 739,
+          "unpricedCalls": 0,
+          "cachedInputTokens": 2764
+        }
+      },
+      "costUsd": 0.09805950000000001,
+      "inputTokens": 35463,
+      "outputTokens": 1543,
+      "unpricedCalls": 0,
+      "unpricedModels": [],
+      "cachedInputTokens": 25420
+    },
+    "modelConfig": {
+      "ranAt": "2026-11-26T03:48:21.370Z",
+      "stageModels": {
+        "style-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage2-matching": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "editorial-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage1-splitting": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "compliance-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage5-commentary": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage1b-claim-spans": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "editorial-style-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        }
+      },
+      "stage2Fingerprints": [
+        "fp_cb2f6fd107"
+      ]
+    },
+    "capacityWait": {
+      "waitMs": 0,
+      "prelaunchCount": 0
+    },
+    "analysisRunId": "19abf78c6e27e5d96f55c1ba6f7ae758",
+    "draftCoverage": {
+      "dropped": [],
+      "uncovered": [],
+      "draftChars": 169,
+      "droppedCount": 0,
+      "uncoveredChars": 0,
+      "uncoveredCount": 0
+    },
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "reviewSummary": {
+      "version": 1,
+      "evidence": {
+        "beyond": 1,
+        "partial": 0,
+        "unbadged": 0,
+        "confirmed": 0,
+        "conflicting": 0,
+        "notSupported": 0,
+        "nothingRaised": 1
+      },
+      "editorial": {
+        "concerns": 0,
+        "notChecked": 0,
+        "hardConcerns": 0
+      },
+      "readiness": "Minor points to address",
+      "compliance": {
+        "concerns": 1,
+        "notChecked": 0,
+        "hardConcerns": 0
+      },
+      "notChecked": 0,
+      "statements": 2,
+      "needsAttention": 1,
+      "signalConcerns": 1,
+      "rateLimitBoundHits": {
+        "other": 0,
+        "editorial": 0,
+        "commentary": 0,
+        "compliance": 0,
+        "statements": 0
+      }
+    },
+    "stageSchedules": [
+      {
+        "why": "fits_remaining_one_wave",
+        "stage": "stage6",
+        "waves": 1,
+        "tpmLimit": 30000000,
+        "concurrency": 2,
+        "totalTokens": 25912,
+        "statementCount": 2,
+        "remainingSource": "header",
+        "remainingTokens": 29997466,
+        "tokensPerStatement": 12956
+      },
+      {
+        "why": "fits_remaining_one_wave",
+        "stage": "stage5",
+        "waves": 1,
+        "tpmLimit": 30000000,
+        "concurrency": 2,
+        "totalTokens": 3600,
+        "statementCount": 2,
+        "remainingSource": "header",
+        "remainingTokens": 29993023,
+        "tokensPerStatement": 1800
+      }
+    ],
+    "stagesComplete": 7,
+    "pipelineVersion": "v4",
+    "providerRefusal": null,
+    "reviewReference": "R-C805",
+    "rateLimitLastWait": null,
+    "rateLimitBoundHits": {
+      "other": 0,
+      "editorial": 0,
+      "commentary": 0,
+      "compliance": 0,
+      "statements": 0
+    },
+    "totalTextLowWarning": true,
+    "dealStatus": ""
+  },
+  "sources": [
+    {
+      "id": "example-northwharf-note",
+      "role": "facts",
+      "publicationState": "published_external",
+      "label": "Northwharf Pantry volunteer note",
+      "index": 0,
+      "text": "Northwharf Pantry volunteer note, October 2026.\n\nNorthwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.\n"
+    }
+  ],
+  "statements": [
+    {
+      "id": "0",
+      "text": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026.",
+      "qcCard": {
+        "tier": "quiet",
+        "index": 0,
+        "setBy": {
+          "branch": "statementVerdict"
+        },
+        "claims": [],
+        "charEnd": 111,
+        "charStart": 0,
+        "draftSpan": {
+          "endChar": 111,
+          "startChar": 0
+        },
+        "qcClaimId": null,
+        "stampGate": "b599",
+        "statement": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "supported",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": false,
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure",
+            "date_period_claim"
+          ]
+        },
+        "readingNote": {
+          "text": "The volunteer note states Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026, which supports the sentence.",
+          "bucket": "none",
+          "completion": "none",
+          "documentValues": [
+            {
+              "value": "120 neighbours in October; GBP 8,000 raised at autumn supper on 4 October 2026",
+              "document": "Northwharf Pantry volunteer note"
+            }
+          ],
+          "disputedIndices": [],
+          "disputedElements": []
+        },
+        "shownReason": "The volunteer note states Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026, which supports the sentence.",
+        "sourceQuote": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026.",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "none",
+        "evidenceLine": "The volunteer note states Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026, which supports the sentence.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 17,
+            "kind": "name",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L1",
+                  "extract": "Document: Northwharf Pantry volunteer note",
+                  "lineAfterId": "L2"
+                },
+                {
+                  "lineId": "L4",
+                  "extract": "Northwharf Pantry volunteer note, October 2026.",
+                  "lineAfterId": "L5",
+                  "lineBeforeId": "L3"
+                },
+                {
+                  "lineId": "L5",
+                  "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                  "lineBeforeId": "L4"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 3
+            },
+            "start": 0,
+            "lineId": "L1",
+            "status": "matched",
+            "extract": "Document: Northwharf Pantry volunteer note",
+            "lineGap": false,
+            "surface": "Northwharf Pantry",
+            "lineAfterId": "L2",
+            "occurrences": [
+              {
+                "lineId": "L1",
+                "extract": "Document: Northwharf Pantry volunteer note",
+                "lineAfterId": "L2"
+              },
+              {
+                "lineId": "L4",
+                "extract": "Northwharf Pantry volunteer note, October 2026.",
+                "lineAfterId": "L5",
+                "lineBeforeId": "L3"
+              },
+              {
+                "lineId": "L5",
+                "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                "lineBeforeId": "L4"
+              }
+            ],
+            "benchmarkCard": null,
+            "occurrenceCount": 3
+          },
+          {
+            "end": 28,
+            "kind": "figure",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L5",
+                  "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                  "lineBeforeId": "L4"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 25,
+            "lineId": "L5",
+            "status": "matched",
+            "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+            "lineGap": false,
+            "surface": "120",
+            "occurrences": [
+              {
+                "lineId": "L5",
+                "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                "lineBeforeId": "L4"
+              }
+            ],
+            "lineBeforeId": "L4",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          },
+          {
+            "end": 50,
+            "kind": "name",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L4",
+                  "extract": "Northwharf Pantry volunteer note, October 2026.",
+                  "lineAfterId": "L5",
+                  "lineBeforeId": "L3"
+                },
+                {
+                  "lineId": "L5",
+                  "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                  "lineBeforeId": "L4"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 2
+            },
+            "start": 43,
+            "lineId": "L4",
+            "status": "matched",
+            "extract": "Northwharf Pantry volunteer note, October 2026.",
+            "lineGap": false,
+            "surface": "October",
+            "lineAfterId": "L5",
+            "occurrences": [
+              {
+                "lineId": "L4",
+                "extract": "Northwharf Pantry volunteer note, October 2026.",
+                "lineAfterId": "L5",
+                "lineBeforeId": "L3"
+              },
+              {
+                "lineId": "L5",
+                "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                "lineBeforeId": "L4"
+              }
+            ],
+            "lineBeforeId": "L3",
+            "benchmarkCard": null,
+            "occurrenceCount": 2
+          },
+          {
+            "end": 71,
+            "kind": "figure",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L5",
+                  "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                  "lineBeforeId": "L4"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 62,
+            "lineId": "L5",
+            "status": "matched",
+            "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+            "lineGap": false,
+            "surface": "GBP 8,000",
+            "occurrences": [
+              {
+                "lineId": "L5",
+                "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                "lineBeforeId": "L4"
+              }
+            ],
+            "lineBeforeId": "L4",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          },
+          {
+            "end": 110,
+            "kind": "date",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L5",
+                  "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                  "lineBeforeId": "L4"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 96,
+            "lineId": "L5",
+            "status": "matched",
+            "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+            "lineGap": false,
+            "surface": "4 October 2026",
+            "occurrences": [
+              {
+                "lineId": "L5",
+                "extract": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026. The pantry is a community kitchen in Northwharf.",
+                "lineBeforeId": "L4"
+              }
+            ],
+            "lineBeforeId": "L4",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "green",
+          "evidence": "nothingRaised",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": false
+        },
+        "supportSpans": [
+          {
+            "end": 176,
+            "start": 49,
+            "passage": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026.",
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "confirmed"
+          }
+        ],
+        "supportState": "supported",
+        "whyItMatters": null,
+        "claimedStatus": null,
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "evidenceTrace": [],
+        "sentenceLabel": "Nothing raised",
+        "sentenceState": "nothing_raised",
+        "supportRefIds": [
+          0
+        ],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "supported_full",
+        "draftSentences": [
+          "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026.",
+          "The pantry guarantees a meal for every child in the city."
+        ],
+        "hasRealExcerpt": true,
+        "primaryExcerpt": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026.",
+        "stampAuthority": "b596",
+        "combinedVerdict": {
+          "tier": "quiet",
+          "tone": "none",
+          "label": "Nothing raised",
+          "setBy": null,
+          "state": "nothing_raised"
+        },
+        "conflictExcerpt": null,
+        "evidenceSummary": "The volunteer note states Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026, which supports the sentence.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Northwharf Pantry volunteer note",
+        "statusDependent": false,
+        "statusQuietLine": null,
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "quiet",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "nothing_raised"
+        },
+        "supportRefTitles": [
+          "Northwharf Pantry volunteer note"
+        ],
+        "unsupportedSpans": [],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The sentence matches the source exactly in terms of the number of neighbours served, the amount raised, and the date of the autumn supper.",
+            "sourceIndex": 0,
+            "sourceLabel": "Northwharf Pantry volunteer note",
+            "classification": "confirmed"
+          }
+        ],
+        "originalClaimText": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026.",
+        "primaryExcerptEnd": 176,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026.",
+        "reasoningParagraph": "The volunteer note states Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026, which supports the sentence.",
+        "statusNeedsConfirm": false,
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 49,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "none",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": [
+          "L2"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [],
+        "suppressInQcWorkbench": false,
+        "displayedEvidenceProse": "The volunteer note states Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026, which supports the sentence.",
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026."
+            },
+            "passage": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The supper was on 4 October 2026.",
+            "sourceIndex": 0,
+            "sourceLabel": "Northwharf Pantry volunteer note",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": null,
+        "complianceSuggestedDirection": null
+      }
+    },
+    {
+      "id": "1",
+      "text": "The pantry guarantees a meal for every child in the city.",
+      "qcCard": {
+        "tier": "light",
+        "index": 1,
+        "setBy": {
+          "branch": "statementVerdict"
+        },
+        "claims": [],
+        "charEnd": 169,
+        "charStart": 112,
+        "draftSpan": {
+          "endChar": 169,
+          "startChar": 112
+        },
+        "qcClaimId": null,
+        "stampGate": "b599",
+        "statement": "The pantry guarantees a meal for every child in the city.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "not_supported",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": false,
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "readingNote": {
+          "text": "The Northwharf Pantry volunteer note says the pantry is a community kitchen that served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+          "bucket": "beyond",
+          "completion": "none",
+          "disputedIndices": [],
+          "disputedElements": []
+        },
+        "shownReason": "The Northwharf Pantry volunteer note says the pantry is a community kitchen that served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "high",
+        "evidenceLine": "The Northwharf Pantry volunteer note says the pantry is a community kitchen that served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+        "factualBadge": false,
+        "primaryRefId": null,
+        "readingFacts": [],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "amber",
+          "evidence": "beyond",
+          "editorial": "clean",
+          "compliance": "concern",
+          "turnedOffLine": null,
+          "needsAttention": true
+        },
+        "supportSpans": [],
+        "supportState": "not_supported",
+        "whyItMatters": null,
+        "claimedStatus": null,
+        "editorialNote": null,
+        "evidenceTrace": [],
+        "sentenceLabel": "Goes beyond the source",
+        "sentenceState": "beyond",
+        "supportRefIds": [],
+        "citationHovers": [],
+        "complianceNote": null,
+        "conflictValues": null,
+        "displayVerdict": "not_supported",
+        "draftSentences": [
+          "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026.",
+          "The pantry guarantees a meal for every child in the city."
+        ],
+        "hasRealExcerpt": false,
+        "primaryExcerpt": null,
+        "stampAuthority": "b596",
+        "combinedVerdict": {
+          "tier": "light",
+          "tone": "amber",
+          "label": "Goes beyond the source",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "beyond"
+        },
+        "conflictExcerpt": null,
+        "evidenceSummary": "The Northwharf Pantry volunteer note says the pantry is a community kitchen that served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": null,
+        "statusDependent": false,
+        "statusQuietLine": null,
+        "conflictEvidence": null,
+        "editorialVerdict": "concern",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "light",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "beyond"
+        },
+        "supportRefTitles": [],
+        "unsupportedSpans": [],
+        "complianceVerdict": "soft_concern",
+        "editorialConcerns": [
+          {
+            "note": "The statement 'The pantry guarantees a meal for every child in the city' implies a commitment that may not be feasible or verifiable. It should be rephrased to reflect a more realistic or hedged commitment.",
+            "span": [
+              {
+                "source": "note_quote",
+                "endChar": 56,
+                "startChar": 0
+              },
+              {
+                "source": "direction_quote",
+                "endChar": 56,
+                "startChar": 11
+              }
+            ],
+            "category": "editorial",
+            "concernCode": "internal_plausibility",
+            "suggestedDirection": "Change 'guarantees a meal for every child in the city' to 'aims to provide a meal for every child in the city'."
+          }
+        ],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+            "sourceIndex": 0,
+            "sourceLabel": "Northwharf Pantry volunteer note",
+            "classification": "no_support"
+          }
+        ],
+        "originalClaimText": "The pantry guarantees a meal for every child in the city.",
+        "primaryExcerptEnd": null,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [
+          {
+            "note": "The phrase 'guarantees a meal for every child in the city' promises a result.",
+            "span": [
+              {
+                "source": "note_quote",
+                "endChar": 56,
+                "startChar": 11
+              }
+            ],
+            "category": "compliance",
+            "concernCode": "caution_promise",
+            "concernText": "The phrase 'guarantees a meal for every child in the city' promises a result. Replace with 'aims to provide a meal for every child in the city'.",
+            "suggestedDirection": "Replace 'guarantees a meal for every child in the city' with 'aims to provide a meal for every child in the city'."
+          },
+          {
+            "note": "This states an absolute (every) that the sources do not support.",
+            "category": "compliance",
+            "concernCode": "caution_absolute"
+          }
+        ],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": null,
+        "reasoningParagraph": "The Northwharf Pantry volunteer note says the pantry is a community kitchen that served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+        "statusNeedsConfirm": false,
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": null,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "high",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": null,
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [],
+        "suppressInQcWorkbench": false,
+        "displayedEvidenceProse": "The Northwharf Pantry volunteer note says the pantry is a community kitchen that served 120 neighbours in October and raised GBP 8,000 at the autumn supper. The sentence claims the pantry guarantees a meal for every child in the city, but the source does not address this claim at all.",
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": false,
+              "parts": 0,
+              "selected": ""
+            },
+            "passage": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper.",
+            "sourceIndex": 0,
+            "sourceLabel": "Northwharf Pantry volunteer note",
+            "classification": "no_support",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": "Change 'guarantees a meal for every child in the city' to 'aims to provide a meal for every child in the city'.",
+        "complianceSuggestedDirection": "Replace 'guarantees a meal for every child in the city' with 'aims to provide a meal for every child in the city'."
+      }
+    }
+  ],
+  "_b602": {
+    "review_id": "687c7f65-f4d6-42d5-a43e-d096b3e20e41",
+    "updated_at": "2026-11-26T03:48:44.182Z",
+    "ref": "R-C805",
+    "draftText": "Northwharf Pantry served 120 neighbours in October and raised GBP 8,000 at the autumn supper on 4 October 2026. The pantry guarantees a meal for every child in the city.",
+    "dealStatus": ""
+  }
+}

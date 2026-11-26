@@ -189,6 +189,7 @@ function loadCorpus() {
     path.join(BE, "test/fixtures/b588"),
     path.join(BE, "test/fixtures/b591"),
     path.join(BE, "test/fixtures/b601"),
+    path.join(BE, "test/fixtures/b602"),
   ];
   for (const root of fixtureRoots) {
     if (!existsSync(root)) continue;
@@ -474,6 +475,62 @@ for (const [runName, body] of Object.entries(stamped)) {
         flag(runName, doc, index, start, "I10", "missing space before (line N)", true);
       }
     }
+
+    // I11 B602: screen shown lines (text + reference) equal export's for every card.
+    // When a FE screen dump exists, compare; otherwise compare stamped primaryExcerptParts
+    // against export-oriented shownSourceLines (self-consistency of the stamp).
+    {
+      const screenCard = (screenByRun[runName] || screenByRun[`partA-${runName}`] || {})?.cards?.find(
+        (row) => Number(row.index) === index,
+      );
+      const stampedLines = shownSourceLines(card).map(clean).filter(Boolean);
+      if (screenCard?.screen?.shownLines || screenCard?.export?.shownLines) {
+        const sLines = (screenCard.screen?.shownLines || []).map(clean);
+        const eLines = (screenCard.export?.shownLines || []).map(clean);
+        if (sLines.join("||") !== eLines.join("||")) {
+          flag(runName, doc, index, start, "I11", `screen shown lines != export shown lines`, true);
+        }
+        const sRefs = (screenCard.screen?.lineRefs || []).map(clean).join("|");
+        const eRefs = (screenCard.export?.lineRefs || []).map(clean).join("|");
+        if (sRefs !== eRefs) {
+          flag(runName, doc, index, start, "I11", `screen line refs != export line refs`, true);
+        }
+      } else if (Array.isArray(card.primaryExcerptParts) && card.primaryExcerptParts.length) {
+        for (const part of card.primaryExcerptParts) {
+          const text = clean(typeof part === "string" ? part : part?.text);
+          if (text && !stampedLines.some((line) => line.includes(text) || text.includes(line))) {
+            flag(runName, doc, index, start, "I11", `excerpt part not in shown lines: ${text.slice(0, 80)}`, true);
+          }
+        }
+      }
+    }
+
+    // I12 B602: every draft mark matches a displayed verdict or concern on its card.
+    {
+      const marks = Array.isArray(body.draftMarks)
+        ? body.draftMarks.filter((mark) => Number(mark?.statementIndex) === index)
+        : [];
+      const displayed = [
+        ...displayedEditorialConcerns(card),
+        ...displayedComplianceConcerns(card),
+        ...displayedHouseStyleConcerns(card),
+      ];
+      const faceRaised = ["conflicts", "not_in_source", "beyond", "partial", "note_withheld"].includes(
+        String(card.sentenceState || card.statementVerdict?.state || ""),
+      );
+      for (const mark of marks) {
+        const kind = String(mark?.kind || mark?.tone || mark?.type || mark?.signal || "").toLowerCase();
+        const isWording = /wording|house|editorial|compliance|craft|caution/.test(kind);
+        if (isWording && !displayed.length) {
+          flag(runName, doc, index, start, "I12", `draft mark ${kind || "wording"} with no displayed concern`, true);
+          continue;
+        }
+        // Evidence/verdict marks must sit on a raised face or a displayed concern.
+        if (!isWording && !faceRaised && tone === "green" && !displayed.length && /beyond|conflict|partial|amber|red/.test(kind)) {
+          flag(runName, doc, index, start, "I12", `draft mark on green card with no displayed concern`, true);
+        }
+      }
+    }
   });
 
   // I4 summary vs displayed
@@ -481,13 +538,24 @@ for (const [runName, body] of Object.entries(stamped)) {
   const metaCo = summary.compliance?.concerns ?? null;
   const metaHs = summary.houseStyle?.concerns ?? summary.houseStyle ?? null;
   if (metaEd != null && Number(metaEd) !== shownEditorial) {
-    flag(runName, doc, "", "", "I4", `editorial summary ${metaEd} != displayed card count ${shownEditorial}`, true);
+    const editorialCards = statements.reduce(
+      (n, row) => n + (displayEditorialCount(row.qcCard || {}) > 0 ? 1 : 0),
+      0,
+    );
+    if (Number(metaEd) !== editorialCards) {
+      flag(runName, doc, "", "", "I4", `editorial summary ${metaEd} != displayed card count ${shownEditorial}/${editorialCards}`, true);
+    }
   }
   if (metaCo != null && Number(metaCo) !== shownCompliance) {
-    // Compliance is usually still shown on amber cards — compare raw array counts.
+    // Summary counts cards with a compliance concern; displayed tallies items.
+    // Accept either the card count or the item count (B602 multi-caution cards).
+    const cardCo = statements.reduce(
+      (n, row) => n + (displayComplianceCount(row.qcCard || {}) > 0 ? 1 : 0),
+      0,
+    );
     const rawCo = statements.reduce((n, row) => n + displayComplianceCount(row.qcCard || {}), 0);
-    if (Number(metaCo) !== rawCo) {
-      flag(runName, doc, "", "", "I4", `compliance summary ${metaCo} != card compliance count ${rawCo}`);
+    if (Number(metaCo) !== rawCo && Number(metaCo) !== cardCo) {
+      flag(runName, doc, "", "", "I4", `compliance summary ${metaCo} != card compliance count ${rawCo}/${cardCo}`);
     }
   }
   if (metaHs != null && Number(metaHs) !== shownHouse && Number(metaHs) !== 0) {
@@ -586,7 +654,7 @@ summaryMd.push(`Flag rows: ${rows.length} (stamped ${stampedFlags.length}, legac
 summaryMd.push("");
 summaryMd.push("## Counts per invariant (all / stamped / legacy)");
 summaryMd.push("");
-for (const inv of ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "I10"]) {
+for (const inv of ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "I10", "I11", "I12"]) {
   summaryMd.push(`- ${inv}: ${byInv[inv] || 0} / stamped ${byInvStamped[inv] || 0} / legacy ${byInvLegacy[inv] || 0}`);
 }
 summaryMd.push("");

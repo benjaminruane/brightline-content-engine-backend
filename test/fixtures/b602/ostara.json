@@ -1,0 +1,2607 @@
+{
+  "ok": true,
+  "meta": {
+    "build": {
+      "ref": "main",
+      "commit": "5b313fc",
+      "source": "vercel-env"
+    },
+    "traceId": "07dff345061654492aec37c86ff00280",
+    "llmSpend": {
+      "calls": 57,
+      "byModel": {
+        "openai/gpt-4o-2024-08-06": {
+          "calls": 48,
+          "costUsd": 0.2476425,
+          "inputTokens": 129857,
+          "outputTokens": 2956,
+          "unpricedCalls": 0,
+          "cachedInputTokens": 85248
+        },
+        "anthropic/claude-opus-4-7": {
+          "calls": 8,
+          "costUsd": 0.139256,
+          "inputTokens": 40095,
+          "outputTokens": 2354,
+          "unpricedCalls": 0,
+          "cachedInputTokens": 26682
+        },
+        "openai/gpt-4o-mini-2024-07-18": {
+          "calls": 1,
+          "costUsd": 0.0000582,
+          "inputTokens": 356,
+          "outputTokens": 8,
+          "unpricedCalls": 0,
+          "cachedInputTokens": 0
+        }
+      },
+      "costUsd": 0.3869567,
+      "inputTokens": 170308,
+      "outputTokens": 5318,
+      "unpricedCalls": 0,
+      "unpricedModels": [],
+      "cachedInputTokens": 111930
+    },
+    "modelConfig": {
+      "ranAt": "2026-11-25T05:20:15.075Z",
+      "stageModels": {
+        "style-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage2-matching": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "editorial-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage1-splitting": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "compliance-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage5-commentary": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "stage1b-claim-spans": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        },
+        "editorial-style-review": {
+          "model": "gpt-4o-2024-08-06",
+          "provider": "openai"
+        }
+      },
+      "stage2Fingerprints": [
+        "fp_cb2f6fd107"
+      ]
+    },
+    "capacityWait": {
+      "waitMs": 0,
+      "prelaunchCount": 0
+    },
+    "analysisRunId": "07dff345061654492aec37c86ff00280",
+    "draftCoverage": {
+      "dropped": [
+        {
+          "text": "We remain constructive on the remaining portfolio.",
+          "reason": "not_a_claim",
+          "charEnd": 483,
+          "charStart": 433,
+          "reasonText": "Not checked as a claim (heading, salutation, or transition)."
+        }
+      ],
+      "uncovered": [],
+      "draftChars": 483,
+      "droppedCount": 1,
+      "uncoveredChars": 0,
+      "uncoveredCount": 0
+    },
+    "reviewOptions": {
+      "evidenceEnabled": true,
+      "editorialEnabled": true,
+      "complianceEnabled": true
+    },
+    "reviewSummary": {
+      "version": 1,
+      "evidence": {
+        "beyond": 1,
+        "partial": 0,
+        "unbadged": 0,
+        "confirmed": 0,
+        "conflicting": 3,
+        "notSupported": 0,
+        "nothingRaised": 2
+      },
+      "editorial": {
+        "concerns": 0,
+        "notChecked": 0,
+        "hardConcerns": 0
+      },
+      "readiness": "Needs significant work",
+      "compliance": {
+        "concerns": 0,
+        "notChecked": 0,
+        "hardConcerns": 0
+      },
+      "notChecked": 0,
+      "statements": 6,
+      "needsAttention": 4,
+      "signalConcerns": 0,
+      "rateLimitBoundHits": {
+        "other": 0,
+        "editorial": 0,
+        "commentary": 0,
+        "compliance": 0,
+        "statements": 0
+      }
+    },
+    "stageSchedules": [
+      {
+        "why": "fits_remaining_one_wave",
+        "stage": "stage6",
+        "waves": 1,
+        "tpmLimit": 30000000,
+        "concurrency": 6,
+        "totalTokens": 78204,
+        "statementCount": 6,
+        "remainingSource": "header",
+        "remainingTokens": 29993935,
+        "tokensPerStatement": 13034
+      },
+      {
+        "why": "fits_remaining_one_wave",
+        "stage": "stage5",
+        "waves": 1,
+        "tpmLimit": 30000000,
+        "concurrency": 6,
+        "totalTokens": 10800,
+        "statementCount": 6,
+        "remainingSource": "header",
+        "remainingTokens": 29955968,
+        "tokensPerStatement": 1800
+      }
+    ],
+    "stagesComplete": 7,
+    "pipelineVersion": "v4",
+    "providerRefusal": null,
+    "reviewReference": "R-A9C3",
+    "rateLimitLastWait": null,
+    "rateLimitBoundHits": {
+      "other": 0,
+      "editorial": 0,
+      "commentary": 0,
+      "compliance": 0,
+      "statements": 0
+    },
+    "dealStatus": "As the source states"
+  },
+  "sources": [
+    {
+      "id": "example-ostara-factsheet",
+      "role": "facts",
+      "publicationState": "unknown",
+      "label": "Ostara European Mid-Market Fund II fund fact sheet",
+      "index": 0,
+      "text": "OSTARA EUROPEAN MID-MARKET FUND II\nFUND FACT SHEET\nAs at 31 March 2025\nPeriod: quarter ended 31 March 2025\n\nOstara Capital Partners\nStrictly confidential — for professional investors only\n\nFUND OVERVIEW\n\nOstara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.\n\nThe Fund is advised by Ostara Capital Partners. The investment team is led by Managing Partner Clara Voss and Partner Henrik Dahl.\n\nKEY TERMS\n\nTotal commitments                                    EUR 1.2 billion\nFund vintage                                         2019\nInvestment period                                    2019–2024\nGeographic focus                                     Western and Northern Europe\nTypical holding period                               four to seven years\nManagement fee                                       1.75% on committed capital during the investment period; 1.50% on invested capital thereafter\nPreferred return                                     8%\nCarried interest                                     20%\n\nPERFORMANCE\n\nNet IRR since inception                              11.2%\nGross IRR since inception                            14.1%\nTVPI                                                 1.48x\nDPI                                                  0.41x\nFund NAV                                             EUR 812 million\n\nReturns are presented net of management fees, carried interest, and Fund-level expenses, in euro. Gross IRR is shown before those items. Past performance is not a guide to future results.\n\nPORTFOLIO\n\nThe Fund held 34 portfolio companies as at 31 March 2025. Sector mix by NAV is approximately 38% business services, 31% healthcare, and 31% specialised industrials. The five largest positions together represent 42% of NAV.\n\nRemaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings.\n\nGOVERNANCE AND REPORTING\n\nThe Fund reports to the Limited Partner Advisory Committee each quarter. Valuation is prepared by the manager and reviewed by an independent valuation agent. The next LPAC meeting is scheduled for May 2025.\n\nCONTACT\n\nInvestor relations: ir@ostaracapital.example\nThis document is a summary of Fund terms and performance as at 31 March 2025. It does not constitute an offer to sell, or a solicitation of an offer to buy, any interest in the Fund.\n"
+    },
+    {
+      "id": "example-ostara-performance",
+      "role": "facts",
+      "publicationState": "unknown",
+      "label": "Ostara European Mid-Market Fund II quarterly performance report",
+      "index": 1,
+      "text": "OSTARA EUROPEAN MID-MARKET FUND II\nQUARTERLY PERFORMANCE REPORT\nAs at 31 March 2025\nPeriod: quarter ended 31 March 2025\n\nOstara Capital Partners\nPrepared for limited partners\nStrictly confidential\n\nCOVERING NOTE\n\nThis report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.\n\nFUND POSITION\n\nTotal commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.\n\nNet IRR since inception was 12.4%. Gross IRR since inception was 15.0%. TVPI was 1.51x and DPI was 0.43x. Returns are presented in euro, net of Fund-level fees and carry unless labelled gross.\n\nCASH FLOWS IN THE QUARTER\n\nRealised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.\n\nPORTFOLIO COMMENTARY\n\nEarnings across the portfolio were mixed. Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix. No portfolio company was written down to nil in the quarter.\n\nHelvetic Components remains a core holding after the partial exit. The remaining stake is carried at a valuation consistent with the transaction multiple on the sold slice, after a liquidity discount.\n\nVALUATION\n\nNAV of EUR 812 million was prepared by the manager and reviewed by the independent valuation agent. Unrealised investments are held at fair value in accordance with IPEV guidelines. Foreign-exchange translation into euro used period-end rates.\n\nLOOKING AHEAD\n\nThe investment period has ended. The team is focused on supporting remaining holdings through the next phase of earnings growth and on orderly realisations where exit conditions are constructive. The next report will cover the quarter ending 30 June 2025.\n\nCONTACT\n\nQuestions on this report should be directed to ir@ostaracapital.example. This document is for the Fund's limited partners and their advisers only.\n"
+    }
+  ],
+  "statements": [
+    {
+      "id": "0",
+      "text": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.",
+      "qcCard": {
+        "tier": "light",
+        "drops": [
+          {
+            "rule": "reader_prose_withheld",
+            "reason": "confirms that",
+            "content": "The source confirms that the remaining value is compounding earnings, but it does not address whether this is in line with the manager's long-term underwriting. The source provides mixed earnings results for the portfolio, which partially supports the statement about compounding in line with long-term underwriting. However, it does not confirm the statement's claim about compounding in line with underwriting."
+          },
+          {
+            "rule": "note_rejections",
+            "reason": "disputes were dropped",
+            "content": "Ostara European Mid (not_named)"
+          },
+          {
+            "rule": "note_rejections",
+            "reason": "disputes were dropped",
+            "content": "Market Fund II (not_named)"
+          }
+        ],
+        "index": 0,
+        "setBy": {
+          "branch": "statementVerdict"
+        },
+        "claims": [],
+        "charEnd": 133,
+        "silences": [
+          {
+            "id": "reader_prose_withheld",
+            "count": 1,
+            "field": "partialSentence",
+            "reason": "confirms that",
+            "content": [
+              "The source confirms that the remaining value is compounding earnings, but it does not address whether this is in line with the manager's long-term underwriting. The source provides mixed earnings results for the portfolio, which partially supports the statement about compounding in line with long-term underwriting. However, it does not confirm the statement's claim about compounding in line with underwriting."
+            ]
+          },
+          {
+            "id": "note_rejections",
+            "count": 2,
+            "reason": "disputes were dropped",
+            "content": [
+              "Ostara European Mid (not_named)",
+              "Market Fund II (not_named)"
+            ]
+          }
+        ],
+        "charStart": 0,
+        "draftSpan": {
+          "endChar": 133,
+          "startChar": 0
+        },
+        "qcClaimId": null,
+        "statement": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "partial",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": false,
+        "materiality": {
+          "level": "material",
+          "features": [
+            "named_person_entity_attribution"
+          ]
+        },
+        "readingNote": {
+          "text": "The quarterly report describes earnings across the portfolio as mixed, with two industrial positions reporting softer order books, and notes remaining value sits in companies compounding earnings. The source addresses compounding earnings but does not address whether performance tracks the manager's long-term underwriting, and the mixed earnings picture does not establish the statement's claim about compounding in line with underwriting.",
+          "bucket": "beyond",
+          "completion": "none",
+          "disputedIndices": [],
+          "disputedElements": []
+        },
+        "sourceQuote": "Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix.",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "moderate",
+        "evidenceLine": "The quarterly report describes earnings across the portfolio as mixed, with two industrial positions reporting softer order books, and notes remaining value sits in companies compounding earnings. The source addresses compounding earnings but does not address whether performance tracks the manager's long-term underwriting, and the mixed earnings picture does not establish the statement's claim about compounding in line with underwriting.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 19,
+            "kind": "name",
+            "shown": {
+              "more": "and 3 more",
+              "shown": [
+                {
+                  "lineId": "L1",
+                  "extract": "Document: Ostara European Mid-Market Fund II fund fact sheet",
+                  "lineAfterId": "L2"
+                },
+                {
+                  "lineId": "L4",
+                  "extract": "OSTARA EUROPEAN MID-MARKET FUND II",
+                  "lineAfterId": "L5",
+                  "lineBeforeId": "L3"
+                },
+                {
+                  "lineId": "L11",
+                  "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                  "lineAfterId": "L12",
+                  "lineBeforeId": "L10"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 6
+            },
+            "start": 0,
+            "lineId": "L1",
+            "status": "matched",
+            "extract": "Document: Ostara European Mid-Market Fund II fund fact sheet",
+            "lineGap": false,
+            "surface": "Ostara European Mid",
+            "lineAfterId": "L2",
+            "occurrences": [
+              {
+                "lineId": "L1",
+                "extract": "Document: Ostara European Mid-Market Fund II fund fact sheet",
+                "lineAfterId": "L2"
+              },
+              {
+                "lineId": "L4",
+                "extract": "OSTARA EUROPEAN MID-MARKET FUND II",
+                "lineAfterId": "L5",
+                "lineBeforeId": "L3"
+              },
+              {
+                "lineId": "L11",
+                "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                "lineAfterId": "L12",
+                "lineBeforeId": "L10"
+              },
+              {
+                "lineId": "L37",
+                "extract": "Document: Ostara European Mid-Market Fund II quarterly performance report",
+                "lineAfterId": "L38",
+                "lineBeforeId": "L36"
+              },
+              {
+                "lineId": "L40",
+                "extract": "OSTARA EUROPEAN MID-MARKET FUND II",
+                "lineAfterId": "L41",
+                "lineBeforeId": "L39"
+              },
+              {
+                "lineId": "L48",
+                "extract": "This report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.",
+                "lineAfterId": "L49",
+                "lineBeforeId": "L47"
+              }
+            ],
+            "benchmarkCard": null,
+            "occurrenceCount": 6
+          },
+          {
+            "end": 34,
+            "kind": "name",
+            "shown": {
+              "more": "and 3 more",
+              "shown": [
+                {
+                  "lineId": "L1",
+                  "extract": "Document: Ostara European Mid-Market Fund II fund fact sheet",
+                  "lineAfterId": "L2"
+                },
+                {
+                  "lineId": "L4",
+                  "extract": "OSTARA EUROPEAN MID-MARKET FUND II",
+                  "lineAfterId": "L5",
+                  "lineBeforeId": "L3"
+                },
+                {
+                  "lineId": "L11",
+                  "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                  "lineAfterId": "L12",
+                  "lineBeforeId": "L10"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 6
+            },
+            "start": 20,
+            "lineId": "L1",
+            "status": "matched",
+            "extract": "Document: Ostara European Mid-Market Fund II fund fact sheet",
+            "lineGap": false,
+            "surface": "Market Fund II",
+            "lineAfterId": "L2",
+            "occurrences": [
+              {
+                "lineId": "L1",
+                "extract": "Document: Ostara European Mid-Market Fund II fund fact sheet",
+                "lineAfterId": "L2"
+              },
+              {
+                "lineId": "L4",
+                "extract": "OSTARA EUROPEAN MID-MARKET FUND II",
+                "lineAfterId": "L5",
+                "lineBeforeId": "L3"
+              },
+              {
+                "lineId": "L11",
+                "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                "lineAfterId": "L12",
+                "lineBeforeId": "L10"
+              },
+              {
+                "lineId": "L37",
+                "extract": "Document: Ostara European Mid-Market Fund II quarterly performance report",
+                "lineAfterId": "L38",
+                "lineBeforeId": "L36"
+              },
+              {
+                "lineId": "L40",
+                "extract": "OSTARA EUROPEAN MID-MARKET FUND II",
+                "lineAfterId": "L41",
+                "lineBeforeId": "L39"
+              },
+              {
+                "lineId": "L48",
+                "extract": "This report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.",
+                "lineAfterId": "L49",
+                "lineBeforeId": "L47"
+              }
+            ],
+            "benchmarkCard": null,
+            "occurrenceCount": 6
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "amber",
+          "evidence": "beyond",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": true
+        },
+        "supportSpans": [
+          {
+            "end": 2188,
+            "start": 2054,
+            "passage": "Remaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings.",
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed"
+          }
+        ],
+        "supportState": "partial",
+        "whyItMatters": null,
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "evidenceTrace": [],
+        "partialGround": {
+          "text": "The source confirms that the remaining value is compounding earnings, but it does not address whether this is in line with the manager's long-term underwriting.\nThe source provides mixed earnings results for the portfolio, which partially supports the statement about compounding in line with long-term underwriting. However, it does not explicitly confirm the statement's claim about compounding in line with underwriting.",
+          "source": "stage2_explanation",
+          "recorded": true
+        },
+        "sentenceLabel": "Goes beyond the source",
+        "sentenceState": "beyond",
+        "supportRefIds": [],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "supported_partial",
+        "hasRealExcerpt": true,
+        "noteRejections": [
+          {
+            "reason": "not_named",
+            "surface": "Ostara European Mid"
+          },
+          {
+            "reason": "not_named",
+            "surface": "Market Fund II"
+          }
+        ],
+        "primaryExcerpt": "Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix.",
+        "combinedVerdict": {
+          "tier": "light",
+          "tone": "amber",
+          "label": "Goes beyond the source",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "beyond"
+        },
+        "conflictExcerpt": {
+          "end": 2188,
+          "parts": [
+            "Remaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings."
+          ],
+          "start": 2054,
+          "lineIds": [
+            "L28"
+          ],
+          "passage": "Remaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings.",
+          "excerptCut": false,
+          "excerptLead": false,
+          "excerptTail": false,
+          "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet"
+        },
+        "evidenceSummary": "The quarterly report describes earnings across the portfolio as mixed, with two industrial positions reporting softer order books, and notes remaining value sits in companies compounding earnings. The source addresses compounding earnings but does not address whether performance tracks the manager's long-term underwriting, and the mixed earnings picture does not establish the statement's claim about compounding in line with underwriting.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Ostara European Mid-Market Fund II quarterly performance report",
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [
+          {
+            "ref": "partial",
+            "note": "",
+            "rule": "partial",
+            "quote": ""
+          }
+        ],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "light",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "beyond"
+        },
+        "supportRefTitles": [],
+        "unsupportedSpans": [
+          {
+            "end": 133,
+            "text": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.",
+            "start": 0,
+            "sourceRefId": 0,
+            "statementId": "0",
+            "classification": "partially_confirmed"
+          },
+          {
+            "end": 133,
+            "text": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.",
+            "start": 0,
+            "sourceRefId": 1,
+            "statementId": "0",
+            "classification": "partially_confirmed"
+          }
+        ],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The source confirms that the remaining value is compounding earnings, but it does not address whether this is in line with the manager's long-term underwriting.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "partially_confirmed"
+          },
+          {
+            "role": "facts",
+            "explanation": "The source provides mixed earnings results for the portfolio, which partially supports the statement about compounding in line with long-term underwriting. However, it does not explicitly confirm the statement's claim about compounding in line with underwriting.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "partially_confirmed"
+          }
+        ],
+        "originalClaimText": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.",
+        "primaryExcerptEnd": 1476,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": "Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix.",
+        "reasoningParagraph": "The quarterly report describes earnings across the portfolio as mixed, with two industrial positions reporting softer order books, and notes remaining value sits in companies compounding earnings. The source addresses compounding earnings but does not address whether performance tracks the manager's long-term underwriting, and the mixed earnings picture does not establish the statement's claim about compounding in line with underwriting.",
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 1256,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "moderate",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [
+          "Ostara European Mid",
+          "Market Fund"
+        ],
+        "primaryExcerptLineIds": [
+          "L16"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [],
+        "suppressInQcWorkbench": false,
+        "displayedEvidenceProse": "The quarterly report describes earnings across the portfolio as mixed, with two industrial positions reporting softer order books, and notes remaining value sits in companies compounding earnings. The source addresses compounding earnings but does not address whether performance tracks the manager's long-term underwriting, and the mixed earnings picture does not establish the statement's claim about compounding in line with underwriting.",
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing t"
+            },
+            "passage": "Remaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          },
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing t"
+            },
+            "passage": "Earnings across the portfolio were mixed. Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "partially_confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": null,
+        "complianceSuggestedDirection": null
+      }
+    },
+    {
+      "id": "1",
+      "text": "Net IRR since inception stood at 11.2 percent as at 31 March 2025.",
+      "qcCard": {
+        "tier": "demands",
+        "drops": [
+          {
+            "rule": "note_rejections",
+            "reason": "disputes were dropped",
+            "content": "11.2 percent (not_named)"
+          },
+          {
+            "rule": "date_extract_limit",
+            "reason": "9 date lines are not shown",
+            "content": "L3 | L6 | L7 | L30 | L36 | L39 | L42 | L43 | L48"
+          }
+        ],
+        "index": 1,
+        "setBy": {
+          "role": "facts",
+          "branch": "statementVerdict",
+          "sourceName": "Ostara European Mid-Market Fund II quarterly performance report"
+        },
+        "claims": [],
+        "charEnd": 201,
+        "silences": [
+          {
+            "id": "note_rejections",
+            "count": 1,
+            "reason": "disputes were dropped",
+            "content": [
+              "11.2 percent (not_named)"
+            ]
+          }
+        ],
+        "charStart": 135,
+        "draftSpan": {
+          "endChar": 201,
+          "startChar": 135
+        },
+        "qcClaimId": null,
+        "statement": "Net IRR since inception stood at 11.2 percent as at 31 March 2025.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "conflicting",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": true,
+        "materiality": {
+          "level": "material",
+          "features": [
+            "percentage_metric",
+            "date_period_claim",
+            "regulated_sensitive"
+          ]
+        },
+        "readingNote": {
+          "text": "The fund fact sheet gives net IRR since inception of 11.2% as at 31 March 2025, while the quarterly performance report gives 12.4% at the same date. The sentence uses the 11.2% figure; check which is final.",
+          "bucket": "conflicts",
+          "completion": "none",
+          "documentValues": [
+            {
+              "value": "11.2%",
+              "document": "Ostara European Mid-Market Fund II fund fact sheet"
+            },
+            {
+              "value": "12.4%",
+              "document": "Ostara European Mid-Market Fund II quarterly performance report"
+            }
+          ],
+          "disputedIndices": [],
+          "disputedElements": []
+        },
+        "sourceQuote": "Date: 31 March 2025\nAs at 31 March 2025",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "high",
+        "evidenceLine": "The fund fact sheet gives net IRR since inception of 11.2% as at 31 March 2025, while the quarterly performance report gives 12.4% at the same date. The sentence uses the 11.2% figure; check which is final.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 7,
+            "kind": "name",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L23",
+                  "extract": "Net IRR since inception                              11.2%",
+                  "lineAfterId": "L24",
+                  "lineBeforeId": "L22"
+                },
+                {
+                  "lineId": "L28",
+                  "extract": "Returns are presented net of management fees, carried interest, and Fund-level expenses, in euro. Gross IRR is shown before those items. Past performance is not a guide to future results.",
+                  "lineAfterId": "L29",
+                  "lineBeforeId": "L27"
+                },
+                {
+                  "lineId": "L51",
+                  "extract": "Net IRR since inception was 12.4%. Gross IRR since inception was 15.0%. TVPI was 1.51x and DPI was 0.43x. Returns are presented in euro, net of Fund-level fees and carry unless labelled gross.",
+                  "lineAfterId": "L52",
+                  "lineBeforeId": "L50"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 3
+            },
+            "start": 0,
+            "lineId": "L23",
+            "status": "matched",
+            "extract": "Net IRR since inception                              11.2%",
+            "lineGap": false,
+            "surface": "Net IRR",
+            "lineAfterId": "L24",
+            "occurrences": [
+              {
+                "lineId": "L23",
+                "extract": "Net IRR since inception                              11.2%",
+                "lineAfterId": "L24",
+                "lineBeforeId": "L22"
+              },
+              {
+                "lineId": "L28",
+                "extract": "Returns are presented net of management fees, carried interest, and Fund-level expenses, in euro. Gross IRR is shown before those items. Past performance is not a guide to future results.",
+                "lineAfterId": "L29",
+                "lineBeforeId": "L27"
+              },
+              {
+                "lineId": "L51",
+                "extract": "Net IRR since inception was 12.4%. Gross IRR since inception was 15.0%. TVPI was 1.51x and DPI was 0.43x. Returns are presented in euro, net of Fund-level fees and carry unless labelled gross.",
+                "lineAfterId": "L52",
+                "lineBeforeId": "L50"
+              }
+            ],
+            "lineBeforeId": "L22",
+            "benchmarkCard": null,
+            "occurrenceCount": 3
+          },
+          {
+            "end": 45,
+            "kind": "figure",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L23",
+                  "extract": "Net IRR since inception                              11.2%",
+                  "lineAfterId": "L24",
+                  "lineBeforeId": "L22"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 33,
+            "lineId": "L23",
+            "status": "matched",
+            "extract": "Net IRR since inception                              11.2%",
+            "lineGap": false,
+            "surface": "11.2 percent",
+            "lineAfterId": "L24",
+            "occurrences": [
+              {
+                "lineId": "L23",
+                "extract": "Net IRR since inception                              11.2%",
+                "lineAfterId": "L24",
+                "lineBeforeId": "L22"
+              }
+            ],
+            "lineBeforeId": "L22",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          },
+          {
+            "end": 65,
+            "kind": "date",
+            "shown": {
+              "more": null,
+              "shown": [],
+              "countOnly": true,
+              "occurrenceCount": 9
+            },
+            "start": 52,
+            "lineId": "L3",
+            "status": "matched",
+            "extract": "Date: 31 March 2025",
+            "lineGap": false,
+            "surface": "31 March 2025",
+            "lineAfterId": "L4",
+            "occurrences": [
+              {
+                "lineId": "L3",
+                "extract": "Date: 31 March 2025",
+                "lineAfterId": "L4",
+                "lineBeforeId": "L2"
+              },
+              {
+                "lineId": "L6",
+                "extract": "As at 31 March 2025",
+                "lineAfterId": "L7",
+                "lineBeforeId": "L5"
+              },
+              {
+                "lineId": "L7",
+                "extract": "Period: quarter ended 31 March 2025",
+                "lineAfterId": "L8",
+                "lineBeforeId": "L6"
+              },
+              {
+                "lineId": "L30",
+                "extract": "The Fund held 34 portfolio companies as at 31 March 2025. Sector mix by NAV is approximately 38% business services, 31% healthcare, and 31% specialised industrials. The five largest positions together represent 42% of NAV.",
+                "lineAfterId": "L31",
+                "lineBeforeId": "L29"
+              },
+              {
+                "lineId": "L36",
+                "extract": "This document is a summary of Fund terms and performance as at 31 March 2025. It does not constitute an offer to sell, or a solicitation of an offer to buy, any interest in the Fund.",
+                "lineAfterId": "L37",
+                "lineBeforeId": "L35"
+              },
+              {
+                "lineId": "L39",
+                "extract": "Date: 31 March 2025",
+                "lineAfterId": "L40",
+                "lineBeforeId": "L38"
+              },
+              {
+                "lineId": "L42",
+                "extract": "As at 31 March 2025",
+                "lineAfterId": "L43",
+                "lineBeforeId": "L41"
+              },
+              {
+                "lineId": "L43",
+                "extract": "Period: quarter ended 31 March 2025",
+                "lineAfterId": "L44",
+                "lineBeforeId": "L42"
+              },
+              {
+                "lineId": "L48",
+                "extract": "This report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.",
+                "lineAfterId": "L49",
+                "lineBeforeId": "L47"
+              }
+            ],
+            "lineBeforeId": "L2",
+            "benchmarkCard": null,
+            "occurrenceCount": 9
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "red",
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": true
+        },
+        "supportSpans": [
+          {
+            "end": 1382,
+            "start": 1324,
+            "passage": "Net IRR since inception                              11.2%",
+            "sourceRefId": 0,
+            "statementId": "1",
+            "classification": "confirmed"
+          },
+          {
+            "end": 692,
+            "start": 658,
+            "passage": "Net IRR since inception was 12.4%.",
+            "sourceRefId": 1,
+            "statementId": "1",
+            "classification": "conflicting"
+          }
+        ],
+        "supportState": "conflicting",
+        "whyItMatters": null,
+        "editorialNote": null,
+        "evidenceTrace": [],
+        "sentenceLabel": "Conflicts with the source",
+        "sentenceState": "conflicts",
+        "supportRefIds": [
+          0
+        ],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "conflict",
+        "hasRealExcerpt": true,
+        "noteRejections": [
+          {
+            "reason": "not_named",
+            "surface": "11.2 percent"
+          }
+        ],
+        "primaryExcerpt": "Date: 31 March 2025\nAs at 31 March 2025",
+        "combinedVerdict": {
+          "tier": "demands",
+          "tone": "red",
+          "label": "Conflicts with the source",
+          "setBy": {
+            "role": "facts",
+            "branch": "statementVerdict",
+            "source": "note",
+            "sourceName": "Ostara European Mid-Market Fund II quarterly performance report"
+          },
+          "state": "conflicts"
+        },
+        "conflictExcerpt": {
+          "end": 1382,
+          "parts": [
+            "Net IRR since inception                              11.2%"
+          ],
+          "start": 1324,
+          "lineIds": [
+            "L20"
+          ],
+          "passage": "Net IRR since inception                              11.2%",
+          "excerptCut": false,
+          "excerptLead": false,
+          "excerptTail": false,
+          "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet"
+        },
+        "evidenceSummary": "The fund fact sheet gives net IRR since inception of 11.2% as at 31 March 2025, while the quarterly performance report gives 12.4% at the same date. The sentence uses the 11.2% figure; check which is final.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Ostara European Mid-Market Fund II quarterly performance report",
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "demands",
+          "setBy": {
+            "role": "facts",
+            "branch": "statementVerdict",
+            "sourceName": "Ostara European Mid-Market Fund II quarterly performance report"
+          },
+          "state": "conflicts"
+        },
+        "supportRefTitles": [
+          "Ostara European Mid-Market Fund II fund fact sheet"
+        ],
+        "unsupportedSpans": [
+          {
+            "end": 66,
+            "text": "Net IRR since inception stood at 11.2 percent as at 31 March 2025.",
+            "start": 0,
+            "sourceRefId": 1,
+            "statementId": "1",
+            "classification": "conflicting"
+          }
+        ],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The sentence states the net IRR since inception as 11.2% as at 31 March 2025, which matches the source exactly.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "confirmed"
+          },
+          {
+            "role": "facts",
+            "explanation": "The sentence states a net IRR of 11.2 percent, while the source reports a net IRR of 12.4 percent for the same period. This is a magnitude conflict beyond rounding.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "conflicting"
+          }
+        ],
+        "originalClaimText": "Net IRR since inception stood at 11.2 percent as at 31 March 2025.",
+        "primaryExcerptEnd": 692,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [
+          {
+            "note": "The percentage is written '11.2 percent'. Write it with %.",
+            "rule": "percentage_notation",
+            "span": [
+              {
+                "endChar": 45,
+                "startChar": 33
+              }
+            ],
+            "text": "The percentage is written '11.2 percent'. Write it with %.",
+            "quote": "11.2 percent",
+            "category": "style_guide",
+            "concernCode": "percentage_notation",
+            "concernText": "The percentage is written '11.2 percent'. Write it with %.",
+            "suggestedDirection": "Write '11.2 percent' with %."
+          }
+        ],
+        "primaryExcerptText": "Date: 31 March 2025\nAs at 31 March 2025",
+        "reasoningParagraph": "The fund fact sheet gives net IRR since inception of 11.2% as at 31 March 2025, while the quarterly performance report gives 12.4% at the same date. The sentence uses the 11.2% figure; check which is final.",
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 658,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "high",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": [
+          "L12"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [
+          "The documents differ. Ostara European Mid-Market Fund II fund fact sheet gives 11.2%. Ostara European Mid-Market Fund II quarterly performance report gives 12.4%."
+        ],
+        "suppressInQcWorkbench": false,
+        "displayedEvidenceProse": "The fund fact sheet gives net IRR since inception of 11.2% as at 31 March 2025, while the quarterly performance report gives 12.4% at the same date. The sentence uses the 11.2% figure; check which is final.",
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Net IRR since inception was 12.4%."
+            },
+            "passage": "Net IRR since inception 11.2%",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          },
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Net IRR since inception was 12.4%."
+            },
+            "passage": "Net IRR since inception was 12.4%.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": "Write '11.2 percent' with %.",
+        "complianceSuggestedDirection": null
+      }
+    },
+    {
+      "id": "2",
+      "text": "The fund held 36 portfolio companies at quarter end.",
+      "qcCard": {
+        "tier": "demands",
+        "index": 2,
+        "setBy": {
+          "role": "facts",
+          "branch": "statementVerdict",
+          "sourceName": "Ostara European Mid-Market Fund II fund fact sheet"
+        },
+        "claims": [],
+        "charEnd": 255,
+        "charStart": 203,
+        "draftSpan": {
+          "endChar": 255,
+          "startChar": 203
+        },
+        "qcClaimId": null,
+        "statement": "The fund held 36 portfolio companies at quarter end.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "conflicting",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": true,
+        "materiality": {
+          "level": "material",
+          "features": []
+        },
+        "readingNote": {
+          "text": "The quarterly performance report gives 36 portfolio companies at 31 March 2025, while the fund fact sheet gives 34 as at the same date. Check which figure is final.",
+          "bucket": "conflicts",
+          "completion": "none",
+          "documentValues": [
+            {
+              "value": "34 portfolio companies",
+              "document": "Ostara European Mid-Market Fund II fund fact sheet"
+            },
+            {
+              "value": "36 portfolio companies",
+              "document": "Ostara European Mid-Market Fund II quarterly performance report"
+            }
+          ],
+          "disputedIndices": [
+            1
+          ],
+          "disputedElements": [
+            "36"
+          ]
+        },
+        "sourceQuote": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "high",
+        "evidenceLine": "The quarterly performance report gives 36 portfolio companies at 31 March 2025, while the fund fact sheet gives 34 as at the same date. Check which figure is final.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 3,
+            "kind": "name",
+            "shown": {
+              "more": "and 14 more",
+              "shown": [
+                {
+                  "lineId": "L11",
+                  "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                  "lineAfterId": "L12",
+                  "lineBeforeId": "L10"
+                },
+                {
+                  "lineId": "L12",
+                  "extract": "The Fund is advised by Ostara Capital Partners. The investment team is led by Managing Partner Clara Voss and Partner Henrik Dahl.",
+                  "lineAfterId": "L13",
+                  "lineBeforeId": "L11"
+                },
+                {
+                  "lineId": "L17",
+                  "extract": "Geographic focus                                     Western and Northern Europe",
+                  "lineAfterId": "L18",
+                  "lineBeforeId": "L16"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 17
+            },
+            "start": 0,
+            "lineId": "L11",
+            "status": "matched",
+            "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+            "lineGap": false,
+            "surface": "The",
+            "lineAfterId": "L12",
+            "occurrences": [
+              {
+                "lineId": "L11",
+                "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                "lineAfterId": "L12",
+                "lineBeforeId": "L10"
+              },
+              {
+                "lineId": "L12",
+                "extract": "The Fund is advised by Ostara Capital Partners. The investment team is led by Managing Partner Clara Voss and Partner Henrik Dahl.",
+                "lineAfterId": "L13",
+                "lineBeforeId": "L11"
+              },
+              {
+                "lineId": "L17",
+                "extract": "Geographic focus                                     Western and Northern Europe",
+                "lineAfterId": "L18",
+                "lineBeforeId": "L16"
+              },
+              {
+                "lineId": "L19",
+                "extract": "Management fee                                       1.75% on committed capital during the investment period; 1.50% on invested capital thereafter",
+                "lineAfterId": "L20",
+                "lineBeforeId": "L18"
+              },
+              {
+                "lineId": "L30",
+                "extract": "The Fund held 34 portfolio companies as at 31 March 2025. Sector mix by NAV is approximately 38% business services, 31% healthcare, and 31% specialised industrials. The five largest positions together represent 42% of NAV.",
+                "lineAfterId": "L31",
+                "lineBeforeId": "L29"
+              },
+              {
+                "lineId": "L31",
+                "extract": "Remaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings.",
+                "lineAfterId": "L32",
+                "lineBeforeId": "L30"
+              },
+              {
+                "lineId": "L33",
+                "extract": "The Fund reports to the Limited Partner Advisory Committee each quarter. Valuation is prepared by the manager and reviewed by an independent valuation agent. The next LPAC meeting is scheduled for May 2025.",
+                "lineAfterId": "L34",
+                "lineBeforeId": "L32"
+              },
+              {
+                "lineId": "L36",
+                "extract": "This document is a summary of Fund terms and performance as at 31 March 2025. It does not constitute an offer to sell, or a solicitation of an offer to buy, any interest in the Fund.",
+                "lineAfterId": "L37",
+                "lineBeforeId": "L35"
+              },
+              {
+                "lineId": "L48",
+                "extract": "This report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.",
+                "lineAfterId": "L49",
+                "lineBeforeId": "L47"
+              },
+              {
+                "lineId": "L50",
+                "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                "lineAfterId": "L51",
+                "lineBeforeId": "L49"
+              },
+              {
+                "lineId": "L52",
+                "extract": "CASH FLOWS IN THE QUARTER",
+                "lineAfterId": "L53",
+                "lineBeforeId": "L51"
+              },
+              {
+                "lineId": "L53",
+                "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                "lineAfterId": "L54",
+                "lineBeforeId": "L52"
+              },
+              {
+                "lineId": "L55",
+                "extract": "Earnings across the portfolio were mixed. Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix. No portfolio company was written down to nil in the quarter.",
+                "lineAfterId": "L56",
+                "lineBeforeId": "L54"
+              },
+              {
+                "lineId": "L56",
+                "extract": "Helvetic Components remains a core holding after the partial exit. The remaining stake is carried at a valuation consistent with the transaction multiple on the sold slice, after a liquidity discount.",
+                "lineAfterId": "L57",
+                "lineBeforeId": "L55"
+              },
+              {
+                "lineId": "L58",
+                "extract": "NAV of EUR 812 million was prepared by the manager and reviewed by the independent valuation agent. Unrealised investments are held at fair value in accordance with IPEV guidelines. Foreign-exchange translation into euro used period-end rates.",
+                "lineAfterId": "L59",
+                "lineBeforeId": "L57"
+              },
+              {
+                "lineId": "L60",
+                "extract": "The investment period has ended. The team is focused on supporting remaining holdings through the next phase of earnings growth and on orderly realisations where exit conditions are constructive. The next report will cover the quarter ending 30 June 2025.",
+                "lineAfterId": "L61",
+                "lineBeforeId": "L59"
+              },
+              {
+                "lineId": "L62",
+                "extract": "Questions on this report should be directed to ir@ostaracapital.example. This document is for the Fund's limited partners and their advisers only.",
+                "lineBeforeId": "L61"
+              }
+            ],
+            "lineBeforeId": "L10",
+            "benchmarkCard": null,
+            "occurrenceCount": 17
+          },
+          {
+            "end": 16,
+            "kind": "figure",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L50",
+                  "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                  "lineAfterId": "L51",
+                  "lineBeforeId": "L49"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 14,
+            "lineId": "L50",
+            "status": "matched_disputed",
+            "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+            "lineGap": false,
+            "surface": "36",
+            "lineAfterId": "L51",
+            "occurrences": [
+              {
+                "lineId": "L50",
+                "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                "lineAfterId": "L51",
+                "lineBeforeId": "L49"
+              }
+            ],
+            "lineBeforeId": "L49",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "red",
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": true
+        },
+        "supportSpans": [
+          {
+            "end": 1887,
+            "start": 1830,
+            "passage": "The Fund held 34 portfolio companies as at 31 March 2025.",
+            "sourceRefId": 0,
+            "statementId": "2",
+            "classification": "conflicting"
+          },
+          {
+            "end": 656,
+            "start": 535,
+            "passage": "The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+            "sourceRefId": 1,
+            "statementId": "2",
+            "classification": "confirmed"
+          }
+        ],
+        "supportState": "conflicting",
+        "whyItMatters": null,
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "evidenceTrace": [],
+        "sentenceLabel": "Conflicts with the source",
+        "sentenceState": "conflicts",
+        "supportRefIds": [
+          1
+        ],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "conflict",
+        "hasRealExcerpt": true,
+        "primaryExcerpt": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+        "combinedVerdict": {
+          "tier": "demands",
+          "tone": "red",
+          "label": "Conflicts with the source",
+          "setBy": {
+            "role": "facts",
+            "branch": "statementVerdict",
+            "source": "note",
+            "sourceName": "Ostara European Mid-Market Fund II fund fact sheet"
+          },
+          "state": "conflicts"
+        },
+        "conflictExcerpt": {
+          "end": 656,
+          "parts": [
+            "The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials."
+          ],
+          "start": 535,
+          "lineIds": [
+            "L11"
+          ],
+          "passage": "The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+          "excerptCut": false,
+          "excerptLead": false,
+          "excerptTail": false,
+          "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report"
+        },
+        "evidenceSummary": "The quarterly performance report gives 36 portfolio companies at 31 March 2025, while the fund fact sheet gives 34 as at the same date. Check which figure is final.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Ostara European Mid-Market Fund II fund fact sheet",
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "demands",
+          "setBy": {
+            "role": "facts",
+            "branch": "statementVerdict",
+            "sourceName": "Ostara European Mid-Market Fund II fund fact sheet"
+          },
+          "state": "conflicts"
+        },
+        "supportRefTitles": [
+          "Ostara European Mid-Market Fund II quarterly performance report"
+        ],
+        "unsupportedSpans": [
+          {
+            "end": 52,
+            "text": "The fund held 36 portfolio companies at quarter end.",
+            "start": 0,
+            "sourceRefId": 0,
+            "statementId": "2",
+            "classification": "conflicting"
+          }
+        ],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The sentence states the fund held 36 portfolio companies, while the source states it held 34. This is a direct conflict in the number of portfolio companies reported for the same period.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "conflicting"
+          },
+          {
+            "role": "facts",
+            "explanation": "The sentence states that the fund held 36 portfolio companies at the end of the quarter, which is directly confirmed by the source.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "confirmed"
+          }
+        ],
+        "originalClaimText": "The fund held 36 portfolio companies at quarter end.",
+        "primaryExcerptEnd": 1887,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+        "reasoningParagraph": "The quarterly performance report gives 36 portfolio companies at 31 March 2025, while the fund fact sheet gives 34 as at the same date. Check which figure is final.",
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 1830,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "high",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": [
+          "L27"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [
+          "The documents differ. Ostara European Mid-Market Fund II fund fact sheet gives 34 portfolio companies. Ostara European Mid-Market Fund II quarterly performance report gives 36 portfolio companies."
+        ],
+        "suppressInQcWorkbench": false,
+        "displayedEvidenceProse": "The quarterly performance report gives 36 portfolio companies at 31 March 2025, while the fund fact sheet gives 34 as at the same date. Check which figure is final.",
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "The Fund held 34 portfolio companies as at 31 March 2025."
+            },
+            "passage": "The Fund held 34 portfolio companies as at 31 March 2025.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_cb2f6fd107"
+          },
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "The Fund held 34 portfolio companies as at 31 March 2025."
+            },
+            "passage": "The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": null,
+        "complianceSuggestedDirection": null
+      }
+    },
+    {
+      "id": "3",
+      "text": "Total commitments were EUR 1.3 billion.",
+      "qcCard": {
+        "tier": "demands",
+        "index": 3,
+        "setBy": {
+          "role": "facts",
+          "branch": "statementVerdict",
+          "sourceName": "Ostara European Mid-Market Fund II fund fact sheet"
+        },
+        "claims": [],
+        "charEnd": 296,
+        "charStart": 257,
+        "draftSpan": {
+          "endChar": 296,
+          "startChar": 257
+        },
+        "qcClaimId": null,
+        "statement": "Total commitments were EUR 1.3 billion.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "conflicting",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": true,
+        "materiality": {
+          "level": "material",
+          "features": [
+            "monetary_figure"
+          ]
+        },
+        "readingNote": {
+          "text": "The fact sheet gives total commitments of EUR 1.2 billion and the quarterly performance report gives EUR 1.25 billion, while the sentence says EUR 1.3 billion. Neither figure matches, and the two source figures differ, so check which is final.",
+          "bucket": "conflicts",
+          "completion": "none",
+          "documentValues": [
+            {
+              "value": "EUR 1.2 billion",
+              "document": "Ostara European Mid-Market Fund II fund fact sheet"
+            },
+            {
+              "value": "EUR 1.25 billion",
+              "document": "Ostara European Mid-Market Fund II quarterly performance report"
+            }
+          ],
+          "disputedIndices": [
+            1
+          ],
+          "disputedElements": [
+            "EUR 1.3 billion"
+          ]
+        },
+        "sourceQuote": "Total commitments stood at EUR 1.25 billion.\n\nAlso in the source (line 14): Total commitments EUR 1.2 billion",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "high",
+        "evidenceLine": "The fact sheet gives total commitments of EUR 1.2 billion and the quarterly performance report gives EUR 1.25 billion, while the sentence says EUR 1.3 billion. Neither figure matches, and the two source figures differ, so check which is final.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 5,
+            "kind": "name",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L14",
+                  "extract": "Total commitments                                    EUR 1.2 billion",
+                  "lineAfterId": "L15",
+                  "lineBeforeId": "L13"
+                },
+                {
+                  "lineId": "L50",
+                  "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                  "lineAfterId": "L51",
+                  "lineBeforeId": "L49"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 2
+            },
+            "start": 0,
+            "lineId": "L14",
+            "status": "matched",
+            "extract": "Total commitments                                    EUR 1.2 billion",
+            "lineGap": false,
+            "surface": "Total",
+            "lineAfterId": "L15",
+            "occurrences": [
+              {
+                "lineId": "L14",
+                "extract": "Total commitments                                    EUR 1.2 billion",
+                "lineAfterId": "L15",
+                "lineBeforeId": "L13"
+              },
+              {
+                "lineId": "L50",
+                "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                "lineAfterId": "L51",
+                "lineBeforeId": "L49"
+              }
+            ],
+            "lineBeforeId": "L13",
+            "benchmarkCard": null,
+            "occurrenceCount": 2
+          },
+          {
+            "end": 38,
+            "kind": "figure",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L50",
+                  "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                  "lineAfterId": "L51",
+                  "lineBeforeId": "L49"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 23,
+            "lineId": "L50",
+            "status": "matched_disputed",
+            "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+            "lineGap": false,
+            "surface": "EUR 1.3 billion",
+            "lineAfterId": "L51",
+            "occurrences": [
+              {
+                "lineId": "L50",
+                "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                "lineAfterId": "L51",
+                "lineBeforeId": "L49"
+              }
+            ],
+            "lineBeforeId": "L49",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "red",
+          "evidence": "conflicting",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": true
+        },
+        "supportSpans": [
+          {
+            "end": 774,
+            "start": 706,
+            "passage": "Total commitments                                    EUR 1.2 billion",
+            "sourceRefId": 0,
+            "statementId": "3",
+            "classification": "conflicting"
+          },
+          {
+            "end": 504,
+            "start": 460,
+            "passage": "Total commitments stood at EUR 1.25 billion.",
+            "sourceRefId": 1,
+            "statementId": "3",
+            "classification": "conflicting"
+          }
+        ],
+        "supportState": "conflicting",
+        "whyItMatters": null,
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "evidenceTrace": [],
+        "sentenceLabel": "Conflicts with the source",
+        "sentenceState": "conflicts",
+        "supportRefIds": [],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "conflict",
+        "hasRealExcerpt": true,
+        "primaryExcerpt": "Total commitments stood at EUR 1.25 billion.\n\nAlso in the source (line 14): Total commitments EUR 1.2 billion",
+        "combinedVerdict": {
+          "tier": "demands",
+          "tone": "red",
+          "label": "Conflicts with the source",
+          "setBy": {
+            "role": "facts",
+            "branch": "statementVerdict",
+            "source": "note",
+            "sourceName": "Ostara European Mid-Market Fund II fund fact sheet"
+          },
+          "state": "conflicts"
+        },
+        "conflictExcerpt": {
+          "end": 774,
+          "parts": [
+            "Total commitments                                    EUR 1.2 billion"
+          ],
+          "start": 706,
+          "lineIds": [
+            "L11"
+          ],
+          "passage": "Total commitments                                    EUR 1.2 billion",
+          "excerptCut": false,
+          "excerptLead": false,
+          "excerptTail": false,
+          "fullPassage": "Total commitments                                    EUR 1.2 billion",
+          "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet"
+        },
+        "evidenceSummary": "The fact sheet gives total commitments of EUR 1.2 billion and the quarterly performance report gives EUR 1.25 billion, while the sentence says EUR 1.3 billion. Neither figure matches, and the two source figures differ, so check which is final.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Ostara European Mid-Market Fund II quarterly performance report",
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "demands",
+          "setBy": {
+            "role": "facts",
+            "branch": "statementVerdict",
+            "sourceName": "Ostara European Mid-Market Fund II fund fact sheet"
+          },
+          "state": "conflicts"
+        },
+        "supportRefTitles": [],
+        "unsupportedSpans": [
+          {
+            "end": 39,
+            "text": "Total commitments were EUR 1.3 billion.",
+            "start": 0,
+            "sourceRefId": 0,
+            "statementId": "3",
+            "classification": "conflicting"
+          },
+          {
+            "end": 39,
+            "text": "Total commitments were EUR 1.3 billion.",
+            "start": 0,
+            "sourceRefId": 1,
+            "statementId": "3",
+            "classification": "conflicting"
+          }
+        ],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The sentence states total commitments as EUR 1.3 billion, while the source states them as EUR 1.2 billion. This is a magnitude conflict beyond rounding.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "conflicting"
+          },
+          {
+            "role": "facts",
+            "explanation": "The sentence states total commitments as EUR 1.3 billion, while the source reports them as EUR 1.25 billion. This is a magnitude conflict beyond rounding.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "conflicting"
+          }
+        ],
+        "originalClaimText": "Total commitments were EUR 1.3 billion.",
+        "primaryExcerptEnd": 504,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": "Total commitments stood at EUR 1.25 billion.\n\nAlso in the source (line 14): Total commitments EUR 1.2 billion",
+        "reasoningParagraph": "The fact sheet gives total commitments of EUR 1.2 billion and the quarterly performance report gives EUR 1.25 billion, while the sentence says EUR 1.3 billion. Neither figure matches, and the two source figures differ, so check which is final.",
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 460,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "high",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": [
+          "L11"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [
+          "The documents differ. Ostara European Mid-Market Fund II fund fact sheet gives EUR 1.2 billion. Ostara European Mid-Market Fund II quarterly performance report gives EUR 1.25 billion."
+        ],
+        "suppressInQcWorkbench": false,
+        "displayedEvidenceProse": "The fact sheet gives total commitments of EUR 1.2 billion and the quarterly performance report gives EUR 1.25 billion, while the sentence says EUR 1.3 billion. Neither figure matches, and the two source figures differ, so check which is final.",
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Total commitments stood at EUR 1.25 billion."
+            },
+            "passage": "Total commitments EUR 1.2 billion",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_cb2f6fd107"
+          },
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Total commitments stood at EUR 1.25 billion."
+            },
+            "passage": "Total commitments stood at EUR 1.25 billion.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "conflicting",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": null,
+        "complianceSuggestedDirection": null
+      }
+    },
+    {
+      "id": "4",
+      "text": "The fund is a 2019 vintage.",
+      "qcCard": {
+        "tier": "quiet",
+        "index": 4,
+        "setBy": {
+          "branch": "statementVerdict"
+        },
+        "claims": [],
+        "charEnd": 325,
+        "charStart": 298,
+        "draftSpan": {
+          "endChar": 325,
+          "startChar": 298
+        },
+        "qcClaimId": null,
+        "statement": "The fund is a 2019 vintage.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "supported",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": false,
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "date_period_claim"
+          ]
+        },
+        "readingNote": {
+          "text": "Both the fact sheet and the quarterly performance report describe Ostara European Mid-Market Fund II as a 2019 vintage fund, in line with the sentence.",
+          "bucket": "none",
+          "completion": "none",
+          "documentValues": [
+            {
+              "value": "2019 vintage",
+              "document": "Ostara European Mid-Market Fund II fund fact sheet"
+            },
+            {
+              "value": "2019 vintage",
+              "document": "Ostara European Mid-Market Fund II quarterly performance report"
+            }
+          ],
+          "disputedIndices": [],
+          "disputedElements": []
+        },
+        "sourceQuote": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund.",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "none",
+        "evidenceLine": "Both the fact sheet and the quarterly performance report describe Ostara European Mid-Market Fund II as a 2019 vintage fund, in line with the sentence.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 3,
+            "kind": "name",
+            "shown": {
+              "more": "and 14 more",
+              "shown": [
+                {
+                  "lineId": "L11",
+                  "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                  "lineAfterId": "L12",
+                  "lineBeforeId": "L10"
+                },
+                {
+                  "lineId": "L12",
+                  "extract": "The Fund is advised by Ostara Capital Partners. The investment team is led by Managing Partner Clara Voss and Partner Henrik Dahl.",
+                  "lineAfterId": "L13",
+                  "lineBeforeId": "L11"
+                },
+                {
+                  "lineId": "L17",
+                  "extract": "Geographic focus                                     Western and Northern Europe",
+                  "lineAfterId": "L18",
+                  "lineBeforeId": "L16"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 17
+            },
+            "start": 0,
+            "lineId": "L11",
+            "status": "matched",
+            "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+            "lineGap": false,
+            "surface": "The",
+            "lineAfterId": "L12",
+            "occurrences": [
+              {
+                "lineId": "L11",
+                "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                "lineAfterId": "L12",
+                "lineBeforeId": "L10"
+              },
+              {
+                "lineId": "L12",
+                "extract": "The Fund is advised by Ostara Capital Partners. The investment team is led by Managing Partner Clara Voss and Partner Henrik Dahl.",
+                "lineAfterId": "L13",
+                "lineBeforeId": "L11"
+              },
+              {
+                "lineId": "L17",
+                "extract": "Geographic focus                                     Western and Northern Europe",
+                "lineAfterId": "L18",
+                "lineBeforeId": "L16"
+              },
+              {
+                "lineId": "L19",
+                "extract": "Management fee                                       1.75% on committed capital during the investment period; 1.50% on invested capital thereafter",
+                "lineAfterId": "L20",
+                "lineBeforeId": "L18"
+              },
+              {
+                "lineId": "L30",
+                "extract": "The Fund held 34 portfolio companies as at 31 March 2025. Sector mix by NAV is approximately 38% business services, 31% healthcare, and 31% specialised industrials. The five largest positions together represent 42% of NAV.",
+                "lineAfterId": "L31",
+                "lineBeforeId": "L29"
+              },
+              {
+                "lineId": "L31",
+                "extract": "Remaining value is concentrated in companies that have completed the first phase of operational work and are now compounding earnings.",
+                "lineAfterId": "L32",
+                "lineBeforeId": "L30"
+              },
+              {
+                "lineId": "L33",
+                "extract": "The Fund reports to the Limited Partner Advisory Committee each quarter. Valuation is prepared by the manager and reviewed by an independent valuation agent. The next LPAC meeting is scheduled for May 2025.",
+                "lineAfterId": "L34",
+                "lineBeforeId": "L32"
+              },
+              {
+                "lineId": "L36",
+                "extract": "This document is a summary of Fund terms and performance as at 31 March 2025. It does not constitute an offer to sell, or a solicitation of an offer to buy, any interest in the Fund.",
+                "lineAfterId": "L37",
+                "lineBeforeId": "L35"
+              },
+              {
+                "lineId": "L48",
+                "extract": "This report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.",
+                "lineAfterId": "L49",
+                "lineBeforeId": "L47"
+              },
+              {
+                "lineId": "L50",
+                "extract": "Total commitments stood at EUR 1.25 billion. Fund NAV was EUR 812 million. The Fund held 36 portfolio companies at quarter end, spanning business services, healthcare, and specialised industrials.",
+                "lineAfterId": "L51",
+                "lineBeforeId": "L49"
+              },
+              {
+                "lineId": "L52",
+                "extract": "CASH FLOWS IN THE QUARTER",
+                "lineAfterId": "L53",
+                "lineBeforeId": "L51"
+              },
+              {
+                "lineId": "L53",
+                "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                "lineAfterId": "L54",
+                "lineBeforeId": "L52"
+              },
+              {
+                "lineId": "L55",
+                "extract": "Earnings across the portfolio were mixed. Healthcare holdings continued to contribute the largest share of NAV. Two industrial positions reported softer order books in the first weeks of the year, which the operating partners are addressing through cost and mix. No portfolio company was written down to nil in the quarter.",
+                "lineAfterId": "L56",
+                "lineBeforeId": "L54"
+              },
+              {
+                "lineId": "L56",
+                "extract": "Helvetic Components remains a core holding after the partial exit. The remaining stake is carried at a valuation consistent with the transaction multiple on the sold slice, after a liquidity discount.",
+                "lineAfterId": "L57",
+                "lineBeforeId": "L55"
+              },
+              {
+                "lineId": "L58",
+                "extract": "NAV of EUR 812 million was prepared by the manager and reviewed by the independent valuation agent. Unrealised investments are held at fair value in accordance with IPEV guidelines. Foreign-exchange translation into euro used period-end rates.",
+                "lineAfterId": "L59",
+                "lineBeforeId": "L57"
+              },
+              {
+                "lineId": "L60",
+                "extract": "The investment period has ended. The team is focused on supporting remaining holdings through the next phase of earnings growth and on orderly realisations where exit conditions are constructive. The next report will cover the quarter ending 30 June 2025.",
+                "lineAfterId": "L61",
+                "lineBeforeId": "L59"
+              },
+              {
+                "lineId": "L62",
+                "extract": "Questions on this report should be directed to ir@ostaracapital.example. This document is for the Fund's limited partners and their advisers only.",
+                "lineBeforeId": "L61"
+              }
+            ],
+            "lineBeforeId": "L10",
+            "benchmarkCard": null,
+            "occurrenceCount": 17
+          },
+          {
+            "end": 18,
+            "kind": "date",
+            "shown": {
+              "more": "and 1 more",
+              "shown": [
+                {
+                  "lineId": "L11",
+                  "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                  "lineAfterId": "L12",
+                  "lineBeforeId": "L10"
+                },
+                {
+                  "lineId": "L15",
+                  "extract": "Fund vintage                                         2019",
+                  "lineAfterId": "L16",
+                  "lineBeforeId": "L14"
+                },
+                {
+                  "lineId": "L16",
+                  "extract": "Investment period                                    2019–2024",
+                  "lineAfterId": "L17",
+                  "lineBeforeId": "L15"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 4
+            },
+            "start": 14,
+            "lineId": "L11",
+            "status": "matched",
+            "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+            "lineGap": false,
+            "surface": "2019",
+            "lineAfterId": "L12",
+            "occurrences": [
+              {
+                "lineId": "L11",
+                "extract": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies. The strategy concentrates on business services, healthcare, and specialised industrials, typically with enterprise values between EUR 75 million and EUR 400 million at entry.",
+                "lineAfterId": "L12",
+                "lineBeforeId": "L10"
+              },
+              {
+                "lineId": "L15",
+                "extract": "Fund vintage                                         2019",
+                "lineAfterId": "L16",
+                "lineBeforeId": "L14"
+              },
+              {
+                "lineId": "L16",
+                "extract": "Investment period                                    2019–2024",
+                "lineAfterId": "L17",
+                "lineBeforeId": "L15"
+              },
+              {
+                "lineId": "L48",
+                "extract": "This report sets out the Fund's performance for the quarter ended 31 March 2025. Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund. Figures below are as at the period end unless stated otherwise.",
+                "lineAfterId": "L49",
+                "lineBeforeId": "L47"
+              }
+            ],
+            "lineBeforeId": "L10",
+            "benchmarkCard": null,
+            "occurrenceCount": 4
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "green",
+          "evidence": "nothingRaised",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": false
+        },
+        "supportSpans": [
+          {
+            "end": 386,
+            "start": 204,
+            "passage": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies.",
+            "sourceRefId": 0,
+            "statementId": "4",
+            "classification": "confirmed"
+          },
+          {
+            "end": 379,
+            "start": 294,
+            "passage": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund.",
+            "sourceRefId": 1,
+            "statementId": "4",
+            "classification": "confirmed"
+          }
+        ],
+        "supportState": "supported",
+        "whyItMatters": null,
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "evidenceTrace": [],
+        "sentenceLabel": "Nothing raised",
+        "sentenceState": "nothing_raised",
+        "supportRefIds": [
+          0,
+          1
+        ],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "supported_full",
+        "hasRealExcerpt": true,
+        "primaryExcerpt": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund.",
+        "combinedVerdict": {
+          "tier": "quiet",
+          "tone": "none",
+          "label": "Nothing raised",
+          "setBy": null,
+          "state": "nothing_raised"
+        },
+        "conflictExcerpt": null,
+        "evidenceSummary": "Both the fact sheet and the quarterly performance report describe Ostara European Mid-Market Fund II as a 2019 vintage fund, in line with the sentence.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Ostara European Mid-Market Fund II quarterly performance report",
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "quiet",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "nothing_raised"
+        },
+        "supportRefTitles": [
+          "Ostara European Mid-Market Fund II fund fact sheet",
+          "Ostara European Mid-Market Fund II quarterly performance report"
+        ],
+        "unsupportedSpans": [],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The sentence states that the fund is a 2019 vintage, which is directly confirmed by the source.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "confirmed"
+          },
+          {
+            "role": "facts",
+            "explanation": "The sentence states that the fund is a 2019 vintage, which is directly confirmed by the source passage.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "confirmed"
+          }
+        ],
+        "originalClaimText": "The fund is a 2019 vintage.",
+        "primaryExcerptEnd": 379,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund.",
+        "reasoningParagraph": "Both the fact sheet and the quarterly performance report describe Ostara European Mid-Market Fund II as a 2019 vintage fund, in line with the sentence.",
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 294,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "none",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": [
+          "L9"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [],
+        "suppressInQcWorkbench": false,
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund."
+            },
+            "passage": "Ostara European Mid-Market Fund II (\"Ostara II\" or \"the Fund\") is a 2019 vintage buyout fund investing in control and significant-minority positions in European mid-market companies.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          },
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund."
+            },
+            "passage": "Ostara European Mid-Market Fund II is a 2019 vintage European mid-market buyout fund.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": null,
+        "complianceSuggestedDirection": null
+      }
+    },
+    {
+      "id": "5",
+      "text": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components.",
+      "qcCard": {
+        "tier": "quiet",
+        "index": 5,
+        "setBy": {
+          "branch": "statementVerdict"
+        },
+        "claims": [],
+        "charEnd": 431,
+        "charStart": 327,
+        "draftSpan": {
+          "endChar": 431,
+          "startChar": 327
+        },
+        "qcClaimId": null,
+        "statement": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components.",
+        "decomposed": false,
+        "excerptCut": false,
+        "displayMode": "supported",
+        "excerptLead": false,
+        "excerptTail": false,
+        "hasConflict": false,
+        "materiality": {
+          "level": "mechanical",
+          "features": [
+            "monetary_figure",
+            "named_person_entity_attribution"
+          ]
+        },
+        "readingNote": {
+          "text": "The quarterly performance report states realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG, which supports the sentence.",
+          "bucket": "none",
+          "completion": "none",
+          "documentValues": [
+            {
+              "value": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG.",
+              "document": "Ostara European Mid-Market Fund II quarterly performance report"
+            }
+          ],
+          "disputedIndices": [],
+          "disputedElements": []
+        },
+        "sourceQuote": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG.",
+        "wordingLine": null,
+        "claimUpgrade": false,
+        "concernLevel": "none",
+        "evidenceLine": "The quarterly performance report states realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG, which supports the sentence.",
+        "factualBadge": true,
+        "primaryRefId": null,
+        "readingFacts": [
+          {
+            "end": 8,
+            "kind": "name",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L53",
+                  "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                  "lineAfterId": "L54",
+                  "lineBeforeId": "L52"
+                },
+                {
+                  "lineId": "L58",
+                  "extract": "NAV of EUR 812 million was prepared by the manager and reviewed by the independent valuation agent. Unrealised investments are held at fair value in accordance with IPEV guidelines. Foreign-exchange translation into euro used period-end rates.",
+                  "lineAfterId": "L59",
+                  "lineBeforeId": "L57"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 2
+            },
+            "start": 0,
+            "lineId": "L53",
+            "status": "matched",
+            "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+            "lineGap": false,
+            "surface": "Realised",
+            "lineAfterId": "L54",
+            "occurrences": [
+              {
+                "lineId": "L53",
+                "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                "lineAfterId": "L54",
+                "lineBeforeId": "L52"
+              },
+              {
+                "lineId": "L58",
+                "extract": "NAV of EUR 812 million was prepared by the manager and reviewed by the independent valuation agent. Unrealised investments are held at fair value in accordance with IPEV guidelines. Foreign-exchange translation into euro used period-end rates.",
+                "lineAfterId": "L59",
+                "lineBeforeId": "L57"
+              }
+            ],
+            "lineBeforeId": "L52",
+            "benchmarkCard": null,
+            "occurrenceCount": 2
+          },
+          {
+            "end": 52,
+            "kind": "figure",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L53",
+                  "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                  "lineAfterId": "L54",
+                  "lineBeforeId": "L52"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 1
+            },
+            "start": 38,
+            "lineId": "L53",
+            "status": "matched",
+            "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+            "lineGap": false,
+            "surface": "EUR 48 million",
+            "lineAfterId": "L54",
+            "occurrences": [
+              {
+                "lineId": "L53",
+                "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                "lineAfterId": "L54",
+                "lineBeforeId": "L52"
+              }
+            ],
+            "lineBeforeId": "L52",
+            "benchmarkCard": null,
+            "occurrenceCount": 1
+          },
+          {
+            "end": 104,
+            "kind": "name",
+            "shown": {
+              "more": null,
+              "shown": [
+                {
+                  "lineId": "L53",
+                  "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                  "lineAfterId": "L54",
+                  "lineBeforeId": "L52"
+                },
+                {
+                  "lineId": "L56",
+                  "extract": "Helvetic Components remains a core holding after the partial exit. The remaining stake is carried at a valuation consistent with the transaction multiple on the sold slice, after a liquidity discount.",
+                  "lineAfterId": "L57",
+                  "lineBeforeId": "L55"
+                }
+              ],
+              "countOnly": false,
+              "occurrenceCount": 2
+            },
+            "start": 84,
+            "lineId": "L53",
+            "status": "matched",
+            "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+            "lineGap": false,
+            "surface": "Helvetic Components",
+            "lineAfterId": "L54",
+            "occurrences": [
+              {
+                "lineId": "L53",
+                "extract": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG. Distributions to limited partners in the quarter were EUR 41 million. No new platform investment was completed in the period. Follow-on capital of EUR 9 million was deployed across two existing holdings.",
+                "lineAfterId": "L54",
+                "lineBeforeId": "L52"
+              },
+              {
+                "lineId": "L56",
+                "extract": "Helvetic Components remains a core holding after the partial exit. The remaining stake is carried at a valuation consistent with the transaction multiple on the sold slice, after a liquidity discount.",
+                "lineAfterId": "L57",
+                "lineBeforeId": "L55"
+              }
+            ],
+            "lineBeforeId": "L52",
+            "benchmarkCard": null,
+            "occurrenceCount": 2
+          }
+        ],
+        "summaryClass": {
+          "counted": true,
+          "cardTone": "green",
+          "evidence": "nothingRaised",
+          "editorial": "clean",
+          "compliance": "clean",
+          "turnedOffLine": null,
+          "needsAttention": false
+        },
+        "supportSpans": [
+          {
+            "end": 986,
+            "start": 879,
+            "passage": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG.",
+            "sourceRefId": 1,
+            "statementId": "5",
+            "classification": "confirmed"
+          }
+        ],
+        "supportState": "supported",
+        "whyItMatters": null,
+        "editorialNote": "No editorial or style concerns identified under the listed rules.",
+        "evidenceTrace": [],
+        "sentenceLabel": "Nothing raised",
+        "sentenceState": "nothing_raised",
+        "supportRefIds": [
+          1
+        ],
+        "citationHovers": [],
+        "complianceNote": "No caution concerns identified under the listed rules.",
+        "conflictValues": null,
+        "displayVerdict": "supported_full",
+        "hasRealExcerpt": true,
+        "primaryExcerpt": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG.",
+        "combinedVerdict": {
+          "tier": "quiet",
+          "tone": "none",
+          "label": "Nothing raised",
+          "setBy": null,
+          "state": "nothing_raised"
+        },
+        "conflictExcerpt": null,
+        "evidenceSummary": "The quarterly performance report states realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG, which supports the sentence.",
+        "pipelineVersion": "v4",
+        "primaryRefTitle": "Ostara European Mid-Market Fund II quarterly performance report",
+        "conflictEvidence": null,
+        "editorialVerdict": "clean",
+        "evidenceFindings": [],
+        "excerptMatchType": "none",
+        "statementVerdict": {
+          "tier": "quiet",
+          "setBy": {
+            "branch": "statementVerdict"
+          },
+          "state": "nothing_raised"
+        },
+        "supportRefTitles": [
+          "Ostara European Mid-Market Fund II quarterly performance report"
+        ],
+        "unsupportedSpans": [],
+        "complianceVerdict": "clean",
+        "editorialConcerns": [],
+        "matchExplanations": [
+          {
+            "role": "facts",
+            "explanation": "The source does not address realised proceeds or any exits, including Helvetic Components, for the quarter ended 31 March 2025.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "no_support"
+          },
+          {
+            "role": "facts",
+            "explanation": "The sentence states the same realised proceeds figure and driver as the source for the same period, confirming the statement.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "confirmed"
+          }
+        ],
+        "originalClaimText": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components.",
+        "primaryExcerptEnd": 986,
+        "reasoningHeadline": null,
+        "unmatchedElements": [],
+        "complianceConcerns": [],
+        "houseStyleConcerns": [],
+        "primaryExcerptText": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG.",
+        "reasoningParagraph": "The quarterly performance report states realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG, which supports the sentence.",
+        "excerptNotLocatable": false,
+        "primaryExcerptParts": null,
+        "primaryExcerptStart": 879,
+        "primarySourceOrigin": null,
+        "displayVerdictReason": null,
+        "evidenceConcernLevel": "none",
+        "suggestedImprovement": null,
+        "commentaryNotReviewed": false,
+        "commentaryUnaddressed": [],
+        "primaryExcerptLineIds": [
+          "L14"
+        ],
+        "primaryExcerptTrusted": false,
+        "secondarySupportCount": 0,
+        "selectedExcerptReason": null,
+        "sentenceSubclaimCount": null,
+        "sourceRecencyConcerns": [],
+        "supersededSourceNotes": [],
+        "suppressInQcWorkbench": false,
+        "supportingReferenceIds": [],
+        "framingFidelityConcerns": [],
+        "stage2SourceFingerprints": [
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG."
+            },
+            "passage": "The Fund held 34 portfolio companies as at 31 March 2025. Sector mix by NAV is approximately 38% business services, 31% healthcare, and 31% specialised industrials. The five largest positions together represent 42% of NAV.",
+            "sourceIndex": 0,
+            "sourceLabel": "Ostara European Mid-Market Fund II fund fact sheet",
+            "classification": "no_support",
+            "systemFingerprint": "fp_cb2f6fd107"
+          },
+          {
+            "gate": {
+              "gated": true,
+              "parts": 1,
+              "selected": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG."
+            },
+            "passage": "Realised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components AG.",
+            "sourceIndex": 1,
+            "sourceLabel": "Ostara European Mid-Market Fund II quarterly performance report",
+            "classification": "confirmed",
+            "systemFingerprint": "fp_cb2f6fd107"
+          }
+        ],
+        "editorialSuggestedRewrite": null,
+        "evidenceNotReviewedReason": null,
+        "supportingReferenceTitles": [],
+        "complianceSuggestedRewrite": null,
+        "conflictExcerptEmptyReason": null,
+        "editorialNotReviewedReason": null,
+        "commentaryNotReviewedReason": null,
+        "complianceNotReviewedReason": null,
+        "editorialSuggestedDirection": null,
+        "complianceSuggestedDirection": null
+      }
+    }
+  ],
+  "_b602": {
+    "review_id": "0e911a74-2952-46e0-8ea6-883012d9233c",
+    "updated_at": "2026-11-25T05:21:01.337Z",
+    "ref": "R-A9C3",
+    "draftText": "Ostara European Mid-Market Fund II continued to compound in line with the manager's long-term underwriting through the first quarter.\n\nNet IRR since inception stood at 11.2 percent as at 31 March 2025.\n\nThe fund held 36 portfolio companies at quarter end.\n\nTotal commitments were EUR 1.3 billion.\n\nThe fund is a 2019 vintage.\n\nRealised proceeds in the quarter were EUR 48 million, driven by the partial exit of Helvetic Components.\n\nWe remain constructive on the remaining portfolio.",
+    "dealStatus": "As the source states"
+  }
+}
