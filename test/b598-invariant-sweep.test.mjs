@@ -65,6 +65,7 @@ function reasonOf(card) {
 }
 
 function specificElement(reason, sentence) {
+  if (/^Nothing in the source addresses this\.?$/i.test(clean(reason))) return true;
   const body = clean(reason);
   if (!body) return false;
   if (/\b(recommend|decision|gross|net|qualifier|table|confirm the decision)\b/i.test(body)) return true;

@@ -18,6 +18,7 @@ const MUST_COVER = {
   NEW_DIRECT_INVESTMENT: [
     "what the company is and does, and its business model",
     "the substantive merits and the investment thesis, backed by concrete figures such as percentages where the source has them, not by adjectives",
+    "how the firm intends to create value or grow the business over its ownership (value creation plan, business plan, investment plan, growth plan, growth initiatives, or value creation levers, whatever the source calls it)",
     "fit with a wider theme",
     "any prior history with the company",
     "the valuation and the stake acquired",
@@ -26,6 +27,7 @@ const MUST_COVER = {
     "the platform's buy-and-build strategy and how the target fits",
     "what the target is and does",
     "what the target adds",
+    "how the firm intends to create value or grow the business over its ownership (value creation plan, business plan, investment plan, growth plan, growth initiatives, or value creation levers, whatever the source calls it)",
     "the valuation and the stake acquired",
     "rationale, backed by concrete figures where the source has them",
     "any prior history with the target",

@@ -4,6 +4,7 @@ import { rememberAccount, requireAccount } from "../lib/auth/require-account.mjs
 import { prepareUploadedSourcesForPipeline } from "../lib/extract-text-from-source.mjs";
 import { reportRouteFailure } from "../lib/problem-events.mjs";
 import { unreadableFileMessage } from "../lib/unreadable-source.mjs";
+import { decodeSourceText } from "../lib/ingest/text-encoding.mjs";
 
 
 async function handler(req, res) {
@@ -20,6 +21,11 @@ async function handler(req, res) {
   const contentBase64 = typeof body.contentBase64 === "string" ? body.contentBase64 : "";
   const isText = mimeType === "text/plain" || /\.txt$/i.test(name);
 
+  // B603 F65: prefer bytes + encoding detection for .txt uploads.
+  if (isText && contentBase64) {
+    const decoded = decodeSourceText({ name, mimeType, contentBase64 });
+    if (decoded.trim()) return res.status(200).json({ ok: true, text: decoded });
+  }
   if (isText && text.trim()) {
     return res.status(200).json({ ok: true, text });
   }

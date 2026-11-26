@@ -190,6 +190,7 @@ function loadCorpus() {
     path.join(BE, "test/fixtures/b591"),
     path.join(BE, "test/fixtures/b601"),
     path.join(BE, "test/fixtures/b602"),
+    path.join(BE, "test/fixtures/b603"),
   ];
   for (const root of fixtureRoots) {
     if (!existsSync(root)) continue;
@@ -286,6 +287,8 @@ function extractClaimedGaps(reason) {
 function specificElement(reason, sentence) {
   const body = clean(reason);
   if (!body) return false;
+  // B603 A2: fixed unaddressed copy is a complete amber reason.
+  if (/^Nothing in the source addresses this\.?$/i.test(body)) return true;
   if (/\b(recommend|decision|gross|net|qualifier|table|confirm the decision)\b/i.test(body)) return true;
   if (numbersOf(body).length) return true;
   if (/[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*/.test(body) && body.length > 40) return true;
