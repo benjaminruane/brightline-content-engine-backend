@@ -105,3 +105,14 @@ test("Accept keeps editorial and caution notes", () => {
   assert.equal(next.editorialConcerns?.length, 1);
   assert.ok(Array.isArray(next.complianceConcerns));
 });
+
+test("B604: the accept line carries no line number (screen numbers differ from review line ids)", () => {
+  const accepted = restampAfterAccept({
+    statement: "Returned 7.4% net.",
+    sentenceState: "conflicts",
+    readingFacts: [{ kind: "figure", surface: "7.4%", status: "unmatched", lineId: "L4" }],
+    primaryExcerpt: "Returned 6.4% net.",
+    primaryExcerptLineIds: ["L4"],
+  }, "Returned 6.4% net.");
+  assert.doesNotMatch(accepted.shownReason, /\(line \d+\)/);
+});
