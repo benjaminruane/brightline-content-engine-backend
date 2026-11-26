@@ -408,6 +408,7 @@ async function handler(req, res) {
       {
         statements,
         sources,
+        ...(pipelineResult?.reading ? { reading: pipelineResult.reading } : {}),
         meta: {
           reviewOptions: effectiveReviewOptions,
           dealStatus: pipelineOptions.dealStatus ?? body?.dealStatus ?? null,
@@ -451,7 +452,8 @@ async function handler(req, res) {
       references: [],
       // R7.B46: aligned reviewed sources + separately listed excluded (empty-text) sources
       sources,
-      ...(pipelineResult?.reading ? { reading: pipelineResult.reading } : {}),
+      // B604 F72: the reading leaves through the exit gate so the note follows the final cards.
+      ...(pipelineResult?.reading ? { reading: gated.reading ?? pipelineResult.reading } : {}),
       recencySummary: Array.isArray(pipelineResult?.recencySummary) ? pipelineResult.recencySummary : [],
       ...(Array.isArray(pipelineResult?.draftMarks) ? { draftMarks: pipelineResult.draftMarks } : {}),
       excludedSources,
