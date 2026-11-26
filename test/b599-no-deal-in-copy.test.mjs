@@ -26,11 +26,91 @@ const SURFACES = [
 
 const ALLOW = /\bdealStatus\b|\bDealStatus\b|\bDEAL_STATUS\b|\bdealInfo\b|\bdeal_status\b|\bdeal-status\b|deal word:|Do not write deal|not deal\.|Say transaction or investment, not deal/i;
 
+/**
+ * Collect string / template literal bodies in linear time.
+ * Avoids the previous nested-regex scanner, which backtracked forever on
+ * large modules (exit-gate grew enough under B601 to hang the suite).
+ */
 function literals(src) {
   const out = [];
-  const re = /(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g;
-  let match;
-  while ((match = re.exec(src))) out.push(match[2]);
+  const text = String(src || "");
+  let i = 0;
+  while (i < text.length) {
+    const ch = text[i];
+    if (ch === '"' || ch === "'") {
+      const quote = ch;
+      i += 1;
+      let body = "";
+      while (i < text.length) {
+        const c = text[i];
+        if (c === "\\") {
+          body += text.slice(i, i + 2);
+          i += 2;
+          continue;
+        }
+        if (c === quote) {
+          i += 1;
+          break;
+        }
+        body += c;
+        i += 1;
+      }
+      out.push(body);
+      continue;
+    }
+    if (ch === "`") {
+      i += 1;
+      let body = "";
+      while (i < text.length) {
+        const c = text[i];
+        if (c === "\\") {
+          body += text.slice(i, i + 2);
+          i += 2;
+          continue;
+        }
+        if (c === "`") {
+          i += 1;
+          break;
+        }
+        // Skip ${...} expressions without treating inner quotes as literals.
+        if (c === "$" && text[i + 1] === "{") {
+          body += "${";
+          i += 2;
+          let depth = 1;
+          while (i < text.length && depth > 0) {
+            const inner = text[i];
+            if (inner === "\\") {
+              body += text.slice(i, i + 2);
+              i += 2;
+              continue;
+            }
+            if (inner === "{") depth += 1;
+            else if (inner === "}") depth -= 1;
+            body += inner;
+            i += 1;
+          }
+          continue;
+        }
+        body += c;
+        i += 1;
+      }
+      out.push(body);
+      continue;
+    }
+    // Skip line/block comments so comment text is not scanned as copy.
+    if (ch === "/" && text[i + 1] === "/") {
+      i += 2;
+      while (i < text.length && text[i] !== "\n") i += 1;
+      continue;
+    }
+    if (ch === "/" && text[i + 1] === "*") {
+      i += 2;
+      while (i < text.length && !(text[i] === "*" && text[i + 1] === "/")) i += 1;
+      i += 2;
+      continue;
+    }
+    i += 1;
+  }
   return out;
 }
 

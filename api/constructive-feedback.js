@@ -11,6 +11,7 @@ import {
   constructiveFeedbackFailure,
   buildConstructiveFeedbackV2,
   normalizeConstructiveFeedbackPlainText,
+  polishConstructiveFeedback,
   prependReadiness,
 } from "../lib/qc/constructive-feedback-v2.mjs";
 import { beginRequestBudget, FUNCTION_MAX_DURATION_MS } from "../lib/qc/request-budget.mjs";
@@ -78,7 +79,11 @@ async function handler(req, res) {
       metadata: { route: "constructive-feedback", findingCount: built.payload.findings.length },
     });
     const raw = typeof completion?.text === "string" ? completion.text.trim() : "";
-    const feedbackText = prependReadiness(built.readiness, normalizeConstructiveFeedbackPlainText(raw));
+    const normalized = normalizeConstructiveFeedbackPlainText(raw);
+    const polished = polishConstructiveFeedback(normalized, {
+      findings: built.payload?.findings || [],
+    });
+    const feedbackText = prependReadiness(built.readiness, polished);
     if (!feedbackText) {
       await reportRouteFailure({
         account,

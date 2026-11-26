@@ -188,6 +188,7 @@ function loadCorpus() {
     path.join(BE, "test/fixtures/b582"),
     path.join(BE, "test/fixtures/b588"),
     path.join(BE, "test/fixtures/b591"),
+    path.join(BE, "test/fixtures/b601"),
   ];
   for (const root of fixtureRoots) {
     if (!existsSync(root)) continue;

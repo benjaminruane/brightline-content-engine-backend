@@ -56,6 +56,10 @@
     "rule": "A year range uses a hyphen, except after from or between."
   },
   {
+    "id": "numeric_range",
+    "rule": "Write numeric ranges with a hyphen and state the unit once: 12-15 companies, EUR 150-500 million, 2016-2019. Do not write 'X to Y' or 'from X to Y' for a range."
+  },
+  {
     "id": "english_variant",
     "rule": "Use the account's spelling. A proper noun keeps its own spelling."
   },

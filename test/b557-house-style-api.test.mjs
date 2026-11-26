@@ -50,6 +50,7 @@ test("a choice outside the guide is refused, and a valid save stays on that acco
     "pence",
     "quotes",
     "legalIdentifiers",
+    "numericRange",
   ]);
   assert.equal(page.settingsChoices.find((row) => row.id === "numberWords").example, "three funds, but 13 funds");
   assert.equal(page.voice.find((row) => row.slug === "investor_letter").sentence, "we, speaking as your organisation.");
