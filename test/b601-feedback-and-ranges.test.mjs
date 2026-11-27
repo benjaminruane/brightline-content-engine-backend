@@ -87,10 +87,10 @@ test("Aldermoor ranges get notes; Helvetia multiple movement gets none", () => {
 
 test("constructive feedback prompt and polish: status fix, no team actor, two sentences", () => {
   assert.match(CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT, /at most two sentences/i);
-  assert.match(CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT, /set the transaction status/i);
+  assert.match(CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT, /set its status/i);
   assert.match(CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT, /never make the investment team or a committee the actor/i);
   assert.match(CONSTRUCTIVE_FEEDBACK_V2_SYSTEM_PROMPT, /12-15 companies/i);
-  assert.match(WRITER_FEEDBACK_PROMPT, /set the transaction status/i);
+  assert.match(WRITER_FEEDBACK_PROMPT, /set its status|set the transaction status/i);
 
   const raw = `The draft overstates the commitment.
 To fix
@@ -105,7 +105,8 @@ Check status before stating a completed commitment.`;
     }],
   });
   assert.equal(/investment team has recommended/i.test(polished), false);
-  assert.match(polished, /set the transaction status/i);
+  assert.match(polished, /set its status/i);
+  assert.doesNotMatch(polished, /\bcommitment has been approved/i);
   assert.equal(/Confirm against the source/i.test(polished), false);
 
   const toFixBlock = polished.split(/For next time/i)[0];
