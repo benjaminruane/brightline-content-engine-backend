@@ -54,3 +54,36 @@ test("no proposal when the sentence already has the qualifier", () => {
   const out = attachQualifierProposal(card);
   assert.equal(out.evidenceProposal, undefined);
 });
+
+test("stamped evidenceProposal becomes an action-list Accept entry without a model call", async () => {
+  const { inventoryStatements } = await import("../lib/revise-actions/inventory.mjs");
+  const { fillAction } = await import("../lib/revise-actions/run.mjs");
+  const { sortFinding } = await import("../lib/revise-actions/sort.mjs");
+  const card = applyExitGate({
+    statement: "The fund reports an IRR of 15.9 percent.",
+    sentenceState: "note_withheld",
+    statementVerdict: { state: "note_withheld" },
+    supportState: "supported",
+    displayVerdict: "supported_full",
+    shownReason: "The draft drops the net qualifier on the figure.",
+    primaryExcerpt: "Net IRR for the period was 15.9 percent.",
+    reasoningParagraph: "The draft drops the net qualifier on the figure.",
+  });
+  assert.equal(card.evidenceProposal?.resultingSentence, "The fund reports a net IRR of 15.9 percent.");
+  const findings = inventoryStatements([{ id: "12", text: card.statement, qcCard: card }]);
+  const evidence = findings.find((row) => row.kind === "evidence");
+  assert.ok(evidence);
+  assert.equal(evidence.resultingSentence, "The fund reports a net IRR of 15.9 percent.");
+  const sorted = sortFinding(evidence, false);
+  assert.equal(sorted.disposition, "ACTION");
+  const filled = await fillAction(sorted, {
+    authoringOrganisation: "Halden Group",
+    draftText: card.statement,
+    callModel: async () => {
+      throw new Error("B606 qualifier proposal must not call a model");
+    },
+  });
+  assert.equal(filled.disposition, "ACTION");
+  assert.equal(filled.resultingSentence, "The fund reports a net IRR of 15.9 percent.");
+  assert.equal(filled.provenance, "derived");
+});

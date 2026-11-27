@@ -51,3 +51,32 @@ test("support-only amber with no deterministic issue goes quiet", () => {
   const out = applyExitGate(card);
   assert.equal(out.sentenceState, "nothing_raised");
 });
+
+test("Harbourline live S5 shape: support-framed later-completion reason is replaced", () => {
+  const card = {
+    statement: "The sale is expected to complete in the third quarter.",
+    sentenceState: "note_withheld",
+    statementVerdict: {
+      state: "note_withheld",
+      setBy: { branch: "supersession", source: "later" },
+    },
+    shownReason:
+      "The press release states the transaction is expected to complete in the third quarter of 2026, subject to customary regulatory approvals, which supports the sentence. The distribution notice later records completion on 30 September 2026, which is within that expected third quarter and does not contradict the expectation stated at the time.",
+    readingNote: {
+      text: "The distribution notice reports completion on 30 September 2026.",
+    },
+    primaryExcerpt:
+      "The transaction is expected to complete in the third quarter of 2026, subject to customary regulatory approvals.",
+    readingFacts: [
+      { kind: "date", status: "matched", surface: "third quarter" },
+    ],
+  };
+  const out = applyExitGate(card);
+  const reason = String(out.shownReason || "");
+  assert.match(reason, /completed|completion/i);
+  assert.match(reason, /30 September 2026/i);
+  assert.match(reason, /Update the sentence|confirm the status/i);
+  assert.doesNotMatch(reason, /supports the sentence/i);
+  assert.doesNotMatch(reason, /does not contradict/i);
+  assert.equal(out.sentenceState, "note_withheld");
+});

@@ -66,3 +66,26 @@ test("filterCardPassages drops unrelated and heading lines on the stamped card",
   assert.doesNotMatch(joined, /Five of the six/i);
   assert.doesNotMatch(joined, /QUARTERLY REPORT/i);
 });
+
+test("heading-only primary excerpt yields to a relevant support span", () => {
+  const out = filterCardPassages({
+    statement:
+      "In the quarter to 30 June 2026 Harbourline reported record volumes, launched a new range of premium ready meals, and secured a listing with a sixth major UK retailer.",
+    primaryExcerpt: "QUARTERLY REPORT - Q2 2026 (PERIOD ENDED 30 JUNE 2026)",
+    supportSpans: [
+      {
+        passage:
+          "In the quarter Harbourline reported record volumes and launched a new range of premium ready meals with two national grocers.",
+      },
+      {
+        passage: "Five of the six largest UK grocers stock the brand over the holding period.",
+      },
+    ],
+  });
+  assert.match(String(out.primaryExcerpt || ""), /record volumes/i);
+  assert.doesNotMatch(String(out.primaryExcerpt || ""), /QUARTERLY REPORT/i);
+  assert.doesNotMatch(
+    (out.supportSpans || []).map((span) => span.passage).join(" "),
+    /Five of the six/i,
+  );
+});
