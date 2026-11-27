@@ -472,6 +472,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B612 | Editorial notes respect house style number format and earlier first mentions; source date summary copy; single-source numbers. Changed existing tests, by decision: tests/b501-recency-summary.test.mjs (source date line uses years ago). No model call. | `b612` |
 | B610 | Assessment reason only under Needs significant work, styled as the first summary row (screen and PDF). Changed existing tests, by decision: test/b593-export-fixes.test.mjs and test/b605-readiness-ladder.test.mjs (header label is the Assessment pill; reason titleLine only when set). | `b610` |
 | B609 | PDF Sources prints the same description as the screen (uploaded, else review row). Draft S-numbers sit right after their own sentence, before trailing whitespace. | `b609` |
 | B608 | Export carries the Also appears at passage the screen shows (same order, badge and line). Status advice says "transaction", not "commitment". | `b608` |
