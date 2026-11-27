@@ -1,0 +1,68 @@
+Investor letter: review
+Assessment: Ready
+Ready
+investor letter · Complete · v1 · 235 words
+Ref R-4DD1
+Sources reviewed: Kestrel Partners sale of Harbourline Foods, Kestrel Partners Fund IV distribution notice, Kestrel Partners Fund IV quarterly report, Q2 2026
+Exported 27/11/2026, 14:54 GMT+8 by Benjamin · Content Engine 0.9.8
+Draft
+Dear investor,
+
+
+Halden Group is a limited partner in Kestrel Partners Fund IV. 
+S1
+This letter is about Harbourline Foods and the partial sale Kestrel has agreed with Northshore Consumer Partners.
+
+
+S2
+On 17 June 2026 Kestrel agreed to sell a 60 percent stake in Harbourline Foods to Northshore Consumer Partners at an enterprise value of GBP 420 million. 
+S3
+Kestrel will retain a 40 percent stake. 
+S4
+The sale is expected to complete in the third quarter.
+
+
+S5
+Harbourline produces chilled ready meals, pies and side dishes for grocery retailers in the United Kingdom and Ireland, from sites in Yorkshire and County Cork. 
+S6
+Kestrel invested in 2020, when Harbourline was a family owned business. 
+S7
+Since then the company has secured listings with five of the six largest UK grocers and the three largest Irish retailers, more than doubled its revenue, and doubled the capacity of its Cork site. 
+S8
+A newly automated production line in Yorkshire is now fully operational.
+
+
+S9
+In the quarter to 30 June 2026 Harbourline reported record volumes, launched a new range of premium ready meals, and secured a listing with a sixth major UK retailer. 
+S10
+Its valuation was marked up by 22 percent to the agreed transaction value.
+
+
+S11
+At 30 June 2026 the fund's net asset value stood at EUR 652 million. 
+S12
+The fund reports an IRR of 15.9 percent.
+S13
+ We will write again when Kestrel reports on the stake it holds.
+
+Yours sincerely,
+
+Halden Group
+Sources
+Kestrel Partners sale of Harbourline Foods
+Press release announcing the agreed sale of a 60% stake.
+Unclassified
+Kestrel Partners Fund IV distribution notice
+October distribution notice recording completion of the sale.
+Unclassified
+Kestrel Partners Fund IV quarterly report, Q2 2026
+Q2 2026 quarterly report with NAV, IRR and Harbourline update.
+Unclassified
+How to read this review
+Conflicts with the source: a figure, date or claim differs from what the source says.
+Goes beyond the source: the draft adds a claim the source does not make.
+Needs a look: the check could not settle the point from the source alone.
+Nothing raised: the sentence sits with the source.
+Craft notes or cautions: house style or wording points for the writer.
+Line numbers refer to the source text as Content Engine read it.
+Evidence flags compare this draft with the sources you provided; they do not check facts beyond those sources. Editorial flags apply your house style and ordinary writing practice. Caution flags mark wording that may overpromise or create risk; they are common-sense prompts, not legal advice for any jurisdiction. Confirm every flag before you publish.
