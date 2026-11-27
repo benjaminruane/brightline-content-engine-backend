@@ -472,6 +472,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B607 | Four live B606 fixes. Also-appears passages resolve through joined-source line numbers (screen + PDF); reasons shortened only at sentence boundaries; multi-source rounding checks every facts source and never proposes another source's figure when one supports; note opener drop clears dangling also/too/as well/However/That said/Still. | `b607` |
 | B606 | Friend-ready polish. Qualifier proposal for needs-a-look net/gross cards; amber/red reasons must state the issue (no support-only faces); reason sentence dedupe; heading/unrelated passages dropped on stamp and PDF; PDF passages lose bullets. Empty-excerpt scrub no longer blanks a real primaryExcerpt when primaryExcerptText is unset. | `b606` |
 | B605 | Overall readiness ladder and note opener alignment with the overall label. | `b605` |
 | B604 | Export and screen parity for table rows, source badges, reason under Assessment. | `b604` |
