@@ -1,7 +1,7 @@
 import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
 import { emailIsAdmin, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
-import { dismissFeedbackBanner, feedbackNotice, findAccount, normaliseWritingFor, problemNotice, updateHouseStyle, updateStyleChoices, updateWritingFor } from "../lib/db/accounts.mjs";
+import { dismissFeedbackBanner, dismissWelcome, feedbackNotice, findAccount, normaliseWritingFor, problemNotice, updateHouseStyle, updateStyleChoices, updateWritingFor } from "../lib/db/accounts.mjs";
 import { houseStyleForRow, normaliseHouseStyle } from "../lib/house-style-choice.mjs";
 import { choicesFromAccountRow, normaliseBannedWords, renderHouseRulesView } from "../lib/style-guide/render.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
@@ -53,6 +53,7 @@ async function publicAccount(sql, row, fallback) {
     spentThisMonthUsd: spent,
     usedFraction: admin ? null : usedFraction(spent, allowance),
     resetsOn: resetsOnIso(new Date()),
+    welcomeDismissed: Boolean(row?.welcome_dismissed_at),
   };
 }
 
@@ -81,6 +82,11 @@ async function handler(req, res) {
       const body = readJsonBody(req);
       if (body.dismissFeedbackBanner === true) {
         const saved = await dismissFeedbackBanner(sql, account.accountId);
+        if (!saved) return res.status(404).json({ error: "not_found" });
+        return res.status(200).json(await publicAccount(sql, saved, account));
+      }
+      if (body.dismissWelcome === true) {
+        const saved = await dismissWelcome(sql, account.accountId);
         if (!saved) return res.status(404).json({ error: "not_found" });
         return res.status(200).json(await publicAccount(sql, saved, account));
       }
