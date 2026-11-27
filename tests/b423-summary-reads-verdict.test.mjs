@@ -50,7 +50,9 @@ test("the clean HICL summary follows the statement verdict and does not say ever
     return { ...card, statementVerdict: verdict };
   });
   const summary = summariseReview(cards, review.meta.reviewOptions);
-  assert.equal(summary.readiness, "Needs work");
+  // B605: four claims to reword or support (three or more) is significant work.
+  assert.equal(summary.readiness, "Needs significant work");
+  assert.equal(summary.readinessReason, "4 claims to reword or support.");
   assert.notEqual(summary.readiness, "Ready");
   const bullets = summaryBulletsFromReview(summary);
   assert.equal(bullets.some((line) => line.includes("All claims are backed by sources")), false);

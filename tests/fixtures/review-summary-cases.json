@@ -71,7 +71,8 @@
         "signalConcerns": 0,
         "notChecked": 0,
         "needsAttention": 3,
-        "readiness": "Minor points to address"
+        "readiness": "Needs significant work",
+        "readinessReason": "3 claims to reword or support."
       }
     },
     {
@@ -120,7 +121,8 @@
         "signalConcerns": 0,
         "notChecked": 0,
         "needsAttention": 1,
-        "readiness": "Needs significant work"
+        "readiness": "Needs work",
+        "readinessReason": "1 figure to correct."
       }
     },
     {
@@ -181,7 +183,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Not fully checked"
+        "readiness": "Not fully checked",
+        "readinessReason": "1 sentence could not be fully checked."
       }
     },
     {
@@ -243,7 +246,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 1,
-        "readiness": "Minor points to address"
+        "readiness": "Needs work",
+        "readinessReason": "1 claim to reword or support."
       }
     },
     {
@@ -316,7 +320,8 @@
         "signalConcerns": 3,
         "notChecked": 0,
         "needsAttention": 3,
-        "readiness": "Needs significant work"
+        "readiness": "Needs work",
+        "readinessReason": "3 phrases to change."
       }
     },
     {
@@ -365,7 +370,8 @@
         "signalConcerns": 0,
         "notChecked": 0,
         "needsAttention": 1,
-        "readiness": "Needs work"
+        "readiness": "Needs work",
+        "readinessReason": "1 claim to reword or support."
       }
     },
     {
@@ -580,7 +586,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Not fully checked"
+        "readiness": "Not fully checked",
+        "readinessReason": "1 sentence could not be fully checked."
       }
     },
     {
@@ -629,7 +636,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Not fully checked"
+        "readiness": "Not fully checked",
+        "readinessReason": "1 sentence could not be fully checked."
       }
     },
     {
@@ -821,7 +829,8 @@
         "signalConcerns": 5,
         "notChecked": 0,
         "needsAttention": 9,
-        "readiness": "Needs significant work"
+        "readiness": "Needs significant work",
+        "readinessReason": "2 claims to reword or support and 7 figures to correct."
       }
     },
     {
@@ -870,7 +879,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Not fully checked"
+        "readiness": "Not fully checked",
+        "readinessReason": "1 sentence could not be fully checked."
       }
     },
     {
@@ -919,7 +929,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Not fully checked"
+        "readiness": "Not fully checked",
+        "readinessReason": "1 sentence could not be fully checked."
       }
     },
     {
@@ -1013,7 +1024,8 @@
         "signalConcerns": 0,
         "notChecked": 1,
         "needsAttention": 0,
-        "readiness": "Not fully checked"
+        "readiness": "Not fully checked",
+        "readinessReason": "1 sentence could not be fully checked."
       }
     }
   ]

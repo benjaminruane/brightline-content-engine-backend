@@ -85,7 +85,8 @@ describe("B439 the screen uses the verdict it already holds", () => {
     assert.equal(summary.evidence.partial, 0);
     assert.equal(summary.evidence.confirmed, 0);
     assert.equal(summary.evidence.nothingRaised, 1);
-    assert.equal(summary.readiness, "Minor points to address");
+    // B605: one claim beyond the source is a rewrite: Needs work.
+    assert.equal(summary.readiness, "Needs work");
     const bullets = summaryBulletsFromReview(summary);
     assert.match(bullets[0], /goes beyond the source/);
     assert.equal(bullets.some((line) => /partial support|backed by sources/i.test(line)), false);
