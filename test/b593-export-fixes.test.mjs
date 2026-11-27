@@ -114,8 +114,10 @@ test("house style appears once; how-to-read lines; verdict in header; draft para
     note: true,
     cards: true,
   });
-  assert.equal(lines.includes("Needs significant work"), true);
-  assert.equal(lines.indexOf("Needs significant work") < lines.indexOf("Draft"), true);
+  // B610: the pill carries the label; a separate titleLine reason is only for
+  // Needs significant work when verdictReason is set.
+  assert.equal(lines.includes("Assessment: Needs significant work"), true);
+  assert.equal(lines.indexOf("Assessment: Needs significant work") < lines.indexOf("Draft"), true);
   assert.equal(lines.includes("Harbourline memo"), true);
   assert.equal(lines.includes("Board pack for Q2."), true);
   assert.equal(lines.includes("Untitled source"), false);
