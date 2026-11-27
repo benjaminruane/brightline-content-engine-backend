@@ -1,5 +1,6 @@
 import { withCors } from "../lib/http/with-cors.mjs";
 import { applyCors } from "../lib/http/frontend-origins.mjs";
+import { maybeSendFirstReviewAlert } from "../lib/account-alerts.mjs";
 import { authMode, rememberAccount, requireAccount } from "../lib/auth/require-account.mjs";
 import { getSql, respondIfDbFailure } from "../lib/db/client.mjs";
 import {
@@ -118,6 +119,20 @@ async function handler(req, res) {
       }
       if (result.ok === false && result.reason === "owner_mismatch") {
         return res.status(403).json({ error: "owner_mismatch" });
+      }
+      // B619. First completed review for this account emails Ben once.
+      if (scopedAccountId && result.ok !== false) {
+        try {
+          await maybeSendFirstReviewAlert(sql, {
+            id: scopedAccountId,
+            email: account.email ?? null,
+            name: account.name ?? null,
+            state,
+            reviewId,
+          });
+        } catch (err) {
+          console.warn("[review-state] first review alert failed", err?.message || err);
+        }
       }
       return res.status(200).json({
         reviewId: result.reviewId,
