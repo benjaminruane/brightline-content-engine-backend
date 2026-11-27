@@ -37,10 +37,10 @@ test("Harbourline S5 reason is one well-formed sentence, no differ on The", () =
   const card = body.statements[4].qcCard;
   assert.equal(card.sentenceLabel, "Needs a look");
   assert.doesNotMatch(card.shownReason || "", /differ on The/i);
-  // B599: later-document completion is named (replaces the older "states" template).
-  assert.match(card.shownReason || "", /^(The sentence (?:states|says)|The source)/);
-  assert.match(card.shownReason || "", /\.$/);
+  // B606: later-document completion is named and asks the writer to update or confirm.
   assert.match(card.shownReason || "", /complet/i);
+  assert.match(card.shownReason || "", /30 September 2026|later source|later document/i);
+  assert.doesNotMatch(card.shownReason || "", /reads as the sentence says|no conflict/i);
 });
 
 test("Harbourline S12 stays red with the EUR 678 million proposal", () => {
