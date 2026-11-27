@@ -1,0 +1,31 @@
+Harbourline: review
+Assessment: Ready
+Ready
+investor letter · 16 words
+Ref R-AAA8
+Sources reviewed: Press, Distribution notice, Quarterly
+Exported 27/11/2026, 08:00 GMT+8
+Sentence review
+S1 · Nothing raised
+Statement
+Halden Group is a limited partner.
+Comment
+The source supports the sentence.
+Source
+Dear Limited Partner, … (line 15)
+S2 · Needs a look
+Statement
+The sale is expected to complete in the third quarter.
+Comment
+A later source reports the transaction completed on 30 September 2026.
+Source
+The transaction is expected to complete in the third quarter of 2026, subject to customary regulatory approvals. (line 7)
+Also appears at [2] On 30 September 2026 the Fund completed the sale of a 60% shareholding in Harbourline Foods Limited to Northshore Consumer Partners. (line 18)
+How to read this review
+Conflicts with the source: a figure, date or claim differs from what the source says.
+Goes beyond the source: the draft adds a claim the source does not make.
+Needs a look: the check could not settle the point from the source alone.
+Nothing raised: the sentence sits with the source.
+Craft notes or cautions: house style or wording points for the writer.
+Line numbers refer to the source text as Content Engine read it.
+Evidence flags compare this draft with the sources you provided; they do not check facts beyond those sources. Editorial flags apply your house style and ordinary writing practice. Caution flags mark wording that may overpromise or create risk; they are common-sense prompts, not legal advice for any jurisdiction. Confirm every flag before you publish.
