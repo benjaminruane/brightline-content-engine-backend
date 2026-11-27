@@ -472,6 +472,7 @@ Process lessons. Do not schedule. P5, P6, P7 and other actual work stay in Open 
 
 | ID  | Item | Resolved by |
 |-----|------|-------------|
+| B610 | Assessment reason only under Needs significant work, styled as the first summary row (screen and PDF). | `b610` |
 | B609 | PDF Sources prints the same description as the screen (uploaded, else review row). Draft S-numbers sit right after their own sentence, before trailing whitespace. | `b609` |
 | B608 | Export carries the Also appears at passage the screen shows (same order, badge and line). Status advice says "transaction", not "commitment". | `b608` |
 | B607 | Four live B606 fixes. Also-appears passages resolve through joined-source line numbers (screen + PDF); reasons shortened only at sentence boundaries; multi-source rounding checks every facts source and never proposes another source's figure when one supports; note opener drop clears dangling also/too/as well/However/That said/Still. | `b607` |

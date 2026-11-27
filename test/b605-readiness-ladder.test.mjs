@@ -69,15 +69,15 @@ test("five fixes of any kind are significant work", () => {
   assert.equal(s.readiness, "Needs significant work");
 });
 
-test("the export shows the reason under the pill and in the summary box", () => {
+test("the export shows the reason under the pill and in the summary box for Needs significant work", () => {
   const blocks = exportBlocks({
-    title: { name: "Review", verdict: "Needs work", verdictReason: "1 figure to correct.", sourceNames: ["Brief"] },
-    summary: { readiness: "Needs work", readinessReason: "1 figure to correct.", facts: "9 of 10", counts: [] },
+    title: { name: "Review", verdict: "Needs significant work", verdictReason: "The sources disagree on 1 sentence.", sourceNames: ["Brief"] },
+    summary: { readiness: "Needs significant work", readinessReason: "The sources disagree on 1 sentence.", facts: "9 of 10", counts: [] },
     draft: [], fullDraft: "", cards: [], sources: [], disclaimer: "d",
     howToRead: { title: "How", labels: [], lineNote: "x", disclaimer: "d" },
   }, { draft: false, reviewSummary: true });
   const all = JSON.stringify(blocks);
-  assert.match(all, /"kind":"titleLine","text":"1 figure to correct\."/);
+  assert.match(all, /"kind":"titleLine","text":"The sources disagree on 1 sentence\."/);
   const summary = blocks.find((block) => block.kind === "summary");
-  assert.deepEqual(summary.rows.slice(0, 2), ["Needs work", "1 figure to correct."]);
+  assert.deepEqual(summary.rows.slice(0, 2), ["Needs significant work", "The sources disagree on 1 sentence."]);
 });

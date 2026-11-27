@@ -1,0 +1,34 @@
+{
+  "computed": {
+    "version": 1,
+    "statements": 13,
+    "evidence": {
+      "confirmed": 0,
+      "partial": 0,
+      "conflicting": 1,
+      "notSupported": 0,
+      "nothingRaised": 9,
+      "needsLook": 3,
+      "unbadged": 0
+    },
+    "editorial": {
+      "concerns": 0,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "compliance": {
+      "concerns": 1,
+      "hardConcerns": 0,
+      "notChecked": 0
+    },
+    "signalConcerns": 1,
+    "notChecked": 0,
+    "needsAttention": 4,
+    "readiness": "Needs work",
+    "readinessReason": "1 figure to correct and 3 points to confirm."
+  },
+  "verdict": "Needs work",
+  "verdictReason": "",
+  "readinessReason": "",
+  "facts": "35 of 36 figures, dates and names match the source."
+}
