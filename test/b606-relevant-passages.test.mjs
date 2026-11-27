@@ -31,7 +31,7 @@ test("Harbourline S10 shape drops unrelated and heading lines", () => {
   assert.doesNotMatch(kept.map((row) => row.text).join(" "), /QUARTERLY REPORT/);
 });
 
-test("always keeps at least the best passage", () => {
+test("B617: unrelated and heading-only passages yield no passage", () => {
   const kept = filterRelevantPassages(
     [
       { text: "Completely unrelated furniture about pensions administration.", lineIds: ["L1"] },
@@ -39,7 +39,7 @@ test("always keeps at least the best passage", () => {
     ],
     "The company delivered record volumes in the quarter.",
   );
-  assert.equal(kept.length, 1);
+  assert.equal(kept.length, 0);
 });
 
 test("filterCardPassages drops unrelated and heading lines on the stamped card", () => {
