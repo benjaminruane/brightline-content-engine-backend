@@ -84,7 +84,8 @@ test("house style appears once; how-to-read lines; verdict in header; draft para
       attention: true,
       sentence: "First paragraph.",
       reason: "The source does not state the period.",
-      passages: [{ text: "NAV total return of 3.1% (31", lines: "L15" }],
+      // B617: passage must share content with the sentence or export drops it.
+      passages: [{ text: "The first paragraph restates the opening.", lines: "L15" }],
       concerns: [],
     }],
     reviewerNote: "Keep periods close to the source.",
